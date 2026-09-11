@@ -8,4 +8,7 @@ Areas: `examiner`, `controls`, `split`, `sight`, `sheet`, `scope`, `ui`, `scorin
 
 ## Log
 
-_(empty; the first entry comes from the first time work on the monster truck slice gets steered)_
+- 2026-09-12 | ui | Waiting-room model lacked a visible role-choice area → place Driver, Spotter, Navigator, and Random controls beside vehicle booking, with separate meshes for future interaction.
+
+- 2026-09-12 | scope | Create a customizable placeholder player and main-menu song as standalone assets; leave existing game scenes and menu integration untouched.
+- 2026-09-12 | scope | Waiting-room work is limited to the visual environment and models, including a terminal screen for future friends and invites; Steam, multiplayer, voice, and lobby logic are separate implementation work.

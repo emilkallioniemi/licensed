@@ -1,0 +1,6037 @@
+{
+  "title": "Please Take a Number",
+  "bpm": 104,
+  "bars": 32,
+  "seconds": 73.84614512471656,
+  "sample_rate": 44100,
+  "frames": 3256615,
+  "peak_dbfs": -3.0,
+  "rms_dbfs": -17.428854353731904,
+  "boundary_step": 0.006886844548179824,
+  "events": [
+    {
+      "beat": 0,
+      "midi": 41,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 1.67,
+      "midi": 53,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 2.5,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 3.67,
+      "midi": 53,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 0.67,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 0.684,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 0.6980000000000001,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 0.7120000000000001,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 2.0,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 2.014,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 2.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 2.042,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 3.33,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 3.344,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 3.358,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 3.372,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 0,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 2,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 1,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 3,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 0,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 0.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 1,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 1.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 2,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 2.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 3,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 3.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 0,
+      "midi": 72,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 0.67,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 1.5,
+      "midi": 67,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 2.67,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 4,
+      "midi": 38,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 5.67,
+      "midi": 50,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 6.5,
+      "midi": 45,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 7.67,
+      "midi": 50,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 4.67,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 4.684,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 4.6979999999999995,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 4.712,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 6.0,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 6.014,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 6.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 6.042,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 7.33,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 7.344,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 7.358,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 7.372,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 4,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 6,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 5,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 7,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 4,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 4.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 5,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 5.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 6,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 6.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 7,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 7.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 4.5,
+      "midi": 65,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 5.67,
+      "midi": 64,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 6.5,
+      "midi": 65,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 8,
+      "midi": 43,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 9.67,
+      "midi": 55,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 10.5,
+      "midi": 50,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 11.67,
+      "midi": 55,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 8.67,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 8.684,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 8.698,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 8.712,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 10.0,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 10.014,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 10.028,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 10.042,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 11.33,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 11.344,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 11.358,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 11.372,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 8,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 10,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 9,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 11,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 8,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 8.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 9,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 9.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 10,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 10.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 11,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 11.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 8,
+      "midi": 67,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 8.67,
+      "midi": 70,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 9.5,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 11,
+      "midi": 65,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 12,
+      "midi": 36,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 13.67,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 14.5,
+      "midi": 43,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 15.67,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 12.67,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 12.684,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 12.698,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 12.712,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 14.0,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 14.014,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 14.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 14.042,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 15.33,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 15.344,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 15.358,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 15.372,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 12,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 14,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 13,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 15,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 12,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 12.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 13,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 13.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 14,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 14.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 15,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 15.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 12.67,
+      "midi": 64,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 13.5,
+      "midi": 62,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 14.67,
+      "midi": 60,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 16,
+      "midi": 41,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 17.67,
+      "midi": 53,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 18.5,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 19.67,
+      "midi": 53,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 16.67,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 16.684,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 16.698,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 16.712000000000003,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 18.0,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 18.014,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 18.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 18.042,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 19.33,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 19.343999999999998,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 19.357999999999997,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 19.372,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 16,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 18,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 17,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 19,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 16,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 16.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 17,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 17.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 18,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 18.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 19,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 19.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 16,
+      "midi": 72,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 16.67,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 17.5,
+      "midi": 67,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 18.67,
+      "midi": 74,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 20,
+      "midi": 45,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 21.67,
+      "midi": 57,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 22.5,
+      "midi": 52,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 23.67,
+      "midi": 57,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 20.67,
+      "midi": 55,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 20.684,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 20.698,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 20.712000000000003,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 22.0,
+      "midi": 55,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 22.014,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 22.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 22.042,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 23.33,
+      "midi": 55,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 23.343999999999998,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 23.357999999999997,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 23.372,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 20,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 22,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 21,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 23,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 20,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 20.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 21,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 21.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 22,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 22.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 23,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 23.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 20.5,
+      "midi": 72,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 21.67,
+      "midi": 71,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 22.5,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 24,
+      "midi": 43,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 25.67,
+      "midi": 55,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 26.5,
+      "midi": 50,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 27.67,
+      "midi": 55,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 24.67,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 24.684,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 24.698,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 24.712000000000003,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 26.0,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 26.014,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 26.028,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 26.042,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 27.33,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 27.343999999999998,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 27.357999999999997,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 27.372,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 24,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 26,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 25,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 27,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 24,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 24.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 25,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 25.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 26,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 26.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 27,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 27.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 24,
+      "midi": 70,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 25,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 25.67,
+      "midi": 67,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 26.67,
+      "midi": 65,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 28,
+      "midi": 36,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 29.67,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 30.5,
+      "midi": 43,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 31.67,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 28.67,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 28.684,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 28.698,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 28.712000000000003,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 30.0,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 30.014,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 30.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 30.042,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 31.33,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 31.343999999999998,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 31.357999999999997,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 31.372,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 28,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 30,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 29,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 31,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 28,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 28.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 29,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 29.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 30,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 30.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 31,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 31.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 28.5,
+      "midi": 64,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 29.67,
+      "midi": 62,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 31,
+      "midi": 67,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 32,
+      "midi": 41,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 33.67,
+      "midi": 53,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 34.5,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 35.67,
+      "midi": 53,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 32.67,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 32.684000000000005,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 32.698,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 32.712,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 34.0,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 34.014,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 34.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 34.042,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 35.33,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 35.344,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 35.358,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 35.372,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 32,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 34,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 33,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 35,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 32,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 32.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 33,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 33.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 34,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 34.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 35,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 35.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 32,
+      "midi": 72,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 32.67,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 33.5,
+      "midi": 67,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 34.67,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 36,
+      "midi": 38,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 37.67,
+      "midi": 50,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 38.5,
+      "midi": 45,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 39.67,
+      "midi": 50,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 36.67,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 36.684000000000005,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 36.698,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 36.712,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 38.0,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 38.014,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 38.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 38.042,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 39.33,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 39.344,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 39.358,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 39.372,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 36,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 38,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 37,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 39,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 36,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 36.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 37,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 37.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 38,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 38.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 39,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 39.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 36.5,
+      "midi": 65,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 37.67,
+      "midi": 64,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 38.5,
+      "midi": 65,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 39.33,
+      "midi": 77,
+      "length": 0.28,
+      "voice": "keys"
+    },
+    {
+      "beat": 40,
+      "midi": 43,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 41.67,
+      "midi": 55,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 42.5,
+      "midi": 50,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 43.67,
+      "midi": 55,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 40.67,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 40.684000000000005,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 40.698,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 40.712,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 42.0,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 42.014,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 42.028,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 42.042,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 43.33,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 43.344,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 43.358,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 43.372,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 40,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 42,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 41,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 43,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 40,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 40.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 41,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 41.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 42,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 42.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 43,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 43.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 40,
+      "midi": 67,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 40.67,
+      "midi": 70,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 41.5,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 43,
+      "midi": 65,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 44,
+      "midi": 36,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 45.67,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 46.5,
+      "midi": 43,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 47.67,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 44.67,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 44.684000000000005,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 44.698,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 44.712,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 46.0,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 46.014,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 46.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 46.042,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 47.33,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 47.344,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 47.358,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 47.372,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 44,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 46,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 45,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 47,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 44,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 44.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 45,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 45.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 46,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 46.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 47,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 47.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 44.67,
+      "midi": 64,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 45.5,
+      "midi": 62,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 46.67,
+      "midi": 60,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 47.33,
+      "midi": 79,
+      "length": 0.28,
+      "voice": "keys"
+    },
+    {
+      "beat": 48,
+      "midi": 41,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 49.67,
+      "midi": 53,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 50.5,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 51.67,
+      "midi": 53,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 48.67,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 48.684000000000005,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 48.698,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 48.712,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 50.0,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 50.014,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 50.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 50.042,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 51.33,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 51.344,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 51.358,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 51.372,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 48,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 50,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 49,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 51,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 48,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 48.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 49,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 49.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 50,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 50.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 51,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 51.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 48,
+      "midi": 72,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 48.67,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 49.5,
+      "midi": 67,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 50.67,
+      "midi": 74,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 52,
+      "midi": 45,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 53.67,
+      "midi": 57,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 54.5,
+      "midi": 52,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 55.67,
+      "midi": 57,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 52.67,
+      "midi": 55,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 52.684000000000005,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 52.698,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 52.712,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 54.0,
+      "midi": 55,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 54.014,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 54.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 54.042,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 55.33,
+      "midi": 55,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 55.344,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 55.358,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 55.372,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 52,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 54,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 53,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 55,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 52,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 52.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 53,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 53.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 54,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 54.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 55,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 55.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 52.5,
+      "midi": 72,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 53.67,
+      "midi": 71,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 54.5,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 55.33,
+      "midi": 79,
+      "length": 0.28,
+      "voice": "keys"
+    },
+    {
+      "beat": 56,
+      "midi": 43,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 57.67,
+      "midi": 55,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 58.5,
+      "midi": 50,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 59.67,
+      "midi": 55,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 56.67,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 56.684000000000005,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 56.698,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 56.712,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 58.0,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 58.014,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 58.028,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 58.042,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 59.33,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 59.344,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 59.358,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 59.372,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 56,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 58,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 57,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 59,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 56,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 56.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 57,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 57.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 58,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 58.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 59,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 59.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 56,
+      "midi": 70,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 57,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 57.67,
+      "midi": 67,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 58.67,
+      "midi": 65,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 60,
+      "midi": 36,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 61.67,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 62.5,
+      "midi": 43,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 63.67,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 60.67,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 60.684000000000005,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 60.698,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 60.712,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 62.0,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 62.014,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 62.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 62.042,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 63.33,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 63.344,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 63.358,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 63.372,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 60,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 62,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 61,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 63,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 60,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 60.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 61,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 61.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 62,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 62.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 63,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 63.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 60.5,
+      "midi": 64,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 61.67,
+      "midi": 62,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 63,
+      "midi": 67,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 64,
+      "midi": 46,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 65.67,
+      "midi": 58,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 66.5,
+      "midi": 53,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 67.67,
+      "midi": 58,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 64.67,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 64.684,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 64.69800000000001,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 64.712,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 66.0,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 66.014,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 66.028,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 66.042,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 67.33,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 67.344,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 67.358,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 67.372,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 64,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 66,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 65,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 67,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 64,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 64.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 65,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 65.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 66,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 66.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 67.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 64.5,
+      "midi": 77,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 66,
+      "midi": 74,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 68,
+      "midi": 46,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 69.67,
+      "midi": 58,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 70.5,
+      "midi": 53,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 71.67,
+      "midi": 58,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 68.67,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 68.684,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 68.69800000000001,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 68.712,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 70.0,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 70.014,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 70.028,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 70.042,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 71.33,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 71.344,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 71.358,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 71.372,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 68,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 70,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 69,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 71,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 68,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 68.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 69,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 69.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 70,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 70.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 71,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 71.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 69,
+      "midi": 72,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 70.67,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 72,
+      "midi": 45,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 73.67,
+      "midi": 57,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 74.5,
+      "midi": 52,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 75.67,
+      "midi": 57,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 72.67,
+      "midi": 55,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 72.684,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 72.69800000000001,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 72.712,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 74.0,
+      "midi": 55,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 74.014,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 74.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 74.042,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 75.33,
+      "midi": 55,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 75.344,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 75.358,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 75.372,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 72,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 74,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 73,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 75,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 72,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 72.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 73,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 73.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 74,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 74.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 75,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 75.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 72,
+      "midi": 76,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 73.67,
+      "midi": 72,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 75,
+      "midi": 67,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 76,
+      "midi": 38,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 77.67,
+      "midi": 50,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 78.5,
+      "midi": 45,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 79.67,
+      "midi": 50,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 76.67,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 76.684,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 76.69800000000001,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 76.712,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 78.0,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 78.014,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 78.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 78.042,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 79.33,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 79.344,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 79.358,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 79.372,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 76,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 78,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 77,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 79,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 76,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 76.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 77,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 77.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 78,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 78.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 79,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 79.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 76.5,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 78.5,
+      "midi": 65,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 80,
+      "midi": 43,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 81.67,
+      "midi": 55,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 82.5,
+      "midi": 50,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 83.67,
+      "midi": 55,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 80.67,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 80.684,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 80.69800000000001,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 80.712,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 82.0,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 82.014,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 82.028,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 82.042,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 83.33,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 83.344,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 83.358,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 83.372,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 80,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 82,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 81,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 83,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 80,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 80.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 81,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 81.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 82,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 82.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 83,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 83.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 80,
+      "midi": 74,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 81.67,
+      "midi": 70,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 84,
+      "midi": 43,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 85.67,
+      "midi": 55,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 86.5,
+      "midi": 50,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 87.67,
+      "midi": 55,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 84.67,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 84.684,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 84.69800000000001,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 84.712,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 86.0,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 86.014,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 86.028,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 86.042,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 87.33,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 87.344,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 87.358,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 87.372,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 84,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 86,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 85,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 87,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 84,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 84.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 85,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 85.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 86,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 86.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 87,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 87.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 84.67,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 86.67,
+      "midi": 67,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 88,
+      "midi": 36,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 89.67,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 90.5,
+      "midi": 43,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 91.67,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 88.67,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 88.684,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 88.69800000000001,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 88.712,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 90.0,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 90.014,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 90.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 90.042,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 91.33,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 91.344,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 91.358,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 91.372,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 88,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 90,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 89,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 91,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 88,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 88.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 89,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 89.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 90,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 90.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 91,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 91.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 88.5,
+      "midi": 64,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 90,
+      "midi": 62,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 92,
+      "midi": 36,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 93.67,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 94.5,
+      "midi": 43,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 95.67,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 92.67,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 92.684,
+      "midi": 61,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 92.69800000000001,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 92.712,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 94.0,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 94.014,
+      "midi": 61,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 94.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 94.042,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 95.33,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 95.344,
+      "midi": 61,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 95.358,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 95.372,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 92,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 94,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 93,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 95,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 92,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 92.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 93,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 93.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 94,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 94.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 95,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 95.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 93,
+      "midi": 61,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 94.67,
+      "midi": 64,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 95.67,
+      "midi": 67,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 96,
+      "midi": 41,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 97.67,
+      "midi": 53,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 98.5,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 99.67,
+      "midi": 53,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 96.67,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 96.684,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 96.69800000000001,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 96.712,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 98.0,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 98.014,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 98.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 98.042,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 99.33,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 99.344,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 99.358,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 99.372,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 96,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 98,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 97,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 99,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 96,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 96.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 97,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 97.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 98,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 98.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 99,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 99.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 96,
+      "midi": 72,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 96.67,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 97.5,
+      "midi": 67,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 98.67,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 100,
+      "midi": 38,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 101.67,
+      "midi": 50,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 102.5,
+      "midi": 45,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 103.67,
+      "midi": 50,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 100.67,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 100.684,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 100.69800000000001,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 100.712,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 102.0,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 102.014,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 102.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 102.042,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 103.33,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 103.344,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 103.358,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 103.372,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 100,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 102,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 101,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 103,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 100,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 100.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 101,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 101.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 102,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 102.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 103,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 103.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 100.5,
+      "midi": 65,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 101.67,
+      "midi": 64,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 102.5,
+      "midi": 65,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 103.33,
+      "midi": 77,
+      "length": 0.28,
+      "voice": "keys"
+    },
+    {
+      "beat": 104,
+      "midi": 43,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 105.67,
+      "midi": 55,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 106.5,
+      "midi": 50,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 107.67,
+      "midi": 55,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 104.67,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 104.684,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 104.69800000000001,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 104.712,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 106.0,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 106.014,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 106.028,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 106.042,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 107.33,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 107.344,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 107.358,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 107.372,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 104,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 106,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 105,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 107,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 104,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 104.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 105,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 105.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 106,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 106.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 107,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 107.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 104,
+      "midi": 67,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 104.67,
+      "midi": 70,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 105.5,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 107,
+      "midi": 65,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 108,
+      "midi": 36,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 109.67,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 110.5,
+      "midi": 43,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 111.67,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 108.67,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 108.684,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 108.69800000000001,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 108.712,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 110.0,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 110.014,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 110.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 110.042,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 111.33,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 111.344,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 111.358,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 111.372,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 108,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 110,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 109,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 111,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 108,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 108.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 109,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 109.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 110,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 110.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 111,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 111.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 108.67,
+      "midi": 64,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 109.5,
+      "midi": 62,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 110.67,
+      "midi": 60,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 111.33,
+      "midi": 79,
+      "length": 0.28,
+      "voice": "keys"
+    },
+    {
+      "beat": 112,
+      "midi": 41,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 113.67,
+      "midi": 53,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 114.5,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 115.67,
+      "midi": 53,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 112.67,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 112.684,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 112.69800000000001,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 112.712,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 114.0,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 114.014,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 114.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 114.042,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 115.33,
+      "midi": 57,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 115.344,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 115.358,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 115.372,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 112,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 114,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 113,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 115,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 112,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 112.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 113,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 113.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 114,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 114.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 115,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 115.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 112,
+      "midi": 72,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 112.67,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 113.5,
+      "midi": 67,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 114.67,
+      "midi": 74,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 116,
+      "midi": 45,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 117.67,
+      "midi": 57,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 118.5,
+      "midi": 52,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 119.67,
+      "midi": 57,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 116.67,
+      "midi": 55,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 116.684,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 116.69800000000001,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 116.712,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 118.0,
+      "midi": 55,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 118.014,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 118.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 118.042,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 119.33,
+      "midi": 55,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 119.344,
+      "midi": 60,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 119.358,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 119.372,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 116,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 118,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 117,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 119,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 116,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 116.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 117,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 117.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 118,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 118.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 119,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 119.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 116.5,
+      "midi": 72,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 117.67,
+      "midi": 71,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 118.5,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 119.33,
+      "midi": 79,
+      "length": 0.28,
+      "voice": "keys"
+    },
+    {
+      "beat": 120,
+      "midi": 43,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 121.67,
+      "midi": 55,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 122.5,
+      "midi": 50,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 123.67,
+      "midi": 55,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 120.67,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 120.684,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 120.69800000000001,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 120.712,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 122.0,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 122.014,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 122.028,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 122.042,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 123.33,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 123.344,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 123.358,
+      "midi": 65,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 123.372,
+      "midi": 69,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 120,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 122,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 121,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 123,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 120,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 120.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 121,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 121.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 122,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 122.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 123,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 123.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 120,
+      "midi": 70,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 121,
+      "midi": 69,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 121.67,
+      "midi": 67,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 122.67,
+      "midi": 65,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 124,
+      "midi": 36,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 125.67,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 126.5,
+      "midi": 43,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 127.67,
+      "midi": 48,
+      "length": 0.55,
+      "voice": "bass"
+    },
+    {
+      "beat": 124.67,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 124.684,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 124.69800000000001,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 124.712,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 126.0,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 126.014,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 126.028,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 126.042,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 127.33,
+      "midi": 58,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 127.344,
+      "midi": 62,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 127.358,
+      "midi": 64,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 127.372,
+      "midi": 67,
+      "length": 0.45,
+      "voice": "keys"
+    },
+    {
+      "beat": 124,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 126,
+      "midi": 36,
+      "length": 0.2,
+      "voice": "kick"
+    },
+    {
+      "beat": 125,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 127,
+      "midi": 36,
+      "length": 0.13,
+      "voice": "rim"
+    },
+    {
+      "beat": 124,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 124.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 125,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 125.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 126,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 126.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 127,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 127.67,
+      "midi": 36,
+      "length": 0.1,
+      "voice": "hat"
+    },
+    {
+      "beat": 124.5,
+      "midi": 64,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 125.67,
+      "midi": 62,
+      "length": 0.65,
+      "voice": "mallet"
+    },
+    {
+      "beat": 127,
+      "midi": 67,
+      "length": 0.65,
+      "voice": "mallet"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/waiting_room/waiting_room.glb" id="1"]
+
+[node name="WaitingRoomVisual" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1")]
+
+[node name="AttachmentPoints" type="Node3D" parent="."]
+
+[node name="Entrance" type="Marker3D" parent="AttachmentPoints"]
+position = Vector3(0, 0.06, 4)
+
+[node name="ReceptionApproach" type="Marker3D" parent="AttachmentPoints"]
+position = Vector3(-1.87, 0.02, -1.2)
+
+[node name="FriendsScreen" type="Marker3D" parent="AttachmentPoints"]
+position = Vector3(-1.87, 1.67, -2.36)
+
+[node name="BookingBoardApproach" type="Marker3D" parent="AttachmentPoints"]
+position = Vector3(3.63, 0.02, -3.3)
+
+[node name="FutureDisplay" type="Marker3D" parent="AttachmentPoints"]
+position = Vector3(5.75, 1.95, 0.75)
+rotation = Vector3(0, -1.5707963, 0)
+
+[node name="RoleSelectionApproach" type="Marker3D" parent="AttachmentPoints"]
+position = Vector3(4.71, 0.02, -3.3)
+
+[node name="DriverButton" type="Marker3D" parent="AttachmentPoints"]
+position = Vector3(4.71, 2.44, -4.565)
+
+[node name="SpotterButton" type="Marker3D" parent="AttachmentPoints"]
+position = Vector3(4.71, 1.89, -4.565)
+
+[node name="NavigatorButton" type="Marker3D" parent="AttachmentPoints"]
+position = Vector3(4.71, 1.34, -4.565)
+
+[node name="RandomButton" type="Marker3D" parent="AttachmentPoints"]
+position = Vector3(4.71, 0.82, -4.575)
