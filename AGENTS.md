@@ -15,3 +15,7 @@ Default vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-
 ### Domain docs
 
 Single-context: `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
+### Design judgment
+
+Before designing, building, or writing anything a player sees, hears, or holds (a vehicle, test item, control, screen, or examiner line), read `docs/design.md`. When you get steered on any of those, append one line to `docs/corrections.md`.
