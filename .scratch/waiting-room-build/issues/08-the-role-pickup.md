@@ -18,7 +18,7 @@ Name tag: a second, smaller line under the name reading "Driver" / "Spotter" / "
 
 **Blocked by:** 07 (the booking board and its dock).
 
-**Status:** ready-for-agent
+**Status:** claimed
 
 - [ ] Without a booking the three strips read "No booking.", lamps are off, and clicking any role or Random does nothing.
 - [ ] With a booking, clicking a free role floods its strip with the clicker's colour and display name and lights its lamp to match on every machine; the clicker's button reads pressed.
