@@ -16,14 +16,14 @@ The booking (formed by the room state on the N-th matching pick): the booked row
 
 **Status:** claimed
 
-- [ ] "E  Booking" appears in the board's zone; E docks the camera framing the whole board, releases the mouse as a cursor; Escape returns to first person. The other two see the player stood at the board while docked.
-- [ ] Five rows are drawn on their surfaces in two lines; the kit's label meshes and `01` are hidden; padlocks remain.
-- [ ] The four locked rows show their exact copy from the spec; clicking one does nothing.
-- [ ] Clicking MONSTER TRUCK adds a chip in the clicker's colour with their display name, in arrival order, on every machine; clicking again removes it; there is at most one pick per player.
-- [ ] Nobody has a pick on arrival.
-- [ ] When all three (N under `--min-players`) have picked the same row, BOOKED appears at the right end of its top line and one sound plays on every machine.
-- [ ] Any drop or departure removes BOOKED silently; the chips of the remaining pickers stay.
-- [ ] The board contains no rule: booking formation and dissolution are read from the room state, not recomputed in the view.
+- [x] "E  Booking" appears in the board's zone; E docks the camera framing the whole board, releases the mouse as a cursor; Escape returns to first person. The other two see the player stood at the board while docked.
+- [x] Five rows are drawn on their surfaces in two lines; the kit's label meshes and `01` are hidden; padlocks remain.
+- [x] The four locked rows show their exact copy from the spec; clicking one does nothing.
+- [x] Clicking MONSTER TRUCK adds a chip in the clicker's colour with their display name, in arrival order, on every machine; clicking again removes it; there is at most one pick per player.
+- [x] Nobody has a pick on arrival.
+- [x] When all three (N under `--min-players`) have picked the same row, BOOKED appears at the right end of its top line and one sound plays on every machine.
+- [x] Any drop or departure removes BOOKED silently; the chips of the remaining pickers stay.
+- [x] The board contains no rule: booking formation and dissolution are read from the room state, not recomputed in the view.
 
 ## Comments
 
@@ -32,3 +32,5 @@ The booking (formed by the room state on the N-th matching pick): the booked row
 **From ticket 04 (orchestrator).** Guests send sit/pick/hold through `WaitingRoom.submit_command` over reliable RPC. Under ENet the name suffix is the arrival slot 2/3 (Godot's ENet unique ids are not 2 and 3).
 
 **From ticket 06 (orchestrator).** `Station` (`scripts/station.gd`) is the zone-prompt-E base: place it on an approach marker, `setup(prompt, prompt_at, zone_size)`, connect `used`. `set_listening(false)` hides the prompt and ignores E. Add the station screen on top of this; do not fork a second grammar. Copy `"E  Booking"`. Palettes 01/02/03 match chair teal / ochre / kit red; `Palettes.flood_color` is the shirt.
+
+**Builder, 2026-09-12.** `StationScreen` (`scripts/station_screen.gd`) is the other half of the grammar: dock, cursor, Escape. `BookingBoard` places `Station` on `AttachmentPoints/BookingBoardApproach` with `"E  Booking"`, draws each row on a SubViewport quad over `DisplaySurface`, and raycasts the dock cursor onto row areas. Picks go through `submit_command`; BOOKED and chips are read from `room.booking()` / `room.players`, never recomputed. Kit labels and the `01` marker are hidden; padlocks stay. Placeholder booking beep is generated in-script at the board (same job as the door). Role column untouched. `RoomState` tests still PASS. Three-instance feel: `docs/run-instances.md`.
