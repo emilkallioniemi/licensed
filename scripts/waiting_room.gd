@@ -8,6 +8,7 @@ extends Node3D
 ## Ticket 07: the booking board is a screened station; picks and BOOKED render here.
 ## Ticket 08: the role column holds Driver, Spotter, Navigator, or Random.
 ## Ticket 09: the reception desk lists friends and joins or leaves a room.
+## Ticket 10: Invite from the desk rings in-world; Accept is Join.
 ## Ticket 11: the notice board, the examiner's call, the fade, and the test area.
 
 ## Views (chairs, the board, the desk, the notice board) render from the replicated room state.

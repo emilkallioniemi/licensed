@@ -47,6 +47,12 @@ func setup(prompt_line: String, prompt_at: Vector3, zone_size: Vector3) -> void:
 	set_process_unhandled_input(true)
 
 
+## Signage on the world prompt; the desk swaps this when an invite is waiting.
+func set_prompt(prompt_line: String) -> void:
+	if _prompt != null:
+		_prompt.text = prompt_line
+
+
 ## While false, the prompt stays hidden and E does nothing. Chairs turn this off
 ## while the local learner is seated, so E can stand instead of sitting again.
 func set_listening(listening: bool) -> void:

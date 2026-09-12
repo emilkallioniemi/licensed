@@ -1,8 +1,9 @@
 class_name ReceptionDesk
 extends Node3D
 ## The reception desk as a station: zone, prompt, E, then the station screen on the kit's
-## friends terminal. Lists Steam friends, Join, and Leave. Invite is drawn disabled
-## (ticket 10). Renders the header count from the host-owned room state and never writes it.
+## friends terminal. Lists Steam friends, Invite, Join, and Leave. An invite rings here
+## in-world; Accept is Join (ticket 10). Renders the header count from the host-owned
+## room state and never writes it.
 
 ## Spec copy table: station prompts, two spaces, signage register.
 const RECEPTION_PROMPT := "E  Reception"
@@ -23,9 +24,12 @@ const STATE_AT_CENTRE := "At the test centre"
 const STATE_ONLINE := "Online. Not at the test centre."
 const STATE_COMPANY := "You have company."
 const STATE_FULL := "The waiting room is full."
+const STATE_ASKING := "is asking for you"
 const FAIL_FULL := "The waiting room is full."
 const FAIL_GONE := "Nobody is at the test centre."
 const FAIL_SILENCE := "The room did not answer."
+const ASKING_PROMPT := "E  %s is asking for you"
+const INVITE_HOLD_MS := 30_000
 
 const GROUP_IN_ROOM := 0
 const GROUP_AT_CENTRE := 1
@@ -44,9 +48,15 @@ var _rows: VBoxContainer
 var _footer: VBoxContainer
 var _leave_btn: Button
 var _id_field: LineEdit
+var _ring: AudioStreamPlayer3D
+## steam_id → Array of TextureRect on the current list.
 var _row_avatars: Dictionary = {}
 ## steam_id or "lobby:<id>" → failure line, kept across a live refresh.
 var _errors: Dictionary = {}
+## Newest invite first: {steam_id, lobby_id, name}. Never expire.
+var _pending_invites: Array = []
+## steam_id → msec until the row's verb returns from "Invited." to Invite.
+var _invited_until: Dictionary = {}
 var _list_queued := false
 var _lobby_refresh_queued := false
 
@@ -60,6 +70,8 @@ func _ready() -> void:
 		Steam.persona_state_change.connect(_on_persona_state_change)
 		Steam.friend_rich_presence_update.connect(_on_friend_rich_presence_update)
 		Steam.lobby_data_update.connect(_on_lobby_data_update)
+		Steam.lobby_invite.connect(_on_lobby_invite)
+		Steam.join_requested.connect(_on_join_requested)
 		SteamClient.avatar_ready.connect(_on_avatar_ready)
 		_queue_lobby_refresh()
 	Transport.join_recovered.connect(_on_join_recovered)
@@ -77,6 +89,10 @@ func _exit_tree() -> void:
 		Steam.friend_rich_presence_update.disconnect(_on_friend_rich_presence_update)
 	if Steam.lobby_data_update.is_connected(_on_lobby_data_update):
 		Steam.lobby_data_update.disconnect(_on_lobby_data_update)
+	if Steam.lobby_invite.is_connected(_on_lobby_invite):
+		Steam.lobby_invite.disconnect(_on_lobby_invite)
+	if Steam.join_requested.is_connected(_on_join_requested):
+		Steam.join_requested.disconnect(_on_join_requested)
 	if SteamClient.avatar_ready.is_connected(_on_avatar_ready):
 		SteamClient.avatar_ready.disconnect(_on_avatar_ready)
 
@@ -147,6 +163,15 @@ func _build(kit: Node3D) -> void:
 	area.add_child(shape)
 	add_child(area)
 	area.global_transform = _marker.global_transform
+
+	_ring = AudioStreamPlayer3D.new()
+	_ring.name = "Ring"
+	_ring.stream = _placeholder_ring()
+	_ring.unit_size = 20.0
+	_ring.max_distance = 0.0
+	_ring.volume_db = 6.0
+	add_child(_ring)
+	_ring.global_position = _marker.global_position
 
 
 func _build_screen() -> void:
@@ -249,9 +274,11 @@ func _on_lobby_data_update(_success: bool, _lobby: int, _member: int) -> void:
 
 
 func _on_avatar_ready(steam_id: int) -> void:
-	var rect := _row_avatars.get(steam_id) as TextureRect
-	if rect != null:
-		rect.texture = SteamClient.avatar_of(steam_id)
+	var rects: Array = _row_avatars.get(steam_id, [])
+	var texture := SteamClient.avatar_of(steam_id)
+	for rect in rects:
+		if rect is TextureRect:
+			(rect as TextureRect).texture = texture
 
 
 func _on_join_recovered() -> void:
@@ -339,6 +366,7 @@ func _redraw() -> void:
 	_count.text = "%d of %d" % [n, RoomState.CAPACITY]
 	var full := n >= RoomState.CAPACITY
 	_full_line.visible = full
+	_refresh_desk_prompt()
 	_rebuild_rows(room, full)
 	_rebuild_footer(room)
 
@@ -346,11 +374,13 @@ func _redraw() -> void:
 func _rebuild_rows(room: RoomState, room_full: bool) -> void:
 	_clear_container(_rows)
 	_row_avatars.clear()
+	var has_company := room != null and room.player_count() > 1
+	var verbs_live := Transport.kind == Transport.STEAM
+	for invite in _pending_invites:
+		_rows.add_child(_make_invite_row(invite, has_company, verbs_live))
 	if not SteamClient.is_running():
 		return
 	var friends := _collect_friends(room)
-	var has_company := room != null and room.player_count() > 1
-	var verbs_live := Transport.kind == Transport.STEAM
 	for friend in friends:
 		_rows.add_child(_make_row(friend, room_full, has_company, verbs_live))
 
@@ -429,7 +459,7 @@ func _make_row(friend: Dictionary, room_full: bool, has_company: bool, verbs_liv
 	avatar.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	avatar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	avatar.texture = SteamClient.avatar_of(int(friend["steam_id"]))
-	_row_avatars[int(friend["steam_id"])] = avatar
+	_register_avatar(int(friend["steam_id"]), avatar)
 	row.add_child(avatar)
 
 	var text := VBoxContainer.new()
@@ -458,8 +488,11 @@ func _make_row(friend: Dictionary, room_full: bool, has_company: bool, verbs_liv
 	verbs.add_theme_constant_override("separation", 6)
 	row.add_child(verbs)
 
-	var invite := _make_verb("Invite")
-	invite.disabled = true
+	var invited := _invite_is_held(int(friend["steam_id"]))
+	var invite := _make_verb("Invited." if invited else "Invite")
+	invite.disabled = not verbs_live or invited or Transport.lobby_id == 0
+	if verbs_live and not invited:
+		invite.pressed.connect(_on_invite_pressed.bind(int(friend["steam_id"])))
 	verbs.add_child(invite)
 
 	if not has_company:
@@ -468,6 +501,64 @@ func _make_row(friend: Dictionary, room_full: bool, has_company: bool, verbs_liv
 		join.pressed.connect(_on_join_pressed.bind(int(friend["lobby_id"]), int(friend["steam_id"])))
 		verbs.add_child(join)
 
+	return row
+
+
+func _make_invite_row(invite: Dictionary, has_company: bool, verbs_live: bool) -> Control:
+	var steam_id := int(invite["steam_id"])
+	var lobby_id := int(invite["lobby_id"])
+	var name := _invite_name(invite)
+	invite["name"] = name
+	var line := _error_for(steam_id, lobby_id)
+	if line.is_empty():
+		line = STATE_COMPANY if has_company else STATE_ASKING
+
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 10)
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+	var avatar := TextureRect.new()
+	avatar.custom_minimum_size = Vector2(AVATAR_PX, AVATAR_PX)
+	avatar.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	avatar.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	avatar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	avatar.texture = SteamClient.avatar_of(steam_id)
+	_register_avatar(steam_id, avatar)
+	row.add_child(avatar)
+
+	var text := VBoxContainer.new()
+	text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	text.add_theme_constant_override("separation", 2)
+	row.add_child(text)
+
+	var name_label := Label.new()
+	name_label.text = name
+	name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	_ink(name_label, 16)
+	text.add_child(name_label)
+
+	var state := Label.new()
+	state.text = line
+	state.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	_ink(state, 14, true)
+	text.add_child(state)
+
+	var verbs := HBoxContainer.new()
+	verbs.add_theme_constant_override("separation", 6)
+	row.add_child(verbs)
+
+	if not has_company:
+		var accept := _make_verb("Accept")
+		accept.disabled = not verbs_live
+		if verbs_live:
+			accept.pressed.connect(_on_accept_pressed.bind(lobby_id, steam_id))
+		verbs.add_child(accept)
+
+	var ignore := _make_verb("Ignore")
+	ignore.disabled = not verbs_live
+	if verbs_live:
+		ignore.pressed.connect(_on_ignore_pressed.bind(lobby_id))
+	verbs.add_child(ignore)
 	return row
 
 
@@ -522,6 +613,171 @@ func _rebuild_footer(room: RoomState) -> void:
 	_id_field.text = typed
 	_id_field.text_submitted.connect(_on_join_by_id)
 	strip.add_child(_id_field)
+
+
+func _on_invite_pressed(friend_id: int) -> void:
+	if Transport.kind != Transport.STEAM or Transport.lobby_id == 0 or friend_id == 0:
+		return
+	Steam.inviteUserToLobby(Transport.lobby_id, friend_id)
+	_invited_until[friend_id] = Time.get_ticks_msec() + INVITE_HOLD_MS
+	_queue_list()
+	get_tree().create_timer(INVITE_HOLD_MS / 1000.0).timeout.connect(
+		_on_invite_hold_elapsed.bind(friend_id),
+		CONNECT_ONE_SHOT,
+	)
+
+
+func _on_invite_hold_elapsed(friend_id: int) -> void:
+	if not is_inside_tree():
+		return
+	if Time.get_ticks_msec() < int(_invited_until.get(friend_id, 0)):
+		return
+	_invited_until.erase(friend_id)
+	_queue_list()
+
+
+func _invite_is_held(friend_id: int) -> bool:
+	return Time.get_ticks_msec() < int(_invited_until.get(friend_id, 0))
+
+
+func _on_lobby_invite(inviter: int, lobby: int, _game: int) -> void:
+	if inviter == 0 or lobby == 0 or lobby == Transport.lobby_id:
+		return
+	_push_invite(inviter, lobby, true)
+
+
+func _on_join_requested(lobby_id: int, friend_id: int) -> void:
+	if Transport.kind != Transport.STEAM:
+		return
+	_accept_invite(lobby_id, friend_id)
+
+
+func _on_accept_pressed(lobby_id: int, friend_id: int) -> void:
+	_accept_invite(lobby_id, friend_id)
+
+
+func _on_ignore_pressed(lobby_id: int) -> void:
+	_drop_invite(lobby_id)
+	_refresh_desk_prompt()
+	_queue_list()
+
+
+func _accept_invite(lobby_id: int, friend_id: int) -> void:
+	if Transport.kind != Transport.STEAM:
+		return
+	var room := _waiting.room_state()
+	if room != null and room.player_count() > 1:
+		if friend_id != 0:
+			_push_invite(friend_id, lobby_id, false)
+		_queue_list()
+		return
+	_keep_invite(lobby_id, friend_id)
+	_refresh_desk_prompt()
+	_on_join_pressed(lobby_id, friend_id)
+
+
+func _push_invite(inviter: int, lobby: int, ring: bool) -> void:
+	_drop_invite(lobby)
+	if SteamClient.is_running():
+		Steam.requestUserInformation(inviter, true)
+	_pending_invites.insert(0, {
+		"steam_id": inviter,
+		"lobby_id": lobby,
+		"name": _persona_name(inviter),
+	})
+	if ring:
+		_play_ring()
+	_refresh_desk_prompt()
+	_queue_list()
+
+
+func _keep_invite(lobby_id: int, friend_id: int) -> void:
+	var kept: Array = []
+	for invite in _pending_invites:
+		if int(invite["lobby_id"]) == lobby_id:
+			kept.append(invite)
+	if kept.is_empty() and (friend_id != 0 or lobby_id != 0):
+		kept.append({
+			"steam_id": friend_id,
+			"lobby_id": lobby_id,
+			"name": _persona_name(friend_id),
+		})
+	_pending_invites = kept
+
+
+func _drop_invite(lobby_id: int) -> void:
+	var kept: Array = []
+	for invite in _pending_invites:
+		if int(invite["lobby_id"]) != lobby_id:
+			kept.append(invite)
+	_pending_invites = kept
+
+
+func _invite_name(invite: Dictionary) -> String:
+	var name := _persona_name(int(invite["steam_id"]))
+	if name.is_empty():
+		return String(invite.get("name", ""))
+	return name
+
+
+func _persona_name(steam_id: int) -> String:
+	if steam_id == 0 or not SteamClient.is_running():
+		return ""
+	return Steam.getFriendPersonaName(steam_id)
+
+
+func _refresh_desk_prompt() -> void:
+	if _station == null:
+		return
+	if _pending_invites.is_empty():
+		_station.set_prompt(RECEPTION_PROMPT)
+		return
+	var name := _invite_name(_pending_invites[0])
+	_station.set_prompt(ASKING_PROMPT % name)
+
+
+func _register_avatar(steam_id: int, avatar: TextureRect) -> void:
+	if not _row_avatars.has(steam_id):
+		_row_avatars[steam_id] = []
+	(_row_avatars[steam_id] as Array).append(avatar)
+
+
+func _play_ring() -> void:
+	if _ring == null or _ring.stream == null:
+		return
+	if _ring.playing:
+		_ring.stop()
+	_ring.play()
+
+
+func _placeholder_ring() -> AudioStreamWAV:
+	var stream := AudioStreamWAV.new()
+	stream.format = AudioStreamWAV.FORMAT_16_BITS
+	stream.mix_rate = 44100
+	stream.stereo = false
+	var n := int(44100 * 2.0)
+	var data := PackedByteArray()
+	data.resize(n * 2)
+	for i in n:
+		var t := float(i) / 44100.0
+		var env := _ring_envelope(t)
+		var sample := int(clampf(0.45 * env * sin(TAU * 880.0 * t), -1.0, 1.0) * 32767.0)
+		data.encode_s16(i * 2, sample)
+	stream.data = data
+	return stream
+
+
+func _ring_envelope(t: float) -> float:
+	var starts: Array[float] = [0.0, 0.4, 1.1, 1.5]
+	for start in starts:
+		var u := t - start
+		if u >= 0.0 and u < 0.25:
+			if u < 0.02:
+				return u / 0.02
+			if u > 0.20:
+				return (0.25 - u) / 0.05
+			return 1.0
+	return 0.0
 
 
 func _on_join_pressed(lobby_id: int, friend_id: int) -> void:
