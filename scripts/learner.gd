@@ -33,11 +33,14 @@ var _using_station := false
 ## True while the Escape overlay is open. Look is off and the mouse is a cursor;
 ## walk stays on because the overlay pauses nothing.
 var _escape_overlay_open := false
+## True while this machine is receiving this learner's voice.
+var _speaking := false
 
 @onready var camera: Camera3D = $Camera3D
 @onready var visual: Node3D = $Visual
 @onready var name_tag: Label3D = $NameTag
 @onready var role_line: Label3D = $NameTag/RoleLine
+@onready var speaking_mark: Label3D = $NameTag/Speaking
 
 
 func _ready() -> void:
@@ -46,6 +49,7 @@ func _ready() -> void:
 	_apply_palette()
 	_apply_display_name()
 	_apply_held_role()
+	_apply_speaking()
 
 
 ## Turns this learner into the one this machine walks (`true`) or a body someone else walks
@@ -130,6 +134,13 @@ func set_escape_overlay_open(open: bool) -> void:
 		_apply_local()
 
 
+## The name-tag mark while this player's voice is being received here.
+func set_speaking(speaking: bool) -> void:
+	_speaking = speaking
+	if is_node_ready():
+		_apply_speaking()
+
+
 func _apply_local() -> void:
 	camera.current = _local and not _using_station
 	var head := visual.find_child("HeadPivot", true, false)
@@ -186,6 +197,12 @@ func _apply_held_role() -> void:
 	if role_line == null:
 		return
 	role_line.text = role_label(_held_role)
+
+
+func _apply_speaking() -> void:
+	if speaking_mark == null:
+		return
+	speaking_mark.visible = _speaking
 
 
 func _unhandled_input(event: InputEvent) -> void:
