@@ -19,3 +19,7 @@ Chairs have no screen. E sits: the seated state is a command to the host's room 
 - [ ] Two players cannot sit in the same chair; a player may sit in any free chair regardless of picks, holds, or player count.
 - [ ] Seated state lives in the host-owned room state and survives a joiner arriving (the joiner sees who is already seated).
 - [ ] The zone-prompt-E station base is one reusable piece that a screenless and a screened station can both build on.
+
+## Comments
+
+**From ticket 01 (orchestrator).** `SteamClient.avatar` holds the local 64 px `ImageTexture` after `avatar_loaded`; no signal is emitted, so a view should poll or add its own signal. `Steam.getFriendRichPresence(own_id, "licensed")` returns "1" for the local user, useful for a self-check.

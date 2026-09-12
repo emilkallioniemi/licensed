@@ -24,3 +24,7 @@ The test is a headless `SceneTree` script run with `godot --headless --path . --
 - [ ] Return from the test area clears everything and the line reads "No booking." (or "Waiting for …" if short).
 - [ ] A departure frees the leaver's pick and hold.
 - [ ] The headless test script runs green and prints `PASS`; the command to run it is written in one sentence at the top of the script.
+
+## Comments
+
+**From ticket 01 (orchestrator).** Autoloads do load under `--headless --script`, so every headless test inits Steam (works, prints identity). Headless scripts that fail an `assert` hang forever instead of exiting (same shape as `verify_assets.gd`); run them with a timeout. The very first `--headless --import` after the extension appears exits with 0xC0000005 at shutdown; the second import and all runs are clean. GodotSteam GDExtension for Godot 4.4+ lives on Codeberg (`v4.22.1-gde`); the vendored `addons/godotsteam/` is trimmed to win64.

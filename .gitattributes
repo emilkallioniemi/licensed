@@ -12,3 +12,4 @@
 *.glb binary
 *.wav binary
 *.ogg binary
+*.dll binary

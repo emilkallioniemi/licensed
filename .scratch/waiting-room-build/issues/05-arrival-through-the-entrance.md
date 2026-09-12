@@ -21,3 +21,7 @@ A deliberate departure (a guest's Leave, ticket 09, or a dev-transport instance 
 - [ ] A clean departure plays the theatre in reverse; the leaver's slot, pick, and hold are freed on every remaining machine.
 - [ ] The mid-room drop behaviour is decided and written into the ticket's Comments; no silent default.
 - [ ] Demoed with three local instances under `--transport=enet`.
+
+## Comments
+
+**From ticket 01 (orchestrator).** Headless scripts that fail an `assert` hang forever instead of exiting; run them with a timeout. The editor drops `~libgodotsteam...dll` copies in `addons/godotsteam/win64/` while open; `.gitignore` covers `addons/**/~*`.

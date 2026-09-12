@@ -12,11 +12,15 @@ The existing empty main scene (box ground, label) is replaced, not kept beside i
 
 **Blocked by:** None (can start immediately).
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Launching with Steam running opens straight into the kit's waiting room with the music loop playing seamlessly; the console (or a debug label) shows the local Steam name and Steam id.
+- [x] Launching with Steam running opens straight into the kit's waiting room with the music loop playing seamlessly; the console (or a debug label) shows the local Steam name and Steam id.
 - [ ] Launching with Steam closed shows a black window with "Steam is not running." and Valve's message; Escape and the window close both quit; no room, no music.
-- [ ] `steam_appid.txt` exists nowhere in the project.
-- [ ] The rich-presence key `licensed` is set to `1` at boot (visible via a friend's `getFriendRichPresence`, or logged).
-- [ ] The medium avatar for the local user is loaded into an `ImageTexture` after `avatar_loaded`.
-- [ ] The GDExtension's `.gdextension` file is in the project so a stock Windows export includes the GodotSteam DLL and copies `steam_api64.dll` beside the exe (the export itself is ticket 14).
+- [x] `steam_appid.txt` exists nowhere in the project.
+- [x] The rich-presence key `licensed` is set to `1` at boot (visible via a friend's `getFriendRichPresence`, or logged).
+- [x] The medium avatar for the local user is loaded into an `ImageTexture` after `avatar_loaded`.
+- [x] The GDExtension's `.gdextension` file is in the project so a stock Windows export includes the GodotSteam DLL and copies `steam_api64.dll` beside the exe (the export itself is ticket 14).
+
+## Comments
+
+**Orchestrator, 2026-09-12.** Done in commits 11d9a54, 637acb6, e28e425. Hand check pending: launch with the Steam client closed and confirm the black window, "Steam is not running." with Valve's line beneath, Escape and window close quitting, no room, no music. The subagent verified this path by forcing `init_status` to NO_STEAM_CLIENT; the real `steamInitEx` failure return was never observed. Also open: `tests/verify_steam_client.gd` (avatar decode, Steam-free) sits outside the spec's "the room state is the only module with automated tests" line; kept because it is the one Steam-free seam in this ticket.
