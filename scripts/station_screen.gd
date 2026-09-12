@@ -34,6 +34,11 @@ func is_open() -> bool:
 	return _open
 
 
+## True while the dock camera still owns Escape: open, or gliding back to the head.
+func occupies_escape() -> bool:
+	return _open or _closing
+
+
 ## `cursor_layer` is the physics layer the cursor ray tests against (row surfaces, later
 ## desk controls). Hits on that layer are mapped by the station that owns this screen.
 func open(learner: Learner, dock: Transform3D, cursor_layer: int) -> void:

@@ -10,6 +10,7 @@ extends Node3D
 ## Ticket 09: the reception desk lists friends and joins or leaves a room.
 ## Ticket 10: Invite from the desk rings in-world; Accept is Join.
 ## Ticket 11: the notice board, the examiner's call, the fade, and the test area.
+## Ticket 12: the Escape overlay, quit, Back, and shared fate from the test area.
 
 ## Views (chairs, the board, the desk, the notice board) render from the replicated room state.
 signal room_changed
@@ -38,6 +39,7 @@ const FURNITURE_GROUPS: PackedStringArray = [
 @onready var theatre: ArrivalTheatre = $ArrivalTheatre
 @onready var test_area: TestArea = $TestArea
 @onready var world_environment: WorldEnvironment = $WorldEnvironment
+@onready var escape_overlay: EscapeOverlay = $EscapeOverlay
 
 ## Host-owned on the server; guests restore snapshots into their copy and never write.
 var _room: RoomState
@@ -50,7 +52,11 @@ var _clean_leavers: Dictionary = {}
 var _watching := false
 ## True once `launched` has started the fade; stations and the tick stop owning the room.
 var _in_test_area := false
+## True while Back or shared fate is walking everyone through the entrance.
+var _returning := false
 var _test_door: AudioStreamPlayer3D
+var _waiting_environment: Environment
+var _music_volume := -6.0
 
 
 func _ready() -> void:
@@ -60,6 +66,8 @@ func _ready() -> void:
 		get_tree().change_scene_to_packed.call_deferred(STEAM_NOT_RUNNING_SCENE)
 		return
 	music.play()
+	_music_volume = music.volume_db
+	_waiting_environment = world_environment.environment
 	get_tree().set_auto_accept_quit(false)
 	_add_room_collision()
 	_add_test_area_door()
@@ -100,6 +108,13 @@ func _on_peer_disconnected(peer_id: int) -> void:
 		_room.leave(steam_id)
 		_steam_id_of.erase(peer_id)
 		print("WaitingRoom: peer %d left; %d in the room" % [peer_id, _room.player_count()])
+	if _in_test_area:
+		var dropped := _learner_of(peer_id)
+		if is_instance_valid(dropped):
+			dropped.queue_free()
+		_apply_return_from_test_area()
+		return
+	if steam_id != 0:
 		_replicate()
 	_play_departure.rpc(peer_id, clean)
 
@@ -176,6 +191,57 @@ func room_state() -> RoomState:
 	return _room
 
 
+func is_in_test_area() -> bool:
+	return _in_test_area
+
+
+func is_returning() -> bool:
+	return _returning
+
+
+## True while the desk or the board still has its station screen open. Escape then
+## closes that screen and must not open the overlay (spec section 3).
+func station_screen_is_open() -> bool:
+	for path in ["BookingBoard/Screen", "ReceptionDesk/Screen"]:
+		var screen := get_node_or_null(path) as StationScreen
+		if screen != null and screen.occupies_escape():
+			return true
+	return false
+
+
+## Mouse follows the overlay: cursor while it is open, captured on close.
+## The room is not paused; stations keep running.
+func set_escape_overlay_open(open: bool) -> void:
+	var learner := _local_learner()
+	if learner != null:
+		learner.set_escape_overlay_open(open)
+
+
+## A station screen is about to dock; the overlay must not sit over it.
+func close_escape_overlay() -> void:
+	if escape_overlay != null:
+		escape_overlay.close()
+
+
+func quit_to_desktop() -> void:
+	_quit_cleanly()
+
+
+## Host only, test area only. Clears the room state and walks everyone back through
+## the entrance with the arrival theatre.
+func request_return_from_test_area() -> void:
+	if not _in_test_area or _returning or not multiplayer.is_server():
+		return
+	_apply_return_from_test_area()
+
+
+func _local_learner() -> Learner:
+	for learner in _learners():
+		if learner.is_local():
+			return learner
+	return null
+
+
 func _bind_room(room: RoomState) -> void:
 	if not room.countdown_started.is_connected(_on_countdown_started):
 		room.countdown_started.connect(_on_countdown_started)
@@ -237,10 +303,15 @@ func _examiner_voice() -> String:
 
 
 func _silence_stations() -> void:
+	_set_stations_enabled(false)
+
+
+func _set_stations_enabled(enabled: bool) -> void:
+	var mode := Node.PROCESS_MODE_INHERIT if enabled else Node.PROCESS_MODE_DISABLED
 	for path in ["ChairStations", "BookingBoard", "ReceptionDesk"]:
 		var node := get_node_or_null(path)
 		if node != null:
-			node.process_mode = Node.PROCESS_MODE_DISABLED
+			node.process_mode = mode
 
 
 func _play_test_area_door() -> void:
@@ -258,17 +329,7 @@ func _fade_music(duration: float) -> void:
 
 
 func _enter_test_area() -> void:
-	kit.visible = false
-	for path in ["NoticeBoard", "BookingBoard", "ReceptionDesk", "ChairStations"]:
-		var node := get_node_or_null(path) as Node3D
-		if node != null:
-			node.visible = false
-	for light_name in [
-		"CeilingFrontLeft", "CeilingFrontRight", "CeilingBackLeft", "CeilingBackRight",
-	]:
-		var light := get_node_or_null(light_name) as Light3D
-		if light != null:
-			light.visible = false
+	_set_waiting_room_visible(false)
 	if test_area.daylight != null:
 		world_environment.environment = test_area.daylight
 	test_area.visible = true
@@ -294,6 +355,100 @@ func _place_in_bays() -> void:
 		learner.velocity = Vector3.ZERO
 		if learner.is_local():
 			test_area.show_own_role(Learner.role_label(dealt))
+
+
+func _apply_return_from_test_area() -> void:
+	if not multiplayer.is_server() or not _in_test_area:
+		return
+	_room.return_from_test_area()
+	_replicate()
+	_play_return()
+
+
+func _play_return() -> void:
+	if _returning or not _in_test_area:
+		return
+	_returning = true
+	_in_test_area = false
+	if escape_overlay != null:
+		escape_overlay.close()
+	fade.to_black(TRANSITION)
+	await get_tree().create_timer(TRANSITION).timeout
+	if not is_inside_tree():
+		return
+	_restore_waiting_room()
+	_restart_music()
+	_place_at_entrance_for_return()
+	fade.to_clear(TRANSITION)
+	await get_tree().create_timer(0.25).timeout
+	if not is_inside_tree():
+		return
+	await _play_return_arrivals()
+	_returning = false
+
+
+func _restore_waiting_room() -> void:
+	_set_waiting_room_visible(true)
+	if _waiting_environment != null:
+		world_environment.environment = _waiting_environment
+	test_area.visible = false
+	test_area.show_own_role("")
+	_set_stations_enabled(true)
+
+
+func _set_waiting_room_visible(shown: bool) -> void:
+	kit.visible = shown
+	for path in ["NoticeBoard", "BookingBoard", "ReceptionDesk", "ChairStations"]:
+		var node := get_node_or_null(path) as Node3D
+		if node != null:
+			node.visible = shown
+	for light_name in [
+		"CeilingFrontLeft", "CeilingFrontRight", "CeilingBackLeft", "CeilingBackRight",
+	]:
+		var light := get_node_or_null(light_name) as Light3D
+		if light != null:
+			light.visible = shown
+
+
+func _restart_music() -> void:
+	music.volume_db = _music_volume
+	music.play(0.0)
+
+
+func _place_at_entrance_for_return() -> void:
+	for learner in _learners():
+		learner.set_held_role(&"")
+		learner.set_seated(false)
+		learner.set_using_station(false)
+		learner.set_escape_overlay_open(false)
+		learner.set_can_walk(false)
+		learner.set_body_visible(false)
+		learner.velocity = Vector3.ZERO
+		_place_at_entrance(learner)
+
+
+func _play_return_arrivals() -> void:
+	for learner in _learners_in_arrival_order():
+		if not is_instance_valid(learner):
+			continue
+		await theatre.open_door()
+		if is_instance_valid(learner):
+			learner.set_body_visible(true)
+			if learner.is_local():
+				learner.set_can_walk(true)
+		await theatre.close_door()
+
+
+func _learners_in_arrival_order() -> Array[Learner]:
+	var ordered: Array[Learner] = []
+	if _room == null:
+		return ordered
+	for occupant in _room.players:
+		for learner in _learners():
+			if learner.palette() == occupant.palette:
+				ordered.append(learner)
+				break
+	return ordered
 
 
 func _occupant_of_learner(learner: Learner) -> RoomState.Player:
@@ -357,6 +512,8 @@ func _receive_state(data: Dictionary) -> void:
 		_room.countdown_cancelled.emit()
 	if not had_launched and not _room.launched_roles().is_empty():
 		_room.launched.emit(_room.booking(), _room.launched_roles())
+	elif _in_test_area and had_launched and _room.launched_roles().is_empty():
+		_play_return()
 	room_changed.emit()
 
 
@@ -457,7 +614,7 @@ func _reset_as_lone_host() -> void:
 
 func _on_host_vanished() -> void:
 	print("WaitingRoom: the host vanished")
-	if Transport.kind != Transport.STEAM:
+	if Transport.kind != Transport.STEAM and not _in_test_area:
 		return
 	leave_to_own_room()
 

@@ -450,6 +450,7 @@ func _on_used() -> void:
 	if learner == null:
 		return
 	_station.set_listening(false)
+	_waiting.close_escape_overlay()
 	_screen.open(learner, _dock_pose(), ROW_LAYER)
 
 

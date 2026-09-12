@@ -123,6 +123,9 @@ func join_lobby(target_lobby_id: int, friend_id: int = 0) -> void:
 ## Leave the current room and host a fresh FRIENDS_ONLY lobby. When `move_room` is true
 ## the waiting room reloads on `room_switched` so the player is alone at the entrance.
 func host_fresh(move_room: bool = true) -> void:
+	if kind == ENET:
+		_host_fresh_enet(move_room)
+		return
 	if kind != STEAM:
 		return
 	_join_target = 0
@@ -139,6 +142,22 @@ func host_fresh(move_room: bool = true) -> void:
 	_ready_to_play = false
 	print("Transport: hosting a fresh room")
 	_create_hosted_lobby()
+
+
+## A leftover ENet guest must not bind-or-join the shared port (that would merge
+## them, which is host migration). An offline peer is a room of one.
+func _host_fresh_enet(move_room: bool) -> void:
+	if move_room:
+		_moves += 1
+	else:
+		_recovering_join = true
+	_drop_godot_peer()
+	_ready_to_play = false
+	hosting = true
+	var peer := OfflineMultiplayerPeer.new()
+	multiplayer.multiplayer_peer = peer
+	print("Transport: ENet hosting a fresh room")
+	_become_ready()
 
 
 func take_join_error() -> Dictionary:

@@ -30,6 +30,9 @@ var _seated := false
 ## True while this machine's station screen is open. Walk and look are off; the
 ## station's dock camera is current and the mouse is a cursor.
 var _using_station := false
+## True while the Escape overlay is open. Look is off and the mouse is a cursor;
+## walk stays on because the overlay pauses nothing.
+var _escape_overlay_open := false
 
 @onready var camera: Camera3D = $Camera3D
 @onready var visual: Node3D = $Visual
@@ -120,6 +123,13 @@ func is_using_station() -> bool:
 	return _using_station
 
 
+## Release the mouse as a cursor while the Escape overlay is open; recapture on close.
+func set_escape_overlay_open(open: bool) -> void:
+	_escape_overlay_open = open
+	if is_node_ready():
+		_apply_local()
+
+
 func _apply_local() -> void:
 	camera.current = _local and not _using_station
 	var head := visual.find_child("HeadPivot", true, false)
@@ -127,11 +137,11 @@ func _apply_local() -> void:
 		head.visible = not _local
 	camera.position.y = SEATED_EYE_HEIGHT if _seated else EYE_HEIGHT
 	var walk := _local and _can_walk and not _seated and not _using_station
-	var look := _local and not _using_station and (_can_walk or _seated)
+	var look := _local and not _using_station and not _escape_overlay_open and (_can_walk or _seated)
 	set_physics_process(walk)
 	set_process_unhandled_input(look)
 	if _local:
-		if _using_station:
+		if _using_station or _escape_overlay_open:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		else:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -180,10 +190,6 @@ func _apply_held_role() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not _local:
-		return
-	if event.is_action_pressed("ui_cancel") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		get_viewport().set_input_as_handled()
 		return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		var motion := event as InputEventMouseMotion
