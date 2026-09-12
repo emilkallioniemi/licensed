@@ -27,3 +27,5 @@ Ticket 03's stand-in (Escape merely releasing the mouse) is replaced by this.
 ## Comments
 
 **From ticket 03 (orchestrator).** Escape currently releases the mouse (`Learner._unhandled_input` on `ui_cancel`) and should be replaced by this overlay. The mouse is recaptured only by becoming local again, not on a second Escape.
+
+**From ticket 07 (orchestrator).** Escape closes the station screen while it is open (`StationScreen`); the overlay must not open over a station screen. Precedence: station open → Escape closes it; nothing open → Escape opens this overlay.
