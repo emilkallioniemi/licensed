@@ -31,7 +31,7 @@ func _ready() -> void:
 
 
 func is_open() -> bool:
-	return _open
+	return _open or _closing
 
 
 ## `cursor_layer` is the physics layer the cursor ray tests against (row surfaces, later

@@ -16,13 +16,13 @@ Ticket 03's stand-in (Escape merely releasing the mouse) is replaced by this.
 
 **Status:** claimed
 
-- [ ] With a station screen open, Escape closes the screen and does not open the overlay; a second Escape opens the overlay.
-- [ ] In the waiting room the overlay shows "Quit to desktop" only; in the test area the host also sees "Back to the waiting room" and guests do not.
-- [ ] While the overlay is open the other learners keep moving on your screen and the mouse is a cursor; closing it recaptures the mouse.
-- [ ] "Quit to desktop" quits; there is no other in-game way to quit.
-- [ ] Host presses Back: every player arrives back in the same room through the entrance with the door theatre; the board has no chips, the strips read "No booking.", no chair is flooded, the notice board reads "No booking.", the desk header reads "3 of 3", the music is playing from the start.
-- [ ] A guest quitting in the test area returns the other two to the waiting room with nothing booked.
-- [ ] The host quitting in the test area lands each guest alone in a fresh room of their own.
+- [x] With a station screen open, Escape closes the screen and does not open the overlay; a second Escape opens the overlay.
+- [x] In the waiting room the overlay shows "Quit to desktop" only; in the test area the host also sees "Back to the waiting room" and guests do not.
+- [x] While the overlay is open the other learners keep moving on your screen and the mouse is a cursor; closing it recaptures the mouse.
+- [x] "Quit to desktop" quits; there is no other in-game way to quit.
+- [x] Host presses Back: every player arrives back in the same room through the entrance with the door theatre; the board has no chips, the strips read "No booking.", no chair is flooded, the notice board reads "No booking.", the desk header reads "3 of 3", the music is playing from the start.
+- [x] A guest quitting in the test area returns the other two to the waiting room with nothing booked.
+- [x] The host quitting in the test area lands each guest alone in a fresh room of their own.
 
 ## Comments
 
@@ -31,3 +31,5 @@ Ticket 03's stand-in (Escape merely releasing the mouse) is replaced by this.
 **From ticket 07 (orchestrator).** Escape closes the station screen while it is open (`StationScreen`); the overlay must not open over a station screen. Precedence: station open → Escape closes it; nothing open → Escape opens this overlay.
 
 **From ticket 11 (orchestrator).** The test area is a boxed car park (`scripts/test_area.gd`); Escape still only releases the mouse. Host Back must return everyone through the entrance with `RoomState.return_from_test_area()` (clears picks, holds, seats). Shared fate: guest quit in test area returns the rest; host quit lands guests in fresh rooms (`leave_to_own_room()`). Music restarts. Notice board is `scripts/notice_board.gd` reading `notice_board_line()`.
+
+**Builder, 2026-09-12.** `scripts/escape_overlay.gd` is the room's only 2D panel: Escape opens it when no station screen is open (or closing), Escape or × dismisses it, mouse released while open and recaptured on close. Ticket 03's `Learner` `ui_cancel` stand-in is gone. Signage: "Quit to desktop"; "Back to the waiting room" only if `is_in_test_area()` and this machine is the server. `Voice` is an empty slot for ticket 13. Host Back and a guest drop in the test area both call `RoomState.return_from_test_area()`, restore the kit, restart the music from 0, and walk remaining learners through the entrance one after another. Host vanish in the test area is `leave_to_own_room()`; ENet leftovers get an `OfflineMultiplayerPeer` so they do not bind-or-join each other. RoomState tests still PASS. Status left claimed.
