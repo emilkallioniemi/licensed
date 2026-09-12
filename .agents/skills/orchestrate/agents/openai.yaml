@@ -1,0 +1,5 @@
+interface:
+  display_name: "Orchestrate"
+  short_description: "Drive a ticketed spec to done on a spec branch"
+policy:
+  allow_implicit_invocation: false

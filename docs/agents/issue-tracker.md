@@ -28,3 +28,13 @@ Used by `/wayfinder`. The **map** is a file with one **child** file per ticket.
 - **Frontier**: scan `.scratch/<effort>/issues/` for files that are open, unblocked, and unclaimed; first by number wins.
 - **Claim**: set `Status: claimed` and save before any work.
 - **Resolve**: append the answer under an `## Answer` heading, set `Status: resolved`, then append a context pointer (gist + link) to the map's Decisions-so-far in `map.md`.
+
+## Orchestration operations
+
+Used by `/orchestrate`. Implementation tickets are the per-ticket files `/to-tickets` writes; a wayfinder decision ticket (one with a `Type:` line) is never orchestrated.
+
+- **Spec**: `.scratch/<feature>/spec.md`. Its tickets are the files in `.scratch/<feature>/issues/` without a `Type:` line.
+- **Blocking**: the `Blocked by:` line. A ticket is unblocked when every ticket it names is `done`.
+- **Frontier**: unblocked tickets with `Status: ready-for-agent`; lowest number first.
+- **Claim**: set `Status: claimed`. **Done**: set `Status: done`. **Park**: set `Status: ready-for-human`.
+- Reports and notes append under `## Comments`.
