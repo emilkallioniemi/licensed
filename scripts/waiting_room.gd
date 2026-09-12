@@ -204,19 +204,23 @@ func is_returning() -> bool:
 func station_screen_is_open() -> bool:
 	for path in ["BookingBoard/Screen", "ReceptionDesk/Screen"]:
 		var screen := get_node_or_null(path) as StationScreen
-		if screen != null and screen.is_open():
+		if screen != null and screen.occupies_escape():
 			return true
 	return false
 
 
-## Mouse and stations follow the overlay: cursor while it is open, captured on close.
-## Stations stay silent in the test area.
+## Mouse follows the overlay: cursor while it is open, captured on close.
+## The room is not paused; stations keep running.
 func set_escape_overlay_open(open: bool) -> void:
 	var learner := _local_learner()
 	if learner != null:
 		learner.set_escape_overlay_open(open)
-	if not _in_test_area and not _returning:
-		_set_stations_enabled(not open)
+
+
+## A station screen is about to dock; the overlay must not sit over it.
+func close_escape_overlay() -> void:
+	if escape_overlay != null:
+		escape_overlay.close()
 
 
 func quit_to_desktop() -> void:
@@ -325,17 +329,7 @@ func _fade_music(duration: float) -> void:
 
 
 func _enter_test_area() -> void:
-	kit.visible = false
-	for path in ["NoticeBoard", "BookingBoard", "ReceptionDesk", "ChairStations"]:
-		var node := get_node_or_null(path) as Node3D
-		if node != null:
-			node.visible = false
-	for light_name in [
-		"CeilingFrontLeft", "CeilingFrontRight", "CeilingBackLeft", "CeilingBackRight",
-	]:
-		var light := get_node_or_null(light_name) as Light3D
-		if light != null:
-			light.visible = false
+	_set_waiting_room_visible(false)
 	if test_area.daylight != null:
 		world_environment.environment = test_area.daylight
 	test_area.visible = true
@@ -394,22 +388,26 @@ func _play_return() -> void:
 
 
 func _restore_waiting_room() -> void:
-	kit.visible = true
-	for path in ["NoticeBoard", "BookingBoard", "ReceptionDesk", "ChairStations"]:
-		var node := get_node_or_null(path) as Node3D
-		if node != null:
-			node.visible = true
-	for light_name in [
-		"CeilingFrontLeft", "CeilingFrontRight", "CeilingBackLeft", "CeilingBackRight",
-	]:
-		var light := get_node_or_null(light_name) as Light3D
-		if light != null:
-			light.visible = true
+	_set_waiting_room_visible(true)
 	if _waiting_environment != null:
 		world_environment.environment = _waiting_environment
 	test_area.visible = false
 	test_area.show_own_role("")
 	_set_stations_enabled(true)
+
+
+func _set_waiting_room_visible(shown: bool) -> void:
+	kit.visible = shown
+	for path in ["NoticeBoard", "BookingBoard", "ReceptionDesk", "ChairStations"]:
+		var node := get_node_or_null(path) as Node3D
+		if node != null:
+			node.visible = shown
+	for light_name in [
+		"CeilingFrontLeft", "CeilingFrontRight", "CeilingBackLeft", "CeilingBackRight",
+	]:
+		var light := get_node_or_null(light_name) as Light3D
+		if light != null:
+			light.visible = shown
 
 
 func _restart_music() -> void:

@@ -249,6 +249,7 @@ func _on_used() -> void:
 		return
 	_station.set_listening(false)
 	set_process_input(true)
+	_waiting.close_escape_overlay()
 	_screen.open(learner, _dock_pose(), SCREEN_LAYER)
 
 

@@ -31,6 +31,11 @@ func _ready() -> void:
 
 
 func is_open() -> bool:
+	return _open
+
+
+## True while the dock camera still owns Escape: open, or gliding back to the head.
+func occupies_escape() -> bool:
 	return _open or _closing
 
 
