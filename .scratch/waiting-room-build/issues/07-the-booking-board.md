@@ -24,3 +24,7 @@ The booking (formed by the room state on the N-th matching pick): the booked row
 - [ ] When all three (N under `--min-players`) have picked the same row, BOOKED appears at the right end of its top line and one sound plays on every machine.
 - [ ] Any drop or departure removes BOOKED silently; the chips of the remaining pickers stay.
 - [ ] The board contains no rule: booking formation and dissolution are read from the room state, not recomputed in the view.
+
+## Comments
+
+**From ticket 02 (orchestrator).** `RoomState.tick(delta)` is the countdown; at the end `launched` carries `{steam_id: named_role}` for everyone (Random dealt); `launched_roles()` holds it until `return_from_test_area()`, which clears picks, holds, seats and the deal and emits `booking_dissolved`. Board strips are unchanged by the deal (spec section 7). Picks are `pick(steam_id, vehicle)` / `drop_pick(steam_id)`; a switch is a `pick` of a different vehicle. `booking_formed`/`booking_dissolved` fire on the host only; the view on a guest should react to the replicated state changing.
