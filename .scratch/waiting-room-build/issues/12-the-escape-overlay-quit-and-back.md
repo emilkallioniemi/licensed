@@ -14,7 +14,7 @@ Ticket 03's stand-in (Escape merely releasing the mouse) is replaced by this.
 
 **Blocked by:** 11 (the test area).
 
-**Status:** ready-for-agent
+**Status:** claimed
 
 - [ ] With a station screen open, Escape closes the screen and does not open the overlay; a second Escape opens the overlay.
 - [ ] In the waiting room the overlay shows "Quit to desktop" only; in the test area the host also sees "Back to the waiting room" and guests do not.
