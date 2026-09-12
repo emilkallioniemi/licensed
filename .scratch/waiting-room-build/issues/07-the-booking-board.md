@@ -14,7 +14,7 @@ The booking (formed by the room state on the N-th matching pick): the booked row
 
 **Blocked by:** 06 (the station base: zone, prompt, E).
 
-**Status:** ready-for-agent
+**Status:** claimed
 
 - [ ] "E  Booking" appears in the board's zone; E docks the camera framing the whole board, releases the mouse as a cursor; Escape returns to first person. The other two see the player stood at the board while docked.
 - [ ] Five rows are drawn on their surfaces in two lines; the kit's label meshes and `01` are hidden; padlocks remain.
