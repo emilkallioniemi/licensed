@@ -9,10 +9,9 @@ const BACK_COPY := "Back to the waiting room"
 const OPEN_MIC_COPY := "Open mic"
 const PUSH_TO_TALK_COPY := "Push to talk"
 const MUTE_COPY := "Mute microphone"
-const VoiceScript := preload("res://scripts/voice.gd")
 
 var _waiting: WaitingRoom
-var _voice: VoiceScript
+var _voice: Voice
 var _panel: PanelContainer
 var _open_mic: Button
 var _push_to_talk: Button
@@ -23,7 +22,8 @@ var _open := false
 
 func _ready() -> void:
 	_waiting = get_parent() as WaitingRoom
-	_voice = get_parent().get_node_or_null("Voice") as VoiceScript
+	if _waiting != null:
+		_voice = _waiting.get_node_or_null("Voice") as Voice
 	layer = 50
 	_build()
 	_refresh_voice()
