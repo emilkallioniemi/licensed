@@ -17,7 +17,7 @@ var _camera: Camera3D
 var _open := false
 var _closing := false
 var _learner: Learner
-var _pick_mask := 0
+var _cursor_layer := 0
 var _tween: Tween
 
 
@@ -34,13 +34,13 @@ func is_open() -> bool:
 	return _open
 
 
-## `pick_mask` is the physics layer the cursor ray tests against (row surfaces, later
+## `cursor_layer` is the physics layer the cursor ray tests against (row surfaces, later
 ## desk controls). Hits on that layer are mapped by the station that owns this screen.
-func open(learner: Learner, dock: Transform3D, pick_mask: int) -> void:
+func open(learner: Learner, dock: Transform3D, cursor_layer: int) -> void:
 	if _open or _closing or learner == null or learner.camera == null:
 		return
 	_learner = learner
-	_pick_mask = pick_mask
+	_cursor_layer = cursor_layer
 	_open = true
 	_closing = false
 	_face_station(learner, dock)
@@ -108,7 +108,7 @@ func _raycast(mouse: Vector2) -> Node3D:
 	var query := PhysicsRayQueryParameters3D.create(from, from + dir * 16.0)
 	query.collide_with_areas = true
 	query.collide_with_bodies = false
-	query.collision_mask = _pick_mask
+	query.collision_mask = _cursor_layer
 	var hit := _camera.get_world_3d().direct_space_state.intersect_ray(query)
 	if hit.is_empty():
 		return null

@@ -131,7 +131,9 @@ func _apply_local() -> void:
 func _apply_body_visible() -> void:
 	if visual == null or name_tag == null:
 		return
-	visual.visible = _body_visible
+	# The dock camera sits behind the local learner; hide the body from this
+	# machine only so the board matches the kit preview. Remotes still see them.
+	visual.visible = _body_visible and not (_local and _using_station)
 	name_tag.visible = _body_visible and not _local
 
 
