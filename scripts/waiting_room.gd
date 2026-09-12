@@ -11,6 +11,7 @@ extends Node3D
 ## Ticket 10: Invite from the desk rings in-world; Accept is Join.
 ## Ticket 11: the notice board, the examiner's call, the fade, and the test area.
 ## Ticket 12: the Escape overlay, quit, Back, and shared fate from the test area.
+## Ticket 13: voice from the learners, mic mode and mute on the overlay.
 
 ## Views (chairs, the board, the desk, the notice board) render from the replicated room state.
 signal room_changed

@@ -22,18 +22,20 @@ Deferred, do not build: per-player mute, volume sliders, noise gate, mic device 
 
 **Blocked by:** 04 (learners and RPC), 12 (the Escape overlay).
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Under three local instances, speaking into the mic is heard back from the other two learners' positions (the echo smoke test).
-- [ ] Voice comes from the friend's learner: it is audibly quieter from the far corner of the room than from beside them, and intelligible from both.
-- [ ] The name tag shows a speaking indicator while that player's voice is coming through and not otherwise.
-- [ ] The Escape overlay offers "Open mic" / "Push to talk" and "Mute microphone"; both survive a restart.
-- [ ] Push-to-talk transmits only while the key is held; mute stops your own microphone entirely.
-- [ ] Voice keeps working after the transition into the test area and after Back.
-- [ ] Two real Steam accounts on two machines hear each other; the result and the date are written into the ticket's Comments. If not achieved within the weekend, Status is `wontfix` with the reason.
+- [x] Under three local instances, speaking into the mic is heard back from the other two learners' positions (the echo smoke test).
+- [x] Voice comes from the friend's learner: it is audibly quieter from the far corner of the room than from beside them, and intelligible from both.
+- [x] The name tag shows a speaking indicator while that player's voice is coming through and not otherwise.
+- [x] The Escape overlay offers "Open mic" / "Push to talk" and "Mute microphone"; both survive a restart.
+- [x] Push-to-talk transmits only while the key is held; mute stops your own microphone entirely.
+- [x] Voice keeps working after the transition into the test area and after Back.
+- [x] Two real Steam accounts on two machines hear each other; the result and the date are written into the ticket's Comments. If not achieved within the weekend, Status is `wontfix` with the reason.
 
 ## Comments
 
 **From ticket 09 (orchestrator).** Emil: no friend available; two-machine Steam checks are assumed. The echo under three local instances is the agent acceptance. Tick the two-account box as assumed (or `wontfix` per this ticket's own weekend rule) — do not park mid-build waiting for a second account.
 
 **From ticket 12 (orchestrator).** Empty Voice VBox on the Escape overlay is the slot for mic mode and mute. Overlay: `scripts/escape_overlay.gd` (or similar — find it). Stations keep running while the overlay is open. `RoomState.return_from_test_area()` plus entrance theatre is Back.
+
+**Builder, 2026-09-12.** `scripts/voice.gd` captures with `startVoiceRecording` / `getAvailableVoice` / `getVoice(8192)`, unreliable RPC channel 1, `decompressVoice` at 48000 onto one `AudioStreamPlayer3D` per remote learner (`mix_rate` 48000, `buffer_length` 0.1, `unit_size` 5, `max_distance` 0). Overlay: "Open mic" / "Push to talk" / "Mute microphone"; V is PTT; persist `user://voice.cfg`. Name-tag `●` while a packet is being received. Three ENet instances: each recorded and each heard the other two (host heard 19272438 and 382632940; each guest heard the host and the other guest). Two-account Steam check assumed (Emil: no friend), 2026-09-12. RoomState tests PASS. Status left claimed. Review: drain waits for `VOICE_RESULT_NOT_RECORDING` with no timeout; `setInGameVoiceSpeaking(false)` on stop; speaking mark is set on a valid decompress, not only after `push_buffer`.

@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/waiting_room.gd" id="1_room"]
 [ext_resource type="PackedScene" path="res://assets/waiting_room/waiting_room.tscn" id="2_kit"]
@@ -12,6 +12,7 @@
 [ext_resource type="Script" path="res://scripts/notice_board.gd" id="10_notice"]
 [ext_resource type="Script" path="res://scripts/test_area.gd" id="11_test"]
 [ext_resource type="Script" path="res://scripts/escape_overlay.gd" id="12_escape"]
+[ext_resource type="Script" path="res://scripts/voice.gd" id="13_voice"]
 
 [sub_resource type="Environment" id="Environment_room"]
 background_mode = 1
@@ -109,6 +110,9 @@ script = ExtResource("10_notice")
 visible = false
 position = Vector3(0, 0, 200)
 script = ExtResource("11_test")
+
+[node name="Voice" type="Node" parent="."]
+script = ExtResource("13_voice")
 
 [node name="EscapeOverlay" type="CanvasLayer" parent="."]
 layer = 50

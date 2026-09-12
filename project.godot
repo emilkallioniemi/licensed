@@ -31,6 +31,10 @@ window/size/mode=3
 
 3d/physics_engine="Jolt Physics"
 
+[steam]
+
+multiplayer_peer/max_channels=4
+
 [rendering]
 
 anti_aliasing/quality/msaa_3d=2
