@@ -33,3 +33,5 @@ Name tag: a second, smaller line under the name reading "Driver" / "Spotter" / "
 ## Comments
 
 **From ticket 04 (orchestrator).** Guests send sit/pick/hold through `WaitingRoom.submit_command` over reliable RPC. Under ENet the name suffix is the arrival slot 2/3 (Godot's ENet unique ids are not 2 and 3). Palettes 01/02/03 match chair teal / ochre / kit red; `Palettes.flood_color` is the shirt.
+
+**From ticket 07 (orchestrator).** Role column still as the kit ships; the board dock and cursor already cover it. `StationScreen` (`scripts/station_screen.gd`) is dock/cursor/Escape. `BookingBoard` draws rows on SubViewport quads over `DisplaySurface` and raycasts the dock cursor. Chip names use kit Ink on `Palettes.flood_color`; teal/red floods are dark, and palette 02 is ochre on the ochre truck row. Holds go through `submit_command`.

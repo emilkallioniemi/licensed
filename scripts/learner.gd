@@ -26,6 +26,9 @@ var _body_visible := true
 var _can_walk := true
 ## True while this learner occupies a chair. Walk is off; look stays on.
 var _seated := false
+## True while this machine's station screen is open. Walk and look are off; the
+## station's dock camera is current and the mouse is a cursor.
+var _using_station := false
 
 @onready var camera: Camera3D = $Camera3D
 @onready var visual: Node3D = $Visual
@@ -95,25 +98,42 @@ func is_seated() -> bool:
 	return _seated
 
 
+## Stand still at a screened station. The dock camera takes over; the other two
+## still see this body facing the station. Safe before or after the node enters the tree.
+func set_using_station(using: bool) -> void:
+	_using_station = using
+	if is_node_ready():
+		_apply_local()
+
+
+func is_using_station() -> bool:
+	return _using_station
+
+
 func _apply_local() -> void:
-	camera.current = _local
+	camera.current = _local and not _using_station
 	var head := visual.find_child("HeadPivot", true, false)
 	if head != null:
 		head.visible = not _local
 	camera.position.y = SEATED_EYE_HEIGHT if _seated else EYE_HEIGHT
-	var walk := _local and _can_walk and not _seated
-	var look := _local and (_can_walk or _seated)
+	var walk := _local and _can_walk and not _seated and not _using_station
+	var look := _local and not _using_station and (_can_walk or _seated)
 	set_physics_process(walk)
 	set_process_unhandled_input(look)
 	if _local:
-		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		if _using_station:
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		else:
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	_apply_body_visible()
 
 
 func _apply_body_visible() -> void:
 	if visual == null or name_tag == null:
 		return
-	visual.visible = _body_visible
+	# The dock camera sits behind the local learner; hide the body from this
+	# machine only so the board matches the kit preview. Remotes still see them.
+	visual.visible = _body_visible and not (_local and _using_station)
 	name_tag.visible = _body_visible and not _local
 
 

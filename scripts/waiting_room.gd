@@ -5,8 +5,9 @@ extends Node3D
 ## Ticket 04: the host owns RoomState, learners replicate, and three instances meet here.
 ## Ticket 05: walking in is a fade and the entrance door, not a teleport.
 ## Ticket 06: chairs are stations; sitting is the ready-up.
+## Ticket 07: the booking board is a screened station; picks and BOOKED render here.
 
-## Views (chairs, later the board and desk) render from the replicated room state.
+## Views (chairs, the board, later the desk) render from the replicated room state.
 signal room_changed
 
 const STEAM_NOT_RUNNING_SCENE := preload("res://scenes/steam_not_running.tscn")

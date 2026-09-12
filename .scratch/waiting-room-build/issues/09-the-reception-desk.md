@@ -38,3 +38,5 @@ Checked over real Steam on Emil's two computers; the dev transport cannot exerci
 **From ticket 05 (orchestrator).** `WaitingRoom.begin_join()` / `begin_leave()` are the desk Join and Leave seams. Parent Astra's door leaf to `ArrivalTheatre/Leaf` (hinge on the −X jamb). Mid-room drop: learner vanishes where they stood and the entrance door sounds once; the leaf does not swing. Reverse door theatre is only for deliberate Leave or a clean window close.
 
 **From ticket 06 (orchestrator).** Reception uses the same `Station` (`scripts/station.gd`) with `"E  Reception"` at `AttachmentPoints/ReceptionApproach`. `set_listening` / `used` / `setup(prompt, prompt_at, zone_size)`. Do not fork a second grammar.
+
+**From ticket 07 (orchestrator).** `StationScreen` (`scripts/station_screen.gd`) is the desk's dock/cursor/Escape half of the grammar. Do not fork a second grammar. Escape closes the station screen while it is open.
