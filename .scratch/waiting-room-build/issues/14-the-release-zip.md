@@ -12,7 +12,7 @@ Write down, in one short section of the repo's README or a release note next to 
 
 **Blocked by:** 10 (the desk with Invite and Join, so friends can find each other), 13 (voice, or its `wontfix`).
 
-**Status:** ready-for-agent
+**Status:** claimed
 
 - [ ] The export preset is committed and exports a Windows build without editor intervention beyond pressing Export.
 - [ ] The exported folder holds exactly the exe, the pck, the GodotSteam DLL, and `steam_api64.dll`; no `steam_appid.txt`.
