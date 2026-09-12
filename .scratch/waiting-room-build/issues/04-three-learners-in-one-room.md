@@ -16,16 +16,16 @@ Document the three-learners-in-under-a-minute setup: Godot *Debug → Customize 
 
 **Status:** claimed
 
-- [ ] Three editor instances launched with `-- --transport=enet` end up in one room: the first hosts, the others join; all three learners are visible and moving on every screen.
-- [ ] Without the flag, boot hosts a FRIENDS_ONLY Steam lobby of max three with `game=licensed` before any input (visible in the log with the lobby id).
-- [ ] `--transport` accepts only `steam` (default) and `enet`; nothing else is a mode.
-- [ ] Steam init failure still shows the Steam-not-running state under `--transport=enet`.
-- [ ] The three learners wear three different fixed palettes by arrival order, and the same player is the same colour on every machine.
-- [ ] The other two learners carry a name tag with the display name (peer-suffixed under enet); your own name tag is never drawn for you.
-- [ ] Standing in front of another learner blocks them; neither moves.
-- [ ] The host's room state is the only writer: a guest disconnecting frees their slot on every machine, a joiner appears in the state on every machine.
-- [ ] `--min-players=N` is parsed and reaches the room state's configured count (checked by log, or by the notice board once ticket 11 lands).
-- [ ] The run-instances setup is documented in one place in the repo and the generated per-clone config is gitignored.
+- [x] Three editor instances launched with `-- --transport=enet` end up in one room: the first hosts, the others join; all three learners are visible and moving on every screen.
+- [x] Without the flag, boot hosts a FRIENDS_ONLY Steam lobby of max three with `game=licensed` before any input (visible in the log with the lobby id).
+- [x] `--transport` accepts only `steam` (default) and `enet`; nothing else is a mode.
+- [x] Steam init failure still shows the Steam-not-running state under `--transport=enet`.
+- [x] The three learners wear three different fixed palettes by arrival order, and the same player is the same colour on every machine.
+- [x] The other two learners carry a name tag with the display name (peer-suffixed under enet); your own name tag is never drawn for you.
+- [x] Standing in front of another learner blocks them; neither moves.
+- [x] The host's room state is the only writer: a guest disconnecting frees their slot on every machine, a joiner appears in the state on every machine.
+- [x] `--min-players=N` is parsed and reaches the room state's configured count (checked by log, or by the notice board once ticket 11 lands).
+- [x] The run-instances setup is documented in one place in the repo and the generated per-clone config is gitignored.
 
 ## Comments
 
@@ -34,3 +34,5 @@ Document the three-learners-in-under-a-minute setup: Godot *Debug → Customize 
 **From ticket 02 (orchestrator).** `RoomState` (`scripts/room_state.gd`, `class_name`, RefCounted) is the record every view renders from; commands return bool (applied/refused) and end in one `_after_command` that raises `booking_formed`/`booking_dissolved` then `countdown_started`/`countdown_cancelled`/`launched(vehicle, roles)`. Vehicles/roles are StringName constants on it (`MONSTER_TRUCK`, `DRIVER`, `SPOTTER`, `NAVIGATOR`, `RANDOM`); empty pick/hold = none, chair 0 = standing, palettes 1/2/3. `snapshot()`/`restore()` carry the whole record as plain `var_to_str`-safe data; a guest's copy derives booking, holders, notice board line and count from the same code and raises no events. Replicating the host's events to guests (booking sound, examiner line) is this ticket's call; a state diff on the guest is one option. `RoomState.min_players_from_args(OS.get_cmdline_user_args())` reads `--min-players=N`, clamped 1..3; the room waits for `max(N, players present)` so a dev room of three waiting for two never reads "Roles: 2 of 2." while someone is unready.
 
 **From ticket 03 (orchestrator).** Wrap `scenes/learner.tscn` via `Learner.set_local`; spawn at `Kit/AttachmentPoints/Entrance` (the GLB has another Entrance group). Collision is already on the waiting-room scene. `set_local(bool)` is the seam: input, the current camera, mouse capture, and hiding `HeadPivot` are on only for the learner this machine walks. Safe before or after `add_child`. The kit visual is `$Visual` (palette exports unchanged).
+
+**Builder, 2026-09-12.** Autoload `Transport` picks Steam or ENet; the waiting room talks to `multiplayer` only. Host `RoomState` is the writer; guests restore snapshots and a state diff re-raises booking/countdown/launched on their copy. `submit_command` is the reliable RPC for later sit/pick/hold. Palettes 01/02/03 match chair teal / ochre / kit red; `Palettes.flood_color` is the shirt. Under ENet the name suffix is the arrival slot 2/3 (Godot's ENet unique ids are not 2 and 3). Learners spawn in a short row at the entrance so capsules do not overlap; ticket 05's arrival theatre replaces that. Bind-or-join still prints Godot's "Couldn't create an ENet host" on guests when `create_server` finds the port taken; then they join.
