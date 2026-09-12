@@ -12,7 +12,7 @@ A deliberate departure (a guest's Leave, ticket 09, or a dev-transport instance 
 
 **Blocked by:** 04 (three learners in one room).
 
-**Status:** ready-for-agent
+**Status:** claimed
 
 - [ ] A joining instance fades to black, then fades up on the `Entrance` marker facing into the room.
 - [ ] On the machines already in the room the door opens (or the sound alone plays until the leaf exists), the learner appears in the doorway, the door closes, and one door sound is heard positionally from the entrance, audible from the far corner.
