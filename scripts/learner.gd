@@ -36,6 +36,16 @@ var _escape_overlay_open := false
 ## True while this machine is receiving this learner's voice.
 var _speaking := false
 
+# Presentation runs at render frequency; collision and walking stay at 60 Hz.
+var _previous_position := Vector3.ZERO
+var _current_position := Vector3.ZERO
+var _pitch := 0.0
+var _remote_pose := Transform3D.IDENTITY
+var _visual_offset := Transform3D.IDENTITY
+var _tag_offset := Transform3D.IDENTITY
+const REMOTE_RESPONSE := 20.0
+const TELEPORT_DISTANCE := 1.5
+
 @onready var camera: Camera3D = $Camera3D
 @onready var visual: Node3D = $Visual
 @onready var name_tag: Label3D = $NameTag
@@ -44,12 +54,18 @@ var _speaking := false
 
 
 func _ready() -> void:
-	camera.position.y = EYE_HEIGHT
+	_previous_position = global_position
+	_current_position = global_position
+	_remote_pose = global_transform
+	_visual_offset = visual.transform
+	_tag_offset = name_tag.transform
+	camera.top_level = true
 	_apply_local()
 	_apply_palette()
 	_apply_display_name()
 	_apply_held_role()
 	_apply_speaking()
+	_update_presentation(0.0, 1.0)
 
 
 ## Turns this learner into the one this machine walks (`true`) or a body someone else walks
@@ -146,8 +162,10 @@ func _apply_local() -> void:
 	var head := visual.find_child("HeadPivot", true, false)
 	if head != null:
 		head.visible = not _local
-	camera.position.y = SEATED_EYE_HEIGHT if _seated else EYE_HEIGHT
 	var walk := _local and _can_walk and not _seated and not _using_station
+	if not walk:
+		_previous_position = global_position
+		_current_position = global_position
 	var look := _local and not _using_station and not _escape_overlay_open and (_can_walk or _seated)
 	set_physics_process(walk)
 	set_process_unhandled_input(look)
@@ -211,11 +229,38 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		var motion := event as InputEventMouseMotion
 		rotate_y(-motion.relative.x * MOUSE_SENSITIVITY)
-		camera.rotate_x(-motion.relative.y * MOUSE_SENSITIVITY)
-		camera.rotation.x = clampf(camera.rotation.x, -PITCH_LIMIT, PITCH_LIMIT)
+		_pitch = clampf(_pitch - motion.relative.y * MOUSE_SENSITIVITY, -PITCH_LIMIT, PITCH_LIMIT)
+
+
+func _process(delta: float) -> void:
+	_update_presentation(delta, Engine.get_physics_interpolation_fraction())
+
+
+func _update_presentation(delta: float, fraction: float) -> void:
+	if _local:
+		# Chair, doorway and test-area placement writes the body outside physics.
+		# Discard old samples so those moves never sweep the camera through walls.
+		if not global_position.is_equal_approx(_current_position):
+			_previous_position = global_position
+			_current_position = global_position
+		var eye_height := SEATED_EYE_HEIGHT if _seated else EYE_HEIGHT
+		camera.global_transform = Transform3D(
+			global_basis * Basis(Vector3.RIGHT, _pitch),
+			_previous_position.lerp(_current_position, clampf(fraction, 0.0, 1.0)) + Vector3.UP * eye_height
+		)
+	else:
+		# Keep collision at the received position, smoothing only visible geometry.
+		# A large discontinuity is a teleport, not a walk to interpolate.
+		if _remote_pose.origin.distance_to(global_position) > TELEPORT_DISTANCE or not _body_visible:
+			_remote_pose = global_transform
+		else:
+			_remote_pose = _remote_pose.interpolate_with(global_transform, 1.0 - exp(-REMOTE_RESPONSE * delta))
+		visual.global_transform = _remote_pose * _visual_offset
+		name_tag.global_transform = _remote_pose * _tag_offset
 
 
 func _physics_process(delta: float) -> void:
+	_previous_position = global_position
 	if not is_on_floor():
 		velocity.y -= float(ProjectSettings.get_setting("physics/3d/default_gravity")) * delta
 	var wish := Vector2(
@@ -230,3 +275,4 @@ func _physics_process(delta: float) -> void:
 		velocity.x = 0.0
 		velocity.z = 0.0
 	move_and_slide()
+	_current_position = global_position

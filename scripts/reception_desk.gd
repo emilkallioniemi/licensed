@@ -131,7 +131,7 @@ func _build(kit: Node3D) -> void:
 	_viewport.disable_3d = true
 	_viewport.handle_input_locally = true
 	_viewport.gui_disable_input = false
-	_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	_viewport.render_target_update_mode = SubViewport.UPDATE_WHEN_VISIBLE
 	add_child(_viewport)
 	_build_screen()
 
