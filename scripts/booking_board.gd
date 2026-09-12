@@ -180,7 +180,7 @@ func _build_row(spec: Dictionary) -> Dictionary:
 	viewport.disable_3d = true
 	viewport.handle_input_locally = false
 	viewport.gui_disable_input = true
-	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 	add_child(viewport)
 
 	var root := Control.new()
@@ -357,7 +357,7 @@ func _build_strip(surface: MeshInstance3D, slot: String) -> Dictionary:
 	viewport.disable_3d = true
 	viewport.handle_input_locally = false
 	viewport.gui_disable_input = true
-	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 	add_child(viewport)
 
 	var root := Control.new()
@@ -546,6 +546,10 @@ func _redraw(room: RoomState) -> void:
 				(chip_names[i] as Label).text = ""
 	_redraw_roles(room)
 	_redraw_name_tags(room)
+	# These textures contain static labels, not animations or interactive Controls.
+	for child in get_children():
+		if child is SubViewport:
+			child.render_target_update_mode = SubViewport.UPDATE_ONCE
 
 
 func _redraw_roles(room: RoomState) -> void:
