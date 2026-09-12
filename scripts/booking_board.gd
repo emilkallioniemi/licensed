@@ -477,17 +477,24 @@ func _on_cursor_hit(collider: Node3D) -> void:
 
 
 func _on_role_clicked(room: RoomState, role: StringName) -> void:
+	if not room.has_booking():
+		return
 	var occupant := _local_occupant(room)
 	if occupant == null:
 		return
 	if occupant.hold == role:
 		_waiting.submit_command(&"drop_hold")
-	else:
-		_waiting.submit_command(&"take", role)
+		return
+	if role != RoomState.RANDOM and room.holder_of(role) != null:
+		return
+	_waiting.submit_command(&"take", role)
 
 
 func _is_role(id: StringName) -> bool:
-	return id == RoomState.DRIVER or id == RoomState.SPOTTER or id == RoomState.NAVIGATOR or id == RoomState.RANDOM
+	for spec in ROLES:
+		if spec["role"] == id:
+			return true
+	return false
 
 
 func _on_room_changed() -> void:
