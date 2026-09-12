@@ -19,9 +19,10 @@ signal room_changed
 const STEAM_NOT_RUNNING_SCENE := preload("res://scenes/steam_not_running.tscn")
 const LEARNER_SCENE := preload("res://scenes/learner.tscn")
 const DOOR_SOUND := preload("res://assets/waiting_room/door.wav")
-## Fade and music share this second; the examiner's only line in the room.
+## Fade and music share this second.
 const TRANSITION := 1.0
-const EXAMINER_LINE := "Monster truck."
+## Synthesized "Monster truck."; native Windows TTS can crash during initialization.
+const EXAMINER_CALL := preload("res://assets/waiting_room/examiner_monster_truck.wav")
 
 ## Furniture the spec names for box colliders, looked up on the kit by node name.
 const FURNITURE_GROUPS: PackedStringArray = [
@@ -58,6 +59,7 @@ var _returning := false
 var _test_door: AudioStreamPlayer3D
 var _waiting_environment: Environment
 var _music_volume := -6.0
+var _examiner: AudioStreamPlayer
 
 
 func _ready() -> void:
@@ -270,7 +272,8 @@ func _on_countdown_started() -> void:
 
 
 func _on_countdown_cancelled() -> void:
-	DisplayServer.tts_stop()
+	if _examiner != null:
+		_examiner.stop()
 
 
 func _on_launched(_vehicle: StringName, _roles: Dictionary) -> void:
@@ -289,18 +292,13 @@ func _on_launched(_vehicle: StringName, _roles: Dictionary) -> void:
 
 
 func _speak_examiner() -> void:
-	DisplayServer.tts_stop()
-	DisplayServer.tts_speak(EXAMINER_LINE, _examiner_voice(), 50, 1.0, 0.92)
-
-
-func _examiner_voice() -> String:
-	var english := DisplayServer.tts_get_voices_for_language("en")
-	if english.size() > 0:
-		return english[0]
-	var voices := DisplayServer.tts_get_voices()
-	if voices.size() > 0:
-		return String(voices[0].get("id", ""))
-	return ""
+	if _examiner == null:
+		_examiner = AudioStreamPlayer.new()
+		_examiner.name = "Examiner"
+		_examiner.stream = EXAMINER_CALL
+		_examiner.volume_db = -6.0
+		add_child(_examiner)
+	_examiner.play()
 
 
 func _silence_stations() -> void:
