@@ -18,7 +18,7 @@ Checked over real Steam on Emil's two computers; the dev transport cannot exerci
 
 **Blocked by:** 05 (arrival theatre on join and leave), 07 (the dock-and-cursor station screen).
 
-**Status:** ready-for-agent
+**Status:** claimed
 
 - [ ] "E  Reception" in the desk's zone; E docks on the desk screen drawn on the kit's screen surface with the placeholder hidden; Escape returns.
 - [ ] The header reads "Reception" and "1 of 3" / "2 of 3" / "3 of 3" from the room state; at three it reads "The waiting room is full." and no row has a verb.
