@@ -29,7 +29,7 @@ const FAIL_FULL := "The waiting room is full."
 const FAIL_GONE := "Nobody is at the test centre."
 const FAIL_SILENCE := "The room did not answer."
 const ASKING_PROMPT := "E  %s is asking for you"
-const INVITE_HOLD_MS := 30_000
+const INVITED_FOR_MS := 30_000
 
 const GROUP_IN_ROOM := 0
 const GROUP_AT_CENTRE := 1
@@ -377,7 +377,7 @@ func _rebuild_rows(room: RoomState, room_full: bool) -> void:
 	var has_company := room != null and room.player_count() > 1
 	var verbs_live := Transport.kind == Transport.STEAM
 	for invite in _pending_invites:
-		_rows.add_child(_make_invite_row(invite, has_company, verbs_live))
+		_rows.add_child(_make_invite_row(invite, room_full, has_company, verbs_live))
 	if not SteamClient.is_running():
 		return
 	var friends := _collect_friends(room)
@@ -488,7 +488,7 @@ func _make_row(friend: Dictionary, room_full: bool, has_company: bool, verbs_liv
 	verbs.add_theme_constant_override("separation", 6)
 	row.add_child(verbs)
 
-	var invited := _invite_is_held(int(friend["steam_id"]))
+	var invited := _invite_is_pending(int(friend["steam_id"]))
 	var invite := _make_verb("Invited." if invited else "Invite")
 	invite.disabled = not verbs_live or invited or Transport.lobby_id == 0
 	if verbs_live and not invited:
@@ -504,7 +504,7 @@ func _make_row(friend: Dictionary, room_full: bool, has_company: bool, verbs_liv
 	return row
 
 
-func _make_invite_row(invite: Dictionary, has_company: bool, verbs_live: bool) -> Control:
+func _make_invite_row(invite: Dictionary, room_full: bool, has_company: bool, verbs_live: bool) -> Control:
 	var steam_id := int(invite["steam_id"])
 	var lobby_id := int(invite["lobby_id"])
 	var name := _invite_name(invite)
@@ -542,6 +542,9 @@ func _make_invite_row(invite: Dictionary, has_company: bool, verbs_live: bool) -
 	state.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	_ink(state, 14, true)
 	text.add_child(state)
+
+	if room_full:
+		return row
 
 	var verbs := HBoxContainer.new()
 	verbs.add_theme_constant_override("separation", 6)
@@ -619,15 +622,15 @@ func _on_invite_pressed(friend_id: int) -> void:
 	if Transport.kind != Transport.STEAM or Transport.lobby_id == 0 or friend_id == 0:
 		return
 	Steam.inviteUserToLobby(Transport.lobby_id, friend_id)
-	_invited_until[friend_id] = Time.get_ticks_msec() + INVITE_HOLD_MS
+	_invited_until[friend_id] = Time.get_ticks_msec() + INVITED_FOR_MS
 	_queue_list()
-	get_tree().create_timer(INVITE_HOLD_MS / 1000.0).timeout.connect(
-		_on_invite_hold_elapsed.bind(friend_id),
+	get_tree().create_timer(INVITED_FOR_MS / 1000.0).timeout.connect(
+		_on_invited_elapsed.bind(friend_id),
 		CONNECT_ONE_SHOT,
 	)
 
 
-func _on_invite_hold_elapsed(friend_id: int) -> void:
+func _on_invited_elapsed(friend_id: int) -> void:
 	if not is_inside_tree():
 		return
 	if Time.get_ticks_msec() < int(_invited_until.get(friend_id, 0)):
@@ -636,7 +639,7 @@ func _on_invite_hold_elapsed(friend_id: int) -> void:
 	_queue_list()
 
 
-func _invite_is_held(friend_id: int) -> bool:
+func _invite_is_pending(friend_id: int) -> bool:
 	return Time.get_ticks_msec() < int(_invited_until.get(friend_id, 0))
 
 
@@ -671,7 +674,7 @@ func _accept_invite(lobby_id: int, friend_id: int) -> void:
 			_push_invite(friend_id, lobby_id, false)
 		_queue_list()
 		return
-	_keep_invite(lobby_id, friend_id)
+	_keep_only_invite(lobby_id, friend_id)
 	_refresh_desk_prompt()
 	_on_join_pressed(lobby_id, friend_id)
 
@@ -691,7 +694,7 @@ func _push_invite(inviter: int, lobby: int, ring: bool) -> void:
 	_queue_list()
 
 
-func _keep_invite(lobby_id: int, friend_id: int) -> void:
+func _keep_only_invite(lobby_id: int, friend_id: int) -> void:
 	var kept: Array = []
 	for invite in _pending_invites:
 		if int(invite["lobby_id"]) == lobby_id:
