@@ -34,3 +34,5 @@ Checked over real Steam on Emil's two computers; the dev transport cannot exerci
 ## Comments
 
 **From ticket 04 (orchestrator).** This ticket only hosts; joining another Steam lobby is still open. `Transport.lobby_id` is the hosted lobby. Autoload `Transport` (`scripts/transport.gd`) picks Steam or ENet; room code talks to `multiplayer` only. Under `--transport=enet` the desk should show the real friends list, every verb disabled, footer "Dev transport." Setup: `docs/run-instances.md`.
+
+**From ticket 05 (orchestrator).** `WaitingRoom.begin_join()` / `begin_leave()` are the desk Join and Leave seams. Parent Astra's door leaf to `ArrivalTheatre/Leaf` (hinge on the −X jamb). Mid-room drop: learner vanishes where they stood and the entrance door sounds once; the leaf does not swing. Reverse door theatre is only for deliberate Leave or a clean window close.

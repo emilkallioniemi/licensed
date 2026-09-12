@@ -18,6 +18,10 @@ const PITCH_LIMIT := deg_to_rad(89.0)
 var _local := false
 var _palette := 0
 var _display_name := ""
+## False while the arrival theatre has this body hidden in the doorway.
+var _body_visible := true
+## False for a joiner until the door has opened, so they fade up standing still on Entrance.
+var _can_walk := true
 
 @onready var camera: Camera3D = $Camera3D
 @onready var visual: Node3D = $Visual
@@ -61,16 +65,38 @@ func set_display_name(text: String) -> void:
 		_apply_display_name()
 
 
+## Shown in the room (true) or hidden in the doorway until the door opens (false).
+## Safe before or after the node enters the tree. Does not hide the local camera.
+func set_body_visible(shown: bool) -> void:
+	_body_visible = shown
+	if is_node_ready():
+		_apply_body_visible()
+
+
+## Walk and look. Off for a joiner until they have appeared in the doorway.
+func set_can_walk(enabled: bool) -> void:
+	_can_walk = enabled
+	if is_node_ready():
+		_apply_local()
+
+
 func _apply_local() -> void:
 	camera.current = _local
 	var head := visual.find_child("HeadPivot", true, false)
 	if head != null:
 		head.visible = not _local
-	name_tag.visible = not _local
-	set_physics_process(_local)
-	set_process_unhandled_input(_local)
+	set_physics_process(_local and _can_walk)
+	set_process_unhandled_input(_local and _can_walk)
 	if _local:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	_apply_body_visible()
+
+
+func _apply_body_visible() -> void:
+	if visual == null or name_tag == null:
+		return
+	visual.visible = _body_visible
+	name_tag.visible = _body_visible and not _local
 
 
 func _apply_palette() -> void:

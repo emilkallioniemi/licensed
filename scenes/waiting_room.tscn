@@ -1,8 +1,11 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/waiting_room.gd" id="1_room"]
 [ext_resource type="PackedScene" path="res://assets/waiting_room/waiting_room.tscn" id="2_kit"]
 [ext_resource type="AudioStreamWAV" path="res://assets/slice_0/music/please_take_a_number.wav" id="3_loop"]
+[ext_resource type="AudioStreamWAV" path="res://assets/waiting_room/door.wav" id="4_door"]
+[ext_resource type="Script" path="res://scripts/arrival_theatre.gd" id="5_theatre"]
+[ext_resource type="Script" path="res://scripts/fade_overlay.gd" id="6_fade"]
 
 [sub_resource type="Environment" id="Environment_room"]
 background_mode = 1
@@ -56,3 +59,30 @@ volume_db = -6.0
 [node name="LearnerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("res://scenes/learner.tscn")
 spawn_path = NodePath(".")
+
+[node name="Fade" type="CanvasLayer" parent="."]
+layer = 100
+script = ExtResource("6_fade")
+
+[node name="Black" type="ColorRect" parent="Fade"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="ArrivalTheatre" type="Node3D" parent="."]
+script = ExtResource("5_theatre")
+position = Vector3(0, 0, 5)
+
+[node name="Leaf" type="Node3D" parent="ArrivalTheatre"]
+position = Vector3(-1.1, 0, 0)
+
+[node name="Sound" type="AudioStreamPlayer3D" parent="ArrivalTheatre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+stream = ExtResource("4_door")
+volume_db = 4.0
+unit_size = 20.0
+max_distance = 0.0
