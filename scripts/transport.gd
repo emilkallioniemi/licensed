@@ -19,8 +19,10 @@ const OCCUPANCY_KEY := "n"
 
 ## Fires once the peer is plugged in and, for a guest, the handshake has completed.
 signal became_ready
-## Fires when this machine swaps room (Join succeeded, Leave, failed Join rehost, host vanished).
-signal session_changed
+## Fires when this machine moves to another room (Join succeeded, Leave, host vanished).
+signal room_switched
+## Fires after a failed Join has rehosted this machine's own room. The waiting room stays.
+signal join_recovered
 
 ## `STEAM` or `ENET`, read from `--transport=` in the user args after `--`.
 var kind: StringName = STEAM
@@ -36,7 +38,8 @@ var _ready_to_play := false
 var _expecting_lobby := false
 var _join_target := 0
 var _join_friend := 0
-var _session := 0
+var _moves := 0
+var _recovering_join := false
 
 
 func _ready() -> void:
@@ -117,14 +120,17 @@ func join_lobby(target_lobby_id: int, friend_id: int = 0) -> void:
 	Steam.joinLobby(target_lobby_id)
 
 
-## Leave the current room and host a fresh FRIENDS_ONLY lobby. The waiting room reloads
-## on `session_changed` so the player is alone at the entrance.
-func host_fresh() -> void:
+## Leave the current room and host a fresh FRIENDS_ONLY lobby. When `move_room` is true
+## the waiting room reloads on `room_switched` so the player is alone at the entrance.
+func host_fresh(move_room: bool = true) -> void:
 	if kind != STEAM:
 		return
 	_join_target = 0
 	_join_friend = 0
-	_session += 1
+	if move_room:
+		_moves += 1
+	else:
+		_recovering_join = true
 	_drop_godot_peer()
 	if lobby_id != 0:
 		Steam.leaveLobby(lobby_id)
@@ -199,11 +205,11 @@ func _fail_join(target: int, friend_id: int, response: int) -> void:
 		"response": response,
 	}
 	print("Transport: join failed (response %d); rehosting" % response)
-	host_fresh()
+	host_fresh(false)
 
 
 func _adopt_as_guest(joined_id: int, friend_id: int) -> void:
-	_session += 1
+	_moves += 1
 	_drop_godot_peer()
 	# joinLobby already left the hosted lobby; do not leave the one we just entered.
 	lobby_id = joined_id
@@ -267,8 +273,11 @@ func _become_ready() -> void:
 	_ready_to_play = true
 	if first:
 		became_ready.emit()
-	if _session > 0:
-		session_changed.emit()
+	if _recovering_join:
+		_recovering_join = false
+		join_recovered.emit()
+	elif _moves > 0:
+		room_switched.emit()
 
 
 func _drop_godot_peer() -> void:

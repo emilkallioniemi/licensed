@@ -53,7 +53,8 @@ func _ready() -> void:
 	_add_room_collision()
 	learner_spawner.spawn_function = _spawn_learner
 	Transport.became_ready.connect(_on_transport_ready, CONNECT_ONE_SHOT)
-	Transport.session_changed.connect(_on_session_changed)
+	Transport.room_switched.connect(_on_room_switched)
+	Transport.join_recovered.connect(_on_join_recovered)
 	if Transport.is_ready():
 		_on_transport_ready()
 
@@ -253,16 +254,33 @@ func leave_to_own_room() -> void:
 		Transport.host_fresh()
 
 
-func _on_session_changed() -> void:
+func _on_room_switched() -> void:
 	get_tree().reload_current_scene.call_deferred()
+
+
+func _on_join_recovered() -> void:
+	print("WaitingRoom: Join failed; this room is still ours")
+	_reset_as_lone_host()
+	fade.to_clear()
+
+
+func _reset_as_lone_host() -> void:
+	_clean_leavers.clear()
+	_steam_id_of.clear()
+	_watching = false
+	while learner_spawner.get_child_count() > 0:
+		var child := learner_spawner.get_child(0)
+		learner_spawner.remove_child(child)
+		child.free()
+	_room = RoomState.new(RoomState.min_players_from_args(OS.get_cmdline_user_args()))
+	_accept_player(multiplayer.get_unique_id(), SteamClient.steam_id, SteamClient.persona_name)
 
 
 func _on_host_vanished() -> void:
 	print("WaitingRoom: the host vanished")
 	if Transport.kind != Transport.STEAM:
 		return
-	begin_leave()
-	Transport.host_fresh()
+	leave_to_own_room()
 
 
 func _peer_connected() -> bool:

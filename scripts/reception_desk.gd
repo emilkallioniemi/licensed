@@ -62,10 +62,13 @@ func _ready() -> void:
 		Steam.lobby_data_update.connect(_on_lobby_data_update)
 		SteamClient.avatar_ready.connect(_on_avatar_ready)
 		_queue_lobby_refresh()
+	Transport.join_recovered.connect(_on_join_recovered)
 	_queue_list()
 
 
 func _exit_tree() -> void:
+	if Transport.join_recovered.is_connected(_on_join_recovered):
+		Transport.join_recovered.disconnect(_on_join_recovered)
 	if not SteamClient.is_running():
 		return
 	if Steam.persona_state_change.is_connected(_on_persona_state_change):
@@ -114,7 +117,7 @@ func _build(kit: Node3D) -> void:
 	_viewport.gui_disable_input = false
 	_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	add_child(_viewport)
-	_build_ui()
+	_build_screen()
 
 	_quad = MeshInstance3D.new()
 	_quad.name = "DeskQuad"
@@ -145,7 +148,7 @@ func _build(kit: Node3D) -> void:
 	area.global_transform = _marker.global_transform
 
 
-func _build_ui() -> void:
+func _build_screen() -> void:
 	var root := Control.new()
 	root.name = "Root"
 	root.size = Vector2(SCREEN_PX)
@@ -240,7 +243,7 @@ func _on_friend_rich_presence_update(_steam_id: int, _app_id: int) -> void:
 	_queue_lobby_refresh()
 
 
-func _on_lobby_data_update(_success, _lobby, _member) -> void:
+func _on_lobby_data_update(_success: bool, _lobby: int, _member: int) -> void:
 	_queue_list()
 
 
@@ -248,6 +251,12 @@ func _on_avatar_ready(steam_id: int) -> void:
 	var rect := _row_avatars.get(steam_id) as TextureRect
 	if rect != null:
 		rect.texture = SteamClient.avatar_of(steam_id)
+
+
+func _on_join_recovered() -> void:
+	_take_join_error()
+	if _screen != null and _screen.is_open():
+		_screen.close()
 
 
 func _take_join_error() -> void:
@@ -353,7 +362,7 @@ func _collect_friends(room: RoomState) -> Array:
 		if id == 0 or id == SteamClient.steam_id:
 			continue
 		var state: int = Steam.getFriendPersonaState(id)
-		if state == Steam.PERSONA_STATE_OFFLINE or state == Steam.PERSONA_STATE_INVISIBLE:
+		if state == Steam.PERSONA_STATE_OFFLINE:
 			continue
 		Steam.requestFriendRichPresence(id)
 		var name := Steam.getFriendPersonaName(id)
@@ -448,7 +457,7 @@ func _make_row(friend: Dictionary, room_full: bool, has_company: bool, verbs_liv
 	invite.disabled = true
 	verbs.add_child(invite)
 
-	if not has_company:
+	if not has_company and int(friend["lobby_id"]) != 0:
 		var join := _make_verb("Join")
 		join.disabled = not verbs_live
 		join.pressed.connect(_on_join_pressed.bind(int(friend["lobby_id"]), int(friend["steam_id"])))
