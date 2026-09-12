@@ -9,11 +9,15 @@ extends RefCounted
 const CAPACITY := 3
 ## The count the room waits for by default; `--min-players=N` lowers it (spec section 11).
 const DEFAULT_MIN_PLAYERS := 3
+## Seconds from the ready-up firing to the launch, counted on the notice board.
+const COUNTDOWN_SECONDS := 3.0
 
 const MONSTER_TRUCK := &"monster_truck"
 ## The vehicles the booking board offers this slice; the other rows are locked and a pick of
 ## them is refused, so a click on a locked row does nothing wherever it is sent from.
 const BOOKABLE_VEHICLES: Array[StringName] = [MONSTER_TRUCK]
+## How the notice board names a vehicle: "Monster truck. 3."
+const VEHICLE_NAMES := {MONSTER_TRUCK: "Monster truck"}
 
 const DRIVER := &"driver"
 const SPOTTER := &"spotter"
@@ -28,6 +32,14 @@ const NAMED_ROLES: Array[StringName] = [DRIVER, SPOTTER, NAVIGATOR]
 signal booking_formed(vehicle: StringName)
 ## The booking dissolved (a drop, a switch, or a departure); every hold was released.
 signal booking_dissolved
+## The ready-up fired: the examiner calls the booking and the notice board starts counting.
+signal countdown_started
+## Something the ready-up needs stopped holding mid-count; the notice board goes back to
+## its state line and nothing is announced.
+signal countdown_cancelled
+## The count reached its end: `roles` maps every Steam id to the named role they leave with,
+## the deal for Random holders included. The room fades and the test area loads.
+signal launched(vehicle: StringName, roles: Dictionary)
 
 
 ## One player in the room, in arrival order. Palette 1/2/3 is the arrival slot's fixed colour.
@@ -42,16 +54,16 @@ class Player extends RefCounted:
 	## The chair (1 to 3) this player sits in, which is the ready-up, or 0 when standing.
 	var chair: int = 0
 
+	func _init(id: int, name: String, palette_number: int) -> void:
+		steam_id = id
+		display_name = name
+		palette = palette_number
+
 	func is_seated() -> bool:
 		return chair != 0
 
 	func holds_a_role() -> bool:
 		return hold != &""
-
-	func _init(id: int, name: String, palette_number: int) -> void:
-		steam_id = id
-		display_name = name
-		palette = palette_number
 
 
 ## The count the room waits for: booking, roles, seated, and the notice board's "of N".
@@ -60,6 +72,11 @@ var min_players: int
 var bookable_vehicles: Array[StringName]
 ## Every player in the room, in arrival order.
 var players: Array[Player] = []
+
+## Seconds left on the count while it runs; negative when it is not running.
+var _countdown_remaining := -1.0
+## Steam id to named role, set by the deal at launch; empty until then and after a return.
+var _launched_roles: Dictionary = {}
 
 
 func _init(waits_for: int = DEFAULT_MIN_PLAYERS, bookable: Array[StringName] = BOOKABLE_VEHICLES) -> void:
@@ -83,18 +100,20 @@ func player(steam_id: int) -> Player:
 func arrive(steam_id: int, display_name: String) -> bool:
 	if players.size() >= CAPACITY or player(steam_id) != null:
 		return false
+	var before := booking()
 	players.append(Player.new(steam_id, display_name, _free_palette()))
+	_settle(before)
 	return true
 
 
-## A player walks out. Their pick goes with them.
+## A player walks out. Their pick and hold go with them.
 func leave(steam_id: int) -> bool:
 	var leaver := player(steam_id)
 	if leaver == null:
 		return false
 	var before := booking()
 	players.erase(leaver)
-	_settle_booking(before)
+	_settle(before)
 	return true
 
 
@@ -105,7 +124,7 @@ func pick(steam_id: int, vehicle: StringName) -> bool:
 		return false
 	var before := booking()
 	picker.pick = vehicle
-	_settle_booking(before)
+	_settle(before)
 	return true
 
 
@@ -116,7 +135,7 @@ func drop_pick(steam_id: int) -> bool:
 		return false
 	var before := booking()
 	picker.pick = &""
-	_settle_booking(before)
+	_settle(before)
 	return true
 
 
@@ -126,21 +145,20 @@ func take(steam_id: int, role: StringName) -> bool:
 	var taker := player(steam_id)
 	if taker == null or not has_booking() or taker.hold == role:
 		return false
-	if role == RANDOM:
-		taker.hold = role
-		return true
-	if not NAMED_ROLES.has(role) or holder_of(role) != null:
+	if role != RANDOM and (not NAMED_ROLES.has(role) or holder_of(role) != null):
 		return false
 	taker.hold = role
+	_settle(booking())
 	return true
 
 
 ## Drop the held role.
 func drop_hold(steam_id: int) -> bool:
 	var holder := player(steam_id)
-	if holder == null or holder.hold == &"":
+	if holder == null or not holder.holds_a_role():
 		return false
 	holder.hold = &""
+	_settle(booking())
 	return true
 
 
@@ -173,6 +191,7 @@ func sit(steam_id: int, chair: int) -> bool:
 		if occupant.chair == chair:
 			return false
 	sitter.chair = chair
+	_settle(booking())
 	return true
 
 
@@ -182,7 +201,21 @@ func stand(steam_id: int) -> bool:
 	if sitter == null or not sitter.is_seated():
 		return false
 	sitter.chair = 0
+	_settle(booking())
 	return true
+
+
+## Advance the countdown by `delta` seconds. At the end of the count the Random holders are
+## dealt the remaining named roles and `launched` fires; nothing is dealt before that.
+func tick(delta: float) -> void:
+	if not is_counting_down():
+		return
+	_countdown_remaining -= delta
+	if _countdown_remaining > 0.0:
+		return
+	_countdown_remaining = -1.0
+	_launched_roles = _deal()
+	launched.emit(booking(), _launched_roles)
 
 
 func has_booking() -> bool:
@@ -200,6 +233,21 @@ func booking() -> StringName:
 		if picks[occupant.pick] >= min_players:
 			return occupant.pick
 	return &""
+
+
+func is_counting_down() -> bool:
+	return _countdown_remaining > 0.0
+
+
+## The number the notice board shows while counting: 3, 2, 1.
+func countdown_count() -> int:
+	return maxi(1, ceili(_countdown_remaining))
+
+
+## Every player's named role once the count has ended, the deal included; empty before
+## launch and again after the return from the test area.
+func launched_roles() -> Dictionary:
+	return _launched_roles
 
 
 ## The one line of signage on the notice board: the first thing the room is still waiting
@@ -220,20 +268,57 @@ func notice_board_line() -> String:
 		return "Roles: %d of %d." % [holding, min_players]
 	if seated < players.size():
 		return "Seated: %d of %d." % [seated, min_players]
-	return ""
+	return "%s. %d." % [_vehicle_name(booking()), countdown_count()]
 
 
-## Raises the booking events for a change from `before` to the booking as it now stands.
-func _settle_booking(before: StringName) -> void:
+## Whether the ready-up's conditions all hold: N players, a booking, every player holding a
+## named role or Random, every player seated. Evaluated after every command.
+func _is_ready() -> bool:
+	if players.size() < min_players or not has_booking():
+		return false
+	for occupant in players:
+		if not occupant.holds_a_role() or not occupant.is_seated():
+			return false
+	return true
+
+
+## After every command: raise the booking events for a change from `before` to the booking
+## as it now stands (releasing every hold on dissolution), then start or cancel the count.
+func _settle(before: StringName) -> void:
 	var after := booking()
-	if before == after:
-		return
-	if before != &"":
-		for occupant in players:
-			occupant.hold = &""
-		booking_dissolved.emit()
-	if after != &"":
-		booking_formed.emit(after)
+	if before != after:
+		if before != &"":
+			for occupant in players:
+				occupant.hold = &""
+			booking_dissolved.emit()
+		if after != &"":
+			booking_formed.emit(after)
+	var ready := _is_ready()
+	if ready and not is_counting_down() and _launched_roles.is_empty():
+		_countdown_remaining = COUNTDOWN_SECONDS
+		countdown_started.emit()
+	elif not ready and is_counting_down():
+		_countdown_remaining = -1.0
+		countdown_cancelled.emit()
+
+
+## Every player's named role at launch: named holders keep theirs; Random holders are dealt
+## the remaining named roles, shuffled, one each, in arrival order.
+func _deal() -> Dictionary:
+	var remaining := NAMED_ROLES.duplicate()
+	var roles := {}
+	for occupant in players:
+		if occupant.hold != RANDOM:
+			roles[occupant.steam_id] = occupant.hold
+			remaining.erase(occupant.hold)
+	remaining.shuffle()
+	for holder in random_holders():
+		roles[holder.steam_id] = remaining.pop_front()
+	return roles
+
+
+func _vehicle_name(vehicle: StringName) -> String:
+	return VEHICLE_NAMES.get(vehicle, String(vehicle).capitalize())
 
 
 func _free_palette() -> int:
