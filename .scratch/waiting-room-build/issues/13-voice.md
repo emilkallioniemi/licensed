@@ -35,3 +35,5 @@ Deferred, do not build: per-player mute, volume sliders, noise gate, mic device 
 ## Comments
 
 **From ticket 09 (orchestrator).** Emil: no friend available; two-machine Steam checks are assumed. The echo under three local instances is the agent acceptance. Tick the two-account box as assumed (or `wontfix` per this ticket's own weekend rule) — do not park mid-build waiting for a second account.
+
+**From ticket 12 (orchestrator).** Empty Voice VBox on the Escape overlay is the slot for mic mode and mute. Overlay: `scripts/escape_overlay.gd` (or similar — find it). Stations keep running while the overlay is open. `RoomState.return_from_test_area()` plus entrance theatre is Back.
