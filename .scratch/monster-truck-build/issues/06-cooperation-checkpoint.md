@@ -27,4 +27,6 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 
 ## Comments
 
+- From ticket 01: Three-peer development ENet launch and display transition checks pass; these do not establish three-human Steam cooperation or feel acceptance.
+
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.

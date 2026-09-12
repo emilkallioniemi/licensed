@@ -54,6 +54,8 @@ var _clean_leavers: Dictionary = {}
 var _watching := false
 ## True once `launched` has started the fade; stations and the tick stop owning the room.
 var _in_test_area := false
+var _presented_attempt := ""
+var _attempt_broadcast_elapsed := 0.0
 ## True while Back or shared fate is walking everyone through the entrance.
 var _returning := false
 var _test_door: AudioStreamPlayer3D
@@ -255,7 +257,17 @@ func _bind_room(room: RoomState) -> void:
 
 
 func _process(delta: float) -> void:
-	if _room == null or not multiplayer.is_server() or _in_test_area:
+	if _room == null or not multiplayer.is_server():
+		return
+	if _room.has_attempt():
+		_room.attempt.tick(delta)
+		if _room.attempt.phase == &"departing":
+			_apply_return_from_test_area()
+			return
+		_attempt_broadcast_elapsed += delta
+		if _attempt_broadcast_elapsed >= 0.1:
+			_attempt_broadcast_elapsed = 0.0
+			_replicate()
 		return
 	if not _room.is_counting_down():
 		return
@@ -280,13 +292,46 @@ func _on_launched(_vehicle: StringName, _roles: Dictionary) -> void:
 	if _in_test_area:
 		return
 	_in_test_area = true
+	var attempt_id: String = _room.attempt.id
 	_silence_stations()
 	_play_test_area_door()
 	fade.to_black(TRANSITION)
 	_fade_music(TRANSITION)
 	await get_tree().create_timer(TRANSITION).timeout
-	if not is_inside_tree():
+	if not is_inside_tree() or _room.attempt.id != attempt_id or _room.attempt.phase != &"loading":
 		return
+	# The current car park is built with the room. Future geometry can load here;
+	# readiness is acknowledged only after the scene and its collision are ready.
+	var loaded := test_area != null and test_area.is_node_ready() and test_area.is_prepared()
+	if multiplayer.is_server():
+		_accept_scene_ready(multiplayer.get_unique_id(), attempt_id, loaded)
+	else:
+		_scene_ready.rpc_id(1, attempt_id, loaded)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _scene_ready(attempt_id: String, loaded: bool) -> void:
+	if multiplayer.is_server():
+		_accept_scene_ready(multiplayer.get_remote_sender_id(), attempt_id, loaded)
+
+
+func _accept_scene_ready(peer_id: int, attempt_id: String, loaded: bool) -> void:
+	var player_id: int = _steam_id_of.get(peer_id, 0)
+	if player_id == 0 or _room.attempt.id != attempt_id or _room.attempt.phase != &"loading":
+		return
+	if not loaded:
+		_room.attempt.depart()
+		_apply_return_from_test_area()
+		return
+	if _room.attempt.scene_ready(player_id, attempt_id):
+		_replicate()
+		_present_arrival()
+
+
+func _present_arrival() -> void:
+	if _room.attempt.phase != &"active" or _presented_attempt == _room.attempt.id:
+		return
+	_presented_attempt = _room.attempt.id
 	_enter_test_area()
 	fade.to_clear(TRANSITION)
 
@@ -353,13 +398,13 @@ func _place_in_bays() -> void:
 		learner.global_transform = test_area.bay_transform(occupant.palette - 1)
 		learner.velocity = Vector3.ZERO
 		if learner.is_local():
-			test_area.show_own_role(Learner.role_label(dealt))
+			test_area.show_own_role("")
 
 
 func _apply_return_from_test_area() -> void:
-	if not multiplayer.is_server() or not _in_test_area:
+	if not multiplayer.is_server() or not _in_test_area or _returning:
 		return
-	_room.return_from_test_area()
+	_room.attempt.depart()
 	_replicate()
 	_play_return()
 
@@ -384,6 +429,10 @@ func _play_return() -> void:
 		return
 	await _play_return_arrivals()
 	_returning = false
+	_presented_attempt = ""
+	if multiplayer.is_server():
+		_room.return_from_test_area()
+		_replicate()
 
 
 func _restore_waiting_room() -> void:
@@ -497,7 +546,7 @@ func _receive_state(data: Dictionary) -> void:
 		_bind_room(_room)
 	var had_booking := _room.has_booking()
 	var was_counting := _room.is_counting_down()
-	var had_launched := not _room.launched_roles().is_empty()
+	var had_launched := _room.has_attempt()
 	_room.restore(data)
 	# restore() is silent; a state diff raises the host's events so later views (booking
 	# sound, examiner line) can connect to `_room` on every machine.
@@ -507,12 +556,14 @@ func _receive_state(data: Dictionary) -> void:
 		_room.booking_dissolved.emit()
 	if not was_counting and _room.is_counting_down():
 		_room.countdown_started.emit()
-	elif was_counting and not _room.is_counting_down() and _room.launched_roles().is_empty():
+	elif was_counting and not _room.is_counting_down() and not _room.has_attempt():
 		_room.countdown_cancelled.emit()
-	if not had_launched and not _room.launched_roles().is_empty():
+	if not had_launched and _room.has_attempt():
 		_room.launched.emit(_room.booking(), _room.launched_roles())
-	elif _in_test_area and had_launched and _room.launched_roles().is_empty():
+	if _room.attempt.phase == &"departing":
 		_play_return()
+	elif _room.attempt.phase == &"active":
+		_present_arrival()
 	room_changed.emit()
 
 

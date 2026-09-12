@@ -20,7 +20,7 @@ signal launched(vehicle: StringName, roles: Dictionary)
 
 ## A room holds exactly three players, whatever the room waits for (ADR-0001).
 const CAPACITY := 3
-## The count the room waits for by default; `--min-players=N` lowers it (spec section 11).
+## Shipping always waits for three; reduced counts exist only in debug ENet fixtures.
 const DEFAULT_MIN_PLAYERS := 3
 ## Seconds from the ready-up firing to the launch, counted on the notice board.
 const COUNTDOWN_SECONDS := 3.0
@@ -37,8 +37,8 @@ const SPOTTER := &"spotter"
 const NAVIGATOR := &"navigator"
 ## Not a fourth role: holding Random means being dealt whichever named role is left at launch.
 const RANDOM := &"random"
-## The monster truck's three roles; the role column shows the booked vehicle's roles, and only
-## the monster truck can be booked this slice.
+## Retained roles for vehicles with preassigned controls and regression fixtures.
+## The monster truck does not use these roles.
 const NAMED_ROLES: Array[StringName] = [DRIVER, SPOTTER, NAVIGATOR]
 
 ## The count the room waits for: booking, roles, seated, and the notice board's "of N".
@@ -52,6 +52,7 @@ var players: Array[Player] = []
 var _countdown_remaining := -1.0
 ## Steam id to named role, set by the deal at launch; empty until then and after a return.
 var _launched_roles: Dictionary = {}
+var attempt = preload("res://scripts/attempt_state.gd").new()
 
 
 func _init(waits_for: int = DEFAULT_MIN_PLAYERS, bookable: Array[StringName] = BOOKABLE_VEHICLES) -> void:
@@ -59,9 +60,12 @@ func _init(waits_for: int = DEFAULT_MIN_PLAYERS, bookable: Array[StringName] = B
 	bookable_vehicles = bookable
 
 
-## The count the room waits for, read from the user args after `--`: `--min-players=N`, with
-## N kept between one and the room's capacity. Anything else means three (spec section 11).
+## Development ENet fixtures may lower the count with --min-players=N.
+## The Steam shipping path ignores this flag and always waits for three humans.
 static func min_players_from_args(args: PackedStringArray) -> int:
+	# Reduced counts are development transport fixtures only. Steam always waits for three.
+	if not OS.is_debug_build() or not args.has("--transport=enet"):
+		return DEFAULT_MIN_PLAYERS
 	const FLAG := "--min-players="
 	for arg in args:
 		if arg.begins_with(FLAG):
@@ -85,6 +89,8 @@ func player(steam_id: int) -> Player:
 
 ## A player walks in. Takes the lowest free palette, so survivors of a departure keep theirs.
 func arrive(steam_id: int, display_name: String) -> bool:
+	if has_attempt():
+		return false
 	if players.size() >= CAPACITY or player(steam_id) != null:
 		return false
 	var before := booking()
@@ -100,12 +106,16 @@ func leave(steam_id: int) -> bool:
 		return false
 	var before := booking()
 	players.erase(leaver)
+	if has_attempt():
+		attempt.depart()
 	_after_command(before, true)
 	return true
 
 
 ## Pick a vehicle, or switch to it from the current pick. Same pick again changes nothing.
 func pick(steam_id: int, vehicle: StringName) -> bool:
+	if has_attempt():
+		return false
 	var picker := player(steam_id)
 	if picker == null or not bookable_vehicles.has(vehicle) or picker.pick == vehicle:
 		return false
@@ -117,6 +127,8 @@ func pick(steam_id: int, vehicle: StringName) -> bool:
 
 ## Drop the current pick.
 func drop_pick(steam_id: int) -> bool:
+	if has_attempt():
+		return false
 	var picker := player(steam_id)
 	if picker == null or not picker.has_a_pick():
 		return false
@@ -130,8 +142,10 @@ func drop_pick(steam_id: int) -> bool:
 ## refuses a second taker, which is how a same-frame tie resolves in receive order. A swap
 ## leaves every player holding a role, so it is not one of the count's cancels.
 func take(steam_id: int, role: StringName) -> bool:
+	if has_attempt():
+		return false
 	var taker := player(steam_id)
-	if taker == null or not has_booking() or taker.hold == role:
+	if taker == null or not requires_roles() or not has_booking() or taker.hold == role:
 		return false
 	if role != RANDOM and (not NAMED_ROLES.has(role) or holder_of(role) != null):
 		return false
@@ -142,6 +156,8 @@ func take(steam_id: int, role: StringName) -> bool:
 
 ## Drop the held role.
 func drop_hold(steam_id: int) -> bool:
+	if has_attempt():
+		return false
 	var holder := player(steam_id)
 	if holder == null or not holder.holds_a_role():
 		return false
@@ -153,6 +169,8 @@ func drop_hold(steam_id: int) -> bool:
 ## Sit in a chair: the ready-up. Any chair, first come; the chair never refuses for any other
 ## reason, in any room state. Changing chairs means standing first.
 func sit(steam_id: int, chair: int) -> bool:
+	if has_attempt():
+		return false
 	var sitter := player(steam_id)
 	if sitter == null or sitter.is_seated() or chair < 1 or chair > CAPACITY:
 		return false
@@ -166,6 +184,8 @@ func sit(steam_id: int, chair: int) -> bool:
 
 ## Stand up, taking the ready-up back.
 func stand(steam_id: int) -> bool:
+	if has_attempt():
+		return false
 	var sitter := player(steam_id)
 	if sitter == null or not sitter.is_seated():
 		return false
@@ -184,6 +204,7 @@ func return_from_test_area() -> void:
 		occupant.chair = 0
 	_countdown_remaining = -1.0
 	_launched_roles = {}
+	attempt = preload("res://scripts/attempt_state.gd").new()
 	_after_command(before, false)
 
 
@@ -196,8 +217,20 @@ func tick(delta: float) -> void:
 	if _countdown_remaining > 0.0:
 		return
 	_countdown_remaining = -1.0
+	var participants: Array[int] = []
+	for occupant in players:
+		participants.append(occupant.steam_id)
+	attempt.begin(booking(), participants)
 	_launched_roles = _deal()
 	launched.emit(booking(), _launched_roles)
+
+
+func has_attempt() -> bool:
+	return attempt.phase != &"waiting"
+
+
+func requires_roles() -> bool:
+	return booking() != MONSTER_TRUCK
 
 
 func has_booking() -> bool:
@@ -268,7 +301,7 @@ func notice_board_line() -> String:
 			holding += 1
 		if occupant.is_seated():
 			seated += 1
-	if holding < players.size():
+	if requires_roles() and holding < players.size():
 		return "Roles: %d of %d." % [holding, out_of]
 	if seated < players.size():
 		return "Seated: %d of %d." % [seated, out_of]
@@ -281,6 +314,7 @@ func snapshot() -> Dictionary:
 	for occupant in players:
 		occupants.append(occupant.to_data())
 	return {
+		"attempt": attempt.snapshot(),
 		"min_players": min_players,
 		"players": occupants,
 		"countdown_remaining": _countdown_remaining,
@@ -291,6 +325,7 @@ func snapshot() -> Dictionary:
 ## Replace this record with a replicated `snapshot()`. Silent: a guest's copy renders the
 ## facts and raises no events of its own.
 func restore(data: Dictionary) -> void:
+	attempt.restore(data["attempt"])
 	min_players = data["min_players"]
 	players.clear()
 	for occupant in data["players"]:
@@ -328,7 +363,7 @@ func _raise_booking_events(before: StringName) -> void:
 ## role or Random, every player seated starts the count; any of them failing cancels it.
 func _arm_or_cancel_countdown() -> void:
 	var ready := _is_ready()
-	if ready and not is_counting_down() and _launched_roles.is_empty():
+	if ready and not is_counting_down() and not has_attempt():
 		_countdown_remaining = COUNTDOWN_SECONDS
 		countdown_started.emit()
 	elif not ready and is_counting_down():
@@ -344,7 +379,7 @@ func _is_ready() -> bool:
 	if players.size() < min_players or not has_booking():
 		return false
 	for occupant in players:
-		if not occupant.holds_a_role() or not occupant.is_seated():
+		if (requires_roles() and not occupant.holds_a_role()) or not occupant.is_seated():
 			return false
 	return true
 
@@ -352,6 +387,8 @@ func _is_ready() -> bool:
 ## Every player's named role at launch: named holders keep theirs; Random holders are dealt
 ## the remaining named roles, shuffled, one each, in arrival order.
 func _deal() -> Dictionary:
+	if not requires_roles():
+		return {}
 	var remaining := NAMED_ROLES.duplicate()
 	var roles := {}
 	for occupant in players:

@@ -1,7 +1,8 @@
 class_name TestArea
 extends Node3D
 ## The car park beyond the Test Area door: asphalt, painted bays as boxes, daylight,
-## one MONSTER TRUCK sign. Nothing to do. Slice 1 starts here.
+## one MONSTER TRUCK sign. TEMPORARY ARRIVAL GEOMETRY: ticket 02 replaces the
+## car park with the secured truck, seated examiner and boarding space.
 
 ## Centre-to-centre spacing of the three bays, metres (spec section 8).
 const BAY_SPACING := 1.5
@@ -114,6 +115,10 @@ func bay_transform(index: int) -> Transform3D:
 	if facing.length_squared() <= 0.0001:
 		facing = Vector3.FORWARD
 	return Transform3D(Basis.looking_at(facing.normalized(), Vector3.UP), bay.global_position)
+
+
+func is_prepared() -> bool:
+	return _bays.size() == 3 and get_node_or_null("AsphaltCollision") != null
 
 
 func show_own_role(copy: String) -> void:

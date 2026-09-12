@@ -27,4 +27,6 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 
 ## Comments
 
+- From ticket 01: Replace the labeled temporary car-park arrival geometry with the secured truck, seated examiner and boarding space. Arrival already uses AttemptState readiness and a shared timer.
+
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.

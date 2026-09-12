@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.349 - Forward+ - Using Device #0: AMD - AMD Radeon RX 7900 XTX
+
+SteamClient: hypps (76561198194031611) is at the test centre; rich presence licensed=1
+SteamClient: avatar loaded, 64 x 64
+Voice: recording
+READY_UP_PROBE: seating three players
+WaitingRoom: peer 3 left; 2 in the room
+WaitingRoom: the host vanished
+Transport: ENet hosting a fresh room
+WaitingRoom: the room waits for 3
+WaitingRoom: spawned Learner_1 palette 01 local=true
+WaitingRoom: hypps arrived as palette 01 (1 of 3)
+WaitingRoom: the room waits for 3
+WaitingRoom: spawned Learner_1 palette 01 local=true
+WaitingRoom: hypps arrived as palette 01 (1 of 3)
+Voice: recording
+PASS: three-player ready-up, announcement, cancellation, restart and test-area transition

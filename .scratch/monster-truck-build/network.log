@@ -1,0 +1,29 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+SteamClient: hypps (76561198194031611) is at the test centre; rich presence licensed=1
+WaitingRoom: the room waits for 3
+WaitingRoom: spawned Learner_1 palette 01 local=true
+WaitingRoom: hypps arrived as palette 01 (1 of 3)
+SteamClient: avatar loaded, 64 x 64
+Voice: recording
+Voice: recording
+WaitingRoom: the room waits for 3
+Voice: recording
+WaitingRoom: peer 321273378 connected
+WaitingRoom: spawned Learner_1 palette 01 local=false
+WaitingRoom: spawned Learner_321273378 palette 02 local=false
+WaitingRoom: hypps (2) arrived as palette 02 (2 of 3)
+WaitingRoom: the door for peer 321273378
+WaitingRoom: spawned Learner_321273378 palette 02 local=true
+WaitingRoom: the room waits for 3
+WaitingRoom: peer 1522079725 connected
+WaitingRoom: spawned Learner_1 palette 01 local=false
+WaitingRoom: spawned Learner_321273378 palette 02 local=false
+WaitingRoom: spawned Learner_1522079725 palette 03 local=false
+WaitingRoom: hypps (3) arrived as palette 03 (3 of 3)
+WaitingRoom: the door for peer 1522079725
+WaitingRoom: spawned Learner_1522079725 palette 03 local=false
+WaitingRoom: the door for peer 1522079725
+WaitingRoom: spawned Learner_1522079725 palette 03 local=true
+WaitingRoom: peer 1522079725 left; 2 in the room
+PASS: three development peers launch by RPC, share arrival/timer and return on guest loss

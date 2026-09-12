@@ -152,8 +152,24 @@ func _build(kit: Node3D) -> void:
 
 	for spec in ROWS:
 		_rows.append(_build_row(spec))
-	for spec in ROLES:
-		_roles.append(_build_role(spec))
+	# Only the monster truck is bookable. Its controls are chosen aboard, so no
+	# role hit targets or occupant strips are created on this board.
+	var roles := _board.find_child("RoleSelection", true, false) as Node3D
+	if roles != null:
+		roles.visible = false
+	var heading := _board.find_child("Role column heading", true, false) as Node3D
+	if heading != null:
+		heading.visible = false
+	var guidance := Label3D.new()
+	guidance.name = "ControlGuidance"
+	guidance.text = "Choose your controls\nin the truck"
+	guidance.font_size = 48
+	guidance.pixel_size = 0.0013
+	guidance.modulate = SCREEN_INK
+	guidance.outline_size = 0
+	_board.add_child(guidance)
+	# Godot's imported board has height along Y and its front along +Z.
+	guidance.position = Vector3(1.08, 1.95, 0.20)
 
 
 func _build_row(spec: Dictionary) -> Dictionary:
@@ -520,7 +536,7 @@ func _on_booking_formed(_vehicle: StringName) -> void:
 
 func _redraw(room: RoomState) -> void:
 	# The deal is revealed in the test area; strips and chips stay as held (spec section 7).
-	if not room.launched_roles().is_empty():
+	if room.has_attempt():
 		return
 	var booked_vehicle := room.booking()
 	for row in _rows:

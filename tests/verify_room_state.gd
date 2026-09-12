@@ -44,6 +44,7 @@ func _verify() -> void:
 	_departure_frees_the_leavers_pick_and_hold()
 	_min_players_comes_from_the_command_line()
 	_replicated_state_round_trips()
+	_monster_truck_booking_and_launch()
 	if _failures > 0:
 		printerr("FAIL: %d checks failed; see the assertion reports above." % _failures)
 		quit(1)
@@ -54,7 +55,7 @@ func _verify() -> void:
 
 ## A room with Emil, Astra, and Brother arrived in that order.
 func _room_of_three(min_players: int = 3) -> RoomStateScript:
-	var room := RoomStateScript.new(min_players)
+	var room := RoomStateScript.new(min_players, [&"fixture_vehicle"])
 	room.arrive(EMIL, "Emil")
 	room.arrive(ASTRA, "Astra")
 	room.arrive(BROTHER, "Brother")
@@ -65,13 +66,13 @@ func _room_of_three(min_players: int = 3) -> RoomStateScript:
 func _booked_room() -> RoomStateScript:
 	var room := _room_of_three()
 	for id in [EMIL, ASTRA, BROTHER]:
-		room.pick(id, RoomStateScript.MONSTER_TRUCK)
+		room.pick(id, &"fixture_vehicle")
 	_check(room.has_booking())
 	return room
 
 
 func _arrival_deals_palettes_in_order() -> void:
-	var room := RoomStateScript.new()
+	var room := RoomStateScript.new(3, [&"fixture_vehicle"])
 	_check(room.player_count() == 0)
 	_check(room.arrive(EMIL, "Emil"))
 	_check(room.arrive(ASTRA, "Astra"))
@@ -101,7 +102,7 @@ func _arrival_deals_palettes_in_order() -> void:
 func _booking_forms_on_the_third_matching_pick() -> void:
 	var room := _room_of_three()
 	var events := Events.new(room)
-	var truck: StringName = RoomStateScript.MONSTER_TRUCK
+	var truck: StringName = &"fixture_vehicle"
 	_check(not room.has_booking())
 	# Nobody arrives with a pick.
 	_check(room.player(EMIL).pick == &"")
@@ -139,7 +140,7 @@ func _booking_forms_on_the_third_matching_pick() -> void:
 ## Only the monster truck is bookable this slice, so a switch needs a room whose board offers
 ## two rows; the record takes the bookable list as configuration for the day a second unlocks.
 func _switch_dissolves_the_booking() -> void:
-	var truck: StringName = RoomStateScript.MONSTER_TRUCK
+	var truck: StringName = &"fixture_vehicle"
 	var room := RoomStateScript.new(3, [truck, &"car"])
 	var events := Events.new(room)
 	room.arrive(EMIL, "Emil")
@@ -156,9 +157,9 @@ func _switch_dissolves_the_booking() -> void:
 
 
 func _booking_forms_at_n_under_min_players() -> void:
-	var room := RoomStateScript.new(2)
+	var room := RoomStateScript.new(2, [&"fixture_vehicle"])
 	var events := Events.new(room)
-	var truck: StringName = RoomStateScript.MONSTER_TRUCK
+	var truck: StringName = &"fixture_vehicle"
 	room.arrive(EMIL, "Emil")
 	room.arrive(ASTRA, "Astra")
 	room.pick(EMIL, truck)
@@ -227,12 +228,12 @@ func _holds_follow_the_booking() -> void:
 	_check(room.holder_of(navigator) == null and room.random_holders().is_empty())
 	# Dead again until it re-forms.
 	_check(not room.take(EMIL, navigator))
-	room.pick(BROTHER, RoomStateScript.MONSTER_TRUCK)
+	room.pick(BROTHER, &"fixture_vehicle")
 	_check(room.take(EMIL, navigator))
 
 
 func _notice_board_states_what_the_room_waits_for() -> void:
-	var room := RoomStateScript.new()
+	var room := RoomStateScript.new(3, [&"fixture_vehicle"])
 	_check(room.notice_board_line() == "Waiting for 3.")
 	room.arrive(EMIL, "Emil")
 	_check(room.notice_board_line() == "Waiting for 2.")
@@ -241,10 +242,10 @@ func _notice_board_states_what_the_room_waits_for() -> void:
 	room.arrive(BROTHER, "Brother")
 	_check(room.notice_board_line() == "No booking.")
 	# Two matching picks are still no booking; disagreement is quiet.
-	room.pick(EMIL, RoomStateScript.MONSTER_TRUCK)
-	room.pick(ASTRA, RoomStateScript.MONSTER_TRUCK)
+	room.pick(EMIL, &"fixture_vehicle")
+	room.pick(ASTRA, &"fixture_vehicle")
 	_check(room.notice_board_line() == "No booking.")
-	room.pick(BROTHER, RoomStateScript.MONSTER_TRUCK)
+	room.pick(BROTHER, &"fixture_vehicle")
 	_check(room.notice_board_line() == "Roles: 0 of 3.")
 	room.take(EMIL, RoomStateScript.DRIVER)
 	room.take(ASTRA, RoomStateScript.RANDOM)
@@ -278,14 +279,14 @@ func _notice_board_states_what_the_room_waits_for() -> void:
 
 
 func _notice_board_counts_out_of_n() -> void:
-	var room := RoomStateScript.new(2)
+	var room := RoomStateScript.new(2, [&"fixture_vehicle"])
 	_check(room.notice_board_line() == "Waiting for 2.")
 	room.arrive(EMIL, "Emil")
 	_check(room.notice_board_line() == "Waiting for 1.")
 	room.arrive(ASTRA, "Astra")
 	_check(room.notice_board_line() == "No booking.")
-	room.pick(EMIL, RoomStateScript.MONSTER_TRUCK)
-	room.pick(ASTRA, RoomStateScript.MONSTER_TRUCK)
+	room.pick(EMIL, &"fixture_vehicle")
+	room.pick(ASTRA, &"fixture_vehicle")
 	_check(room.notice_board_line() == "Roles: 0 of 2.")
 	room.take(EMIL, RoomStateScript.NAVIGATOR)
 	_check(room.notice_board_line() == "Roles: 1 of 2.")
@@ -300,8 +301,8 @@ func _notice_board_counts_out_of_n() -> void:
 func _ready_up_two(room: RoomStateScript) -> void:
 	room.arrive(EMIL, "Emil")
 	room.arrive(ASTRA, "Astra")
-	room.pick(EMIL, RoomStateScript.MONSTER_TRUCK)
-	room.pick(ASTRA, RoomStateScript.MONSTER_TRUCK)
+	room.pick(EMIL, &"fixture_vehicle")
+	room.pick(ASTRA, &"fixture_vehicle")
 	room.take(EMIL, RoomStateScript.SPOTTER)
 	room.take(ASTRA, RoomStateScript.RANDOM)
 	room.sit(EMIL, 1)
@@ -327,13 +328,13 @@ func _countdown_starts_only_when_everything_holds() -> void:
 	_check(room.notice_board_line() == "Seated: 2 of 3.")
 	room.sit(BROTHER, 3)
 	_check(room.is_counting_down() and events.countdown_started == 1)
-	_check(room.notice_board_line() == "Monster truck. 3.")
+	_check(room.notice_board_line() == "fixture_vehicle. 3.")
 	room.tick(1.0)
-	_check(room.notice_board_line() == "Monster truck. 2.")
+	_check(room.notice_board_line() == "fixture_vehicle. 2.")
 	room.tick(1.0)
-	_check(room.notice_board_line() == "Monster truck. 1.")
+	_check(room.notice_board_line() == "fixture_vehicle. 1.")
 	room.tick(0.5)
-	_check(room.notice_board_line() == "Monster truck. 1.")
+	_check(room.notice_board_line() == "fixture_vehicle. 1.")
 	_check(events.launches.is_empty(), "nothing is dealt during the count")
 	_check(room.launched_roles().is_empty())
 	room.tick(0.6)
@@ -344,11 +345,11 @@ func _countdown_starts_only_when_everything_holds() -> void:
 	room.tick(5.0)
 	_check(events.launches.size() == 1 and events.countdown_started == 1)
 	# Under --min-players=2 the count fires at two.
-	var short_room := RoomStateScript.new(2)
+	var short_room := RoomStateScript.new(2, [&"fixture_vehicle"])
 	var short_events := Events.new(short_room)
 	_ready_up_two(short_room)
 	_check(short_room.is_counting_down() and short_events.countdown_started == 1)
-	_check(short_room.notice_board_line() == "Monster truck. 3.")
+	_check(short_room.notice_board_line() == "fixture_vehicle. 3.")
 
 
 func _countdown_is_cancelled_by_any_change() -> void:
@@ -357,7 +358,7 @@ func _countdown_is_cancelled_by_any_change() -> void:
 	var events := Events.new(room)
 	room.sit(BROTHER, 3)
 	room.tick(1.5)
-	_check(room.notice_board_line() == "Monster truck. 2.")
+	_check(room.notice_board_line() == "fixture_vehicle. 2.")
 	room.stand(ASTRA)
 	_check(not room.is_counting_down() and events.countdown_cancelled == 1)
 	_check(room.notice_board_line() == "Seated: 2 of 3.")
@@ -366,7 +367,7 @@ func _countdown_is_cancelled_by_any_change() -> void:
 	# Re-arming starts a fresh count of three.
 	room.sit(ASTRA, 2)
 	_check(events.countdown_started == 2)
-	_check(room.notice_board_line() == "Monster truck. 3.")
+	_check(room.notice_board_line() == "fixture_vehicle. 3.")
 	# A pick change.
 	room.drop_pick(EMIL)
 	_check(not room.is_counting_down() and events.countdown_cancelled == 2)
@@ -397,7 +398,7 @@ func _countdown_is_cancelled_even_when_the_booking_survives() -> void:
 	var room := _room_of_three(2)
 	var events := Events.new(room)
 	for id in [EMIL, ASTRA, BROTHER]:
-		room.pick(id, RoomStateScript.MONSTER_TRUCK)
+		room.pick(id, &"fixture_vehicle")
 	room.take(EMIL, RoomStateScript.DRIVER)
 	room.take(ASTRA, RoomStateScript.RANDOM)
 	room.take(BROTHER, RoomStateScript.RANDOM)
@@ -408,18 +409,18 @@ func _countdown_is_cancelled_even_when_the_booking_survives() -> void:
 	room.sit(BROTHER, 3)
 	_check(room.is_counting_down() and events.countdown_started == 1)
 	room.tick(2.0)
-	_check(room.notice_board_line() == "Monster truck. 1.")
+	_check(room.notice_board_line() == "fixture_vehicle. 1.")
 	# A pick change with the booking intact: cancelled, then armed again from three.
 	room.drop_pick(BROTHER)
 	_check(room.has_booking())
 	_check(events.countdown_cancelled == 1 and events.countdown_started == 2)
-	_check(room.notice_board_line() == "Monster truck. 3.")
+	_check(room.notice_board_line() == "fixture_vehicle. 3.")
 	room.tick(2.0)
 	# A departure with the booking intact: the same.
 	room.leave(BROTHER)
 	_check(room.has_booking())
 	_check(events.countdown_cancelled == 2 and events.countdown_started == 3)
-	_check(room.notice_board_line() == "Monster truck. 3.")
+	_check(room.notice_board_line() == "fixture_vehicle. 3.")
 	_check(events.launches.is_empty())
 
 
@@ -467,7 +468,7 @@ func _deal_gives_random_holders_the_remaining_roles() -> void:
 		EMIL: RoomStateScript.NAVIGATOR, ASTRA: RoomStateScript.DRIVER, BROTHER: RoomStateScript.SPOTTER,
 	})
 	# Under --min-players=2, named plus dealt sums to two and the dealt role is one nobody holds.
-	var short_room := RoomStateScript.new(2)
+	var short_room := RoomStateScript.new(2, [&"fixture_vehicle"])
 	var short_events := Events.new(short_room)
 	_ready_up_two(short_room)
 	short_room.tick(3.0)
@@ -498,7 +499,7 @@ func _return_from_the_test_area_clears_everything() -> void:
 	_check(events.countdown_cancelled == 0, "nothing was counting")
 	# The ritual runs again from the start, and the count arms again.
 	for id in [EMIL, ASTRA, BROTHER]:
-		room.pick(id, RoomStateScript.MONSTER_TRUCK)
+		room.pick(id, &"fixture_vehicle")
 	for id in [EMIL, ASTRA, BROTHER]:
 		room.take(id, RoomStateScript.RANDOM)
 	room.sit(EMIL, 1)
@@ -524,7 +525,7 @@ func _departure_frees_the_leavers_pick_and_hold() -> void:
 	# can be seen to come free while the column is still awake.
 	var room := _room_of_three(2)
 	for id in [EMIL, ASTRA, BROTHER]:
-		room.pick(id, RoomStateScript.MONSTER_TRUCK)
+		room.pick(id, &"fixture_vehicle")
 	room.take(BROTHER, RoomStateScript.DRIVER)
 	_check(not room.take(EMIL, RoomStateScript.DRIVER))
 	room.leave(BROTHER)
@@ -547,12 +548,12 @@ func _departure_frees_the_leavers_pick_and_hold() -> void:
 func _min_players_comes_from_the_command_line() -> void:
 	_check(RoomStateScript.min_players_from_args(PackedStringArray()) == 3)
 	_check(RoomStateScript.min_players_from_args(PackedStringArray(["--transport=enet"])) == 3)
-	_check(RoomStateScript.min_players_from_args(PackedStringArray(["--min-players=2"])) == 2)
+	_check(RoomStateScript.min_players_from_args(PackedStringArray(["--transport=enet", "--min-players=2"])) == 2)
 	_check(RoomStateScript.min_players_from_args(PackedStringArray(["--transport=enet", "--min-players=1"])) == 1)
 	# Never fewer than one, never more than the room holds, never garbage.
-	_check(RoomStateScript.min_players_from_args(PackedStringArray(["--min-players=0"])) == 1)
-	_check(RoomStateScript.min_players_from_args(PackedStringArray(["--min-players=7"])) == 3)
-	_check(RoomStateScript.min_players_from_args(PackedStringArray(["--min-players=two"])) == 3)
+	_check(RoomStateScript.min_players_from_args(PackedStringArray(["--transport=enet", "--min-players=0"])) == 1)
+	_check(RoomStateScript.min_players_from_args(PackedStringArray(["--transport=enet", "--min-players=7"])) == 3)
+	_check(RoomStateScript.min_players_from_args(PackedStringArray(["--transport=enet", "--min-players=two"])) == 3)
 	_check(RoomStateScript.min_players_from_args(PackedStringArray(["--min-players"])) == 3)
 
 
@@ -561,19 +562,19 @@ func _replicated_state_round_trips() -> void:
 	var host := _room_one_seat_short()
 	host.sit(BROTHER, 3)
 	host.tick(1.2)
-	_check(host.notice_board_line() == "Monster truck. 2.")
-	var guest := RoomStateScript.new()
+	_check(host.notice_board_line() == "fixture_vehicle. 2.")
+	var guest := RoomStateScript.new(3, [&"fixture_vehicle"])
 	guest.restore(host.snapshot())
 	_check(guest.player_count() == 3)
 	_check(guest.min_players == 3)
 	_check(guest.player(ASTRA).display_name == "Astra" and guest.player(ASTRA).palette == 2)
 	_check(guest.players[2].steam_id == BROTHER, "arrival order is kept")
-	_check(guest.booking() == RoomStateScript.MONSTER_TRUCK)
+	_check(guest.booking() == &"fixture_vehicle")
 	_check(guest.holder_of(RoomStateScript.DRIVER).display_name == "Emil")
 	_check(guest.random_holders().size() == 2)
 	_check(guest.player(BROTHER).chair == 3)
 	_check(guest.is_counting_down())
-	_check(guest.notice_board_line() == "Monster truck. 2.")
+	_check(guest.notice_board_line() == "fixture_vehicle. 2.")
 	_check(guest.launched_roles().is_empty())
 	# The snapshot is plain data a reliable RPC can carry.
 	var data: Dictionary = host.snapshot()
@@ -606,3 +607,78 @@ class Events extends RefCounted:
 		room.countdown_started.connect(func() -> void: countdown_started += 1)
 		room.countdown_cancelled.connect(func() -> void: countdown_cancelled += 1)
 		room.launched.connect(func(_vehicle: StringName, roles: Dictionary) -> void: launches.append(roles))
+
+
+## The preassigned-role checks above use an unshipped fixture vehicle; the only
+## shipping booking is the monster truck, which requires no roles.
+func _monster_truck_booking_and_launch() -> void:
+	var room := RoomStateScript.new()
+	_check(RoomStateScript.min_players_from_args(PackedStringArray(["--min-players=1"])) == 3)
+	_check(RoomStateScript.min_players_from_args(PackedStringArray(["--transport=steam", "--min-players=2"])) == 3)
+	_check(room.notice_board_line() == "Waiting for 3.")
+	for id in [1001, 1002, 1003]:
+		_check(room.arrive(id, "Learner %d" % id))
+	_check(not room.arrive(1004, "Fourth"))
+	_check(not room.arrive(1001, "Duplicate"))
+	_check(room.notice_board_line() == "No booking.")
+	_check(not room.pick(1001, &"locked_vehicle"))
+	room.pick(1001, RoomStateScript.MONSTER_TRUCK)
+	room.pick(1002, RoomStateScript.MONSTER_TRUCK)
+	_check(not room.has_booking())
+	room.pick(1003, RoomStateScript.MONSTER_TRUCK)
+	_check(room.has_booking())
+	_check(room.notice_board_line() == "Seated: 0 of 3.")
+	_check(not room.take(1001, RoomStateScript.DRIVER))
+	_check(not room.take(1002, RoomStateScript.RANDOM))
+	_check(not room.has_attempt())
+	room.sit(1001, 1)
+	_check(not room.sit(1002, 1))
+	room.sit(1002, 2)
+	_check(not room.is_counting_down())
+	room.sit(1003, 3)
+	_check(room.is_counting_down())
+	_check(room.notice_board_line() == "Monster truck. 3.")
+	room.tick(1.2)
+	_check(room.notice_board_line() == "Monster truck. 2.")
+	var guest := RoomStateScript.new()
+	guest.restore(room.snapshot())
+	_check(guest.snapshot() == room.snapshot())
+	room.stand(1003)
+	_check(not room.is_counting_down())
+	room.tick(4.0)
+	_check(not room.has_attempt())
+	room.sit(1003, 3)
+	_check(room.countdown_count() == 3)
+	room.drop_pick(1001)
+	_check(not room.is_counting_down() and not room.has_booking())
+	room.pick(1001, RoomStateScript.MONSTER_TRUCK)
+	room.leave(1002)
+	_check(not room.is_counting_down())
+	_check(room.notice_board_line() == "Waiting for 1.")
+	_check(room.player(1003).palette == 3)
+	room.arrive(1002, "Learner 1002")
+	_check(room.player(1002).palette == 2)
+	_check(room.player(1002).pick == &"")
+	room.pick(1002, RoomStateScript.MONSTER_TRUCK)
+	room.sit(1002, 2)
+	room.tick(3.0)
+	_check(room.has_attempt())
+	_check(room.attempt.id != "")
+	_check(room.attempt.phase == &"loading")
+	_check(room.launched_roles().is_empty())
+	var first_id: String = room.attempt.id
+	guest.restore(room.snapshot())
+	_check(guest.attempt.id == first_id and guest.attempt.phase == &"loading")
+	room.tick(5.0)
+	_check(room.attempt.id == first_id)
+	room.return_from_test_area()
+	guest.restore(room.snapshot())
+	_check(not guest.has_attempt())
+	_check(guest.notice_board_line() == "No booking.")
+	for occupant in room.players:
+		_check(occupant.pick == &"" and occupant.hold == &"" and occupant.chair == 0)
+		room.pick(occupant.steam_id, RoomStateScript.MONSTER_TRUCK)
+		room.sit(occupant.steam_id, occupant.palette)
+	room.tick(3.0)
+	_check(room.attempt.id != first_id)
+	_check(str_to_var(var_to_str(room.snapshot())) == room.snapshot())

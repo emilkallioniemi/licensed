@@ -67,7 +67,7 @@ func _on_room_changed() -> void:
 	if room == null:
 		return
 	# Launch has placed everyone in the test area; chairs no longer own the bodies.
-	if not room.launched_roles().is_empty():
+	if room.has_attempt():
 		for station in _stations:
 			station.set_listening(false)
 		return
