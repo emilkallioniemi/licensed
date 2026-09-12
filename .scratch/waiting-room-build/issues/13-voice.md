@@ -31,3 +31,7 @@ Deferred, do not build: per-player mute, volume sliders, noise gate, mic device 
 - [ ] Push-to-talk transmits only while the key is held; mute stops your own microphone entirely.
 - [ ] Voice keeps working after the transition into the test area and after Back.
 - [ ] Two real Steam accounts on two machines hear each other; the result and the date are written into the ticket's Comments. If not achieved within the weekend, Status is `wontfix` with the reason.
+
+## Comments
+
+**From ticket 09 (orchestrator).** Emil: no friend available; two-machine Steam checks are assumed. The echo under three local instances is the agent acceptance. Tick the two-account box as assumed (or `wontfix` per this ticket's own weekend rule) — do not park mid-build waiting for a second account.

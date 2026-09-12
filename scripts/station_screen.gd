@@ -3,7 +3,7 @@ extends Node3D
 ## The other half of the station grammar: the camera glides to a dock pose framing the
 ## station, the mouse is released as a cursor, the learner stands still facing the
 ## station, and Escape returns the camera to the head. A screened station (the board,
-## later the desk) adds this on top of `Station`; a chair does not.
+## the desk) adds this on top of `Station`; a chair does not.
 
 signal closed
 ## `collider` is the Area3D the cursor ray hit on the station's surfaces.
@@ -64,6 +64,17 @@ func close() -> void:
 	_learner = null
 	_closing = false
 	closed.emit()
+
+
+## Keep the dock after a failed Join rehosts this room. The old learner is gone; the
+## new one must stand still at the desk so the row can show the failure line.
+func rebind_learner(learner: Learner) -> void:
+	if not _open or _closing or learner == null:
+		return
+	_learner = learner
+	_face_station(learner, _camera.global_transform)
+	learner.set_using_station(true)
+	_camera.current = true
 
 
 func _face_station(learner: Learner, dock: Transform3D) -> void:

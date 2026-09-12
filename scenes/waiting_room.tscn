@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/waiting_room.gd" id="1_room"]
 [ext_resource type="PackedScene" path="res://assets/waiting_room/waiting_room.tscn" id="2_kit"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://scripts/fade_overlay.gd" id="6_fade"]
 [ext_resource type="Script" path="res://scripts/chair_stations.gd" id="7_chairs"]
 [ext_resource type="Script" path="res://scripts/booking_board.gd" id="8_board"]
+[ext_resource type="Script" path="res://scripts/reception_desk.gd" id="9_desk"]
 
 [sub_resource type="Environment" id="Environment_room"]
 background_mode = 1
@@ -94,3 +95,6 @@ script = ExtResource("7_chairs")
 
 [node name="BookingBoard" type="Node3D" parent="."]
 script = ExtResource("8_board")
+
+[node name="ReceptionDesk" type="Node3D" parent="."]
+script = ExtResource("9_desk")

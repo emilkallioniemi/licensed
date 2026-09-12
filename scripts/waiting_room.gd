@@ -7,8 +7,9 @@ extends Node3D
 ## Ticket 06: chairs are stations; sitting is the ready-up.
 ## Ticket 07: the booking board is a screened station; picks and BOOKED render here.
 ## Ticket 08: the role column holds Driver, Spotter, Navigator, or Random.
+## Ticket 09: the reception desk lists friends and joins or leaves a room.
 
-## Views (chairs, the board, later the desk) render from the replicated room state.
+## Views (chairs, the board, the desk) render from the replicated room state.
 signal room_changed
 
 const STEAM_NOT_RUNNING_SCENE := preload("res://scenes/steam_not_running.tscn")
@@ -52,6 +53,8 @@ func _ready() -> void:
 	_add_room_collision()
 	learner_spawner.spawn_function = _spawn_learner
 	Transport.became_ready.connect(_on_transport_ready, CONNECT_ONE_SHOT)
+	Transport.room_switched.connect(_on_room_switched)
+	Transport.join_recovered.connect(_on_join_recovered)
 	if Transport.is_ready():
 		_on_transport_ready()
 
@@ -65,6 +68,7 @@ func _on_transport_ready() -> void:
 		_accept_player(multiplayer.get_unique_id(), SteamClient.steam_id, SteamClient.persona_name)
 		return
 	begin_join()
+	multiplayer.server_disconnected.connect(_on_host_vanished, CONNECT_ONE_SHOT)
 	_report_identity.rpc_id(1, SteamClient.steam_id, SteamClient.persona_name)
 
 
@@ -162,6 +166,7 @@ func room_state() -> RoomState:
 func _replicate() -> void:
 	if not multiplayer.is_server():
 		return
+	Transport.set_occupancy(_room.player_count())
 	_receive_state.rpc(_room.snapshot())
 	room_changed.emit()
 
@@ -237,8 +242,62 @@ func begin_join() -> void:
 ## Ticket 09 calls this on Leave. Remaining machines play the reverse theatre on disconnect.
 func begin_leave() -> void:
 	fade.to_black()
-	if not multiplayer.is_server() and multiplayer.multiplayer_peer != null:
+	if not multiplayer.is_server() and _peer_connected():
 		_announce_leave.rpc_id(1)
+
+
+## Guest Leave, or a guest whose host vanished: a fresh hosted room, alone at the entrance.
+func leave_to_own_room() -> void:
+	begin_leave()
+	await get_tree().create_timer(0.25).timeout
+	if is_inside_tree():
+		Transport.host_fresh()
+
+
+func _on_room_switched() -> void:
+	get_tree().reload_current_scene.call_deferred()
+
+
+func _on_join_recovered() -> void:
+	print("WaitingRoom: Join failed; this room is still ours")
+	_reset_as_lone_host()
+	fade.to_clear()
+
+
+func _reset_as_lone_host() -> void:
+	var pose := Transform3D.IDENTITY
+	var had_pose := false
+	for child in learner_spawner.get_children():
+		if child is Learner and (child as Learner).is_local():
+			pose = (child as Learner).global_transform
+			had_pose = true
+			break
+	_clean_leavers.clear()
+	_steam_id_of.clear()
+	_watching = false
+	while learner_spawner.get_child_count() > 0:
+		var child := learner_spawner.get_child(0)
+		learner_spawner.remove_child(child)
+		child.free()
+	_room = RoomState.new(RoomState.min_players_from_args(OS.get_cmdline_user_args()))
+	_accept_player(multiplayer.get_unique_id(), SteamClient.steam_id, SteamClient.persona_name)
+	if not had_pose:
+		return
+	var learner := _learner_of(multiplayer.get_unique_id())
+	if learner != null:
+		learner.global_transform = pose
+
+
+func _on_host_vanished() -> void:
+	print("WaitingRoom: the host vanished")
+	if Transport.kind != Transport.STEAM:
+		return
+	leave_to_own_room()
+
+
+func _peer_connected() -> bool:
+	var peer := multiplayer.multiplayer_peer
+	return peer != null and peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED
 
 
 func _reveal_local() -> void:
@@ -314,7 +373,7 @@ func _notification(what: int) -> void:
 
 
 func _quit_cleanly() -> void:
-	if multiplayer.multiplayer_peer != null and not multiplayer.is_server():
+	if _peer_connected() and not multiplayer.is_server():
 		_announce_leave.rpc_id(1)
 		await get_tree().create_timer(0.2).timeout
 	get_tree().quit()

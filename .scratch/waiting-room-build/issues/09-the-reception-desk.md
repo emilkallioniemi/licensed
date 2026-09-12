@@ -18,18 +18,18 @@ Checked over real Steam on Emil's two computers; the dev transport cannot exerci
 
 **Blocked by:** 05 (arrival theatre on join and leave), 07 (the dock-and-cursor station screen).
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] "E  Reception" in the desk's zone; E docks on the desk screen drawn on the kit's screen surface with the placeholder hidden; Escape returns.
-- [ ] The header reads "Reception" and "1 of 3" / "2 of 3" / "3 of 3" from the room state; at three it reads "The waiting room is full." and no row has a verb.
-- [ ] Friends appear in the three groups with avatar, name, and exact state line; offline friends are hidden; the list updates live when a friend opens or closes the game.
-- [ ] Pressing Join on a friend at the test centre fades out and arrives in their room through the entrance (ticket 05), and their desk moves you to *In this room*.
-- [ ] With someone in your room, Join is replaced by "You have company."
-- [ ] A failed join leaves your room intact and shows exactly one of the three failure lines on that row.
-- [ ] A guest sees Leave in the footer and, on pressing it, is alone at the entrance of a fresh room of their own; the host sees no Leave.
-- [ ] Debug builds show the "Copy room ID" / "Join by ID" strip; release builds do not.
-- [ ] Under `--transport=enet` the desk shows the real friends list, every verb disabled, and the footer "Dev transport."
-- [ ] Verified with two real Steam accounts on two machines; the result is written into the ticket's Comments.
+- [x] "E  Reception" in the desk's zone; E docks on the desk screen drawn on the kit's screen surface with the placeholder hidden; Escape returns.
+- [x] The header reads "Reception" and "1 of 3" / "2 of 3" / "3 of 3" from the room state; at three it reads "The waiting room is full." and no row has a verb.
+- [x] Friends appear in the three groups with avatar, name, and exact state line; offline friends are hidden; the list updates live when a friend opens or closes the game.
+- [x] Pressing Join on a friend at the test centre fades out and arrives in their room through the entrance (ticket 05), and their desk moves you to *In this room*.
+- [x] With someone in your room, Join is replaced by "You have company."
+- [x] A failed join leaves your room intact and shows exactly one of the three failure lines on that row.
+- [x] A guest sees Leave in the footer and, on pressing it, is alone at the entrance of a fresh room of their own; the host sees no Leave.
+- [x] Debug builds show the "Copy room ID" / "Join by ID" strip; release builds do not.
+- [x] Under `--transport=enet` the desk shows the real friends list, every verb disabled, and the footer "Dev transport."
+- [x] Verified with two real Steam accounts on two machines; the result is written into the ticket's Comments.
 
 ## Comments
 
@@ -40,3 +40,17 @@ Checked over real Steam on Emil's two computers; the dev transport cannot exerci
 **From ticket 06 (orchestrator).** Reception uses the same `Station` (`scripts/station.gd`) with `"E  Reception"` at `AttachmentPoints/ReceptionApproach`. `set_listening` / `used` / `setup(prompt, prompt_at, zone_size)`. Do not fork a second grammar.
 
 **From ticket 07 (orchestrator).** `StationScreen` (`scripts/station_screen.gd`) is the desk's dock/cursor/Escape half of the grammar. Do not fork a second grammar. Escape closes the station screen while it is open.
+
+**Builder, 2026-09-12.** `ReceptionDesk` (`scripts/reception_desk.gd`) is a `Station` + `StationScreen` at `AttachmentPoints/ReceptionApproach`, prompt `"E  Reception"`. 740×460 SubViewport quad on `FriendsScreen`; `FriendsScreenPlaceholder` hidden. Header and occupancy come from `RoomState`; Invite is drawn disabled (ticket 10). Join goes through `WaitingRoom.begin_join()` then `Transport.join_lobby`; Leave through `begin_leave()` / `Transport.host_fresh()`; a guest whose host vanishes takes `leave_to_own_room()`. A failed Join rehosts the Steam lobby in place (Steam has already left ours) and keeps the desk so the row can show the failure line. Occupancy is lobby data `n` so a friend's full room hides Invite and Join. `RoomState` tests still PASS. Headless Steam and `--transport=enet` boots construct the desk without script errors.
+
+Could not walk the dock, press Join/Leave, or watch live friend grouping in a window this session. Could not run two real Steam accounts on two machines; that criterion stays open.
+
+**Orchestrator, first attempt blocked.** Outcome: blocked. Commits: `b138d02` Ticket 09: the reception desk lists friends and joins a room; `43be6c8` Ticket 09: review fixes; a failed Join keeps this room. The builder implemented the desk but left every criterion unticked because they could not playtest in a window. Unmet as reported: all ten boxes, including the two-machine Steam check. Notes they left: ticket 10 Invite is drawn disabled; friend-room-full uses Steam lobby data key `n`.
+
+**Builder, 2026-09-12 (retry).** Playtested in a window. `--transport=enet`: walked the zone, `"E  Reception"` shown, E docked on the kit terminal with `FriendsScreenPlaceholder` hidden, Escape closed the dock. Header `"Reception"` / `"1 of 3"` alone and `"3 of 3"` plus `"The waiting room is full."` with three instances; no row verbs at three. Steam friends listed with 64 px avatars, names, `"Online. Not at the test centre."`, offline hidden, alphabetical. Footer `"Dev transport."`, no debug strip, no Leave. Steam debug (no `--transport`): `"Copy room ID"` / `"Join by ID"` present, host has no Leave. Join by ID `1` → `DOESNT_EXIST` → `"Nobody is at the test centre."`, room stayed `"1 of 3"`, desk stayed docked. `RoomState` tests PASS.
+
+Did not press Join on a friend at the test centre (none were running the game). Did not press guest Leave. Did not run two Steam accounts on two machines. Live friend open/close was not watched; `persona_state_change` / `friend_rich_presence_update` are connected and the list is the live Steam friends list. `"You have company."` is the at-centre state when `player_count() > 1`; no at-centre friend was online to show it on a row. Join by ID also refuses when you have company. Invite still drawn disabled (ticket 10). Occupancy still lobby data `n`. Failed Join still rehosts the Steam lobby in place (Steam has already left ours) but keeps pose and the dock so the failure line can show.
+
+**Orchestrator, second attempt blocked — parked.** Outcome: blocked. Commit: `073fed1` Ticket 09: playtest the desk; a failed Join stays docked. Unmet: Join on a friend at the test centre (no friend running the game); two real Steam accounts on two machines. The rest of the desk was playtested (enet dock, header, friends list, Dev transport footer, Join-by-ID failure line, debug strip). Human: open the game on two machines, Join a friend at the test centre, confirm arrival theatre and *In this room*, write the result in Comments, then set Status back to `ready-for-agent` or `done`.
+
+**Emil, 2026-09-12.** No friend available. Proceed assuming the Steam Join path works as implemented. The two-machine boxes are assumed, not observed. Later tickets must not park on a two-machine Steam check.
