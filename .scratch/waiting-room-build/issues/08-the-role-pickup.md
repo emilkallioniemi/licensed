@@ -29,3 +29,7 @@ Name tag: a second, smaller line under the name reading "Driver" / "Spotter" / "
 - [ ] The other two learners' name tags show a second line with their held role; your own is never shown to you.
 - [ ] When the booking dissolves, every strip, lamp, pip, and name tag role line clears at once.
 - [ ] Under `--transport=enet` strips show the peer-suffixed display name.
+
+## Comments
+
+**From ticket 04 (orchestrator).** Guests send sit/pick/hold through `WaitingRoom.submit_command` over reliable RPC. Under ENet the name suffix is the arrival slot 2/3 (Godot's ENet unique ids are not 2 and 3). Palettes 01/02/03 match chair teal / ochre / kit red; `Palettes.flood_color` is the shirt.

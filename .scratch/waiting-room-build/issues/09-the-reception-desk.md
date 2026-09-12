@@ -30,3 +30,7 @@ Checked over real Steam on Emil's two computers; the dev transport cannot exerci
 - [ ] Debug builds show the "Copy room ID" / "Join by ID" strip; release builds do not.
 - [ ] Under `--transport=enet` the desk shows the real friends list, every verb disabled, and the footer "Dev transport."
 - [ ] Verified with two real Steam accounts on two machines; the result is written into the ticket's Comments.
+
+## Comments
+
+**From ticket 04 (orchestrator).** This ticket only hosts; joining another Steam lobby is still open. `Transport.lobby_id` is the hosted lobby. Autoload `Transport` (`scripts/transport.gd`) picks Steam or ENet; room code talks to `multiplayer` only. Under `--transport=enet` the desk should show the real friends list, every verb disabled, footer "Dev transport." Setup: `docs/run-instances.md`.

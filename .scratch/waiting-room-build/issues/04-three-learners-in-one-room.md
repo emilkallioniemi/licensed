@@ -14,7 +14,7 @@ Document the three-learners-in-under-a-minute setup: Godot *Debug → Customize 
 
 **Blocked by:** 01 (Steam identity), 02 (the room state), 03 (the learner controller).
 
-**Status:** claimed
+**Status:** done
 
 - [x] Three editor instances launched with `-- --transport=enet` end up in one room: the first hosts, the others join; all three learners are visible and moving on every screen.
 - [x] Without the flag, boot hosts a FRIENDS_ONLY Steam lobby of max three with `game=licensed` before any input (visible in the log with the lobby id).

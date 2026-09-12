@@ -25,3 +25,5 @@ Chairs have no screen. E sits: the seated state is a command to the host's room 
 **From ticket 01 (orchestrator).** `SteamClient.avatar` holds the local 64 px `ImageTexture` after `avatar_loaded`; no signal is emitted, so a view should poll or add its own signal. `Steam.getFriendRichPresence(own_id, "licensed")` returns "1" for the local user, useful for a self-check.
 
 **From ticket 02 (orchestrator).** `RoomState.sit(steam_id, chair)` refuses a seated player (stand first, matching the E/move-key grammar) and an occupied chair; nothing else refuses it. `stand`, any pick change, `drop_hold`, and `leave` cancel a running count unconditionally (the spec's four cancels), and the ready-up re-arms from three if everything still holds, so the examiner line must be re-spoken on every `countdown_started`. Chair 0 means standing; chairs are 1..3.
+
+**From ticket 04 (orchestrator).** Guests send sit/pick/hold through `WaitingRoom.submit_command` over reliable RPC. Palettes 01/02/03 match chair teal / ochre / kit red; `Palettes.flood_color` is the shirt.
