@@ -157,20 +157,25 @@ func _apply_display_name() -> void:
 	name_tag.text = _display_name
 
 
+## Signage for a held or dealt role: "Driver" / "Spotter" / "Navigator" / "Random".
+static func role_label(role: StringName) -> String:
+	match role:
+		RoomState.DRIVER:
+			return "Driver"
+		RoomState.SPOTTER:
+			return "Spotter"
+		RoomState.NAVIGATOR:
+			return "Navigator"
+		RoomState.RANDOM:
+			return "Random"
+		_:
+			return ""
+
+
 func _apply_held_role() -> void:
 	if role_line == null:
 		return
-	match _held_role:
-		RoomState.DRIVER:
-			role_line.text = "Driver"
-		RoomState.SPOTTER:
-			role_line.text = "Spotter"
-		RoomState.NAVIGATOR:
-			role_line.text = "Navigator"
-		RoomState.RANDOM:
-			role_line.text = "Random"
-		_:
-			role_line.text = ""
+	role_line.text = role_label(_held_role)
 
 
 func _unhandled_input(event: InputEvent) -> void:

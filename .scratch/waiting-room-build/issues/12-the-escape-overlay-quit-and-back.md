@@ -29,3 +29,5 @@ Ticket 03's stand-in (Escape merely releasing the mouse) is replaced by this.
 **From ticket 03 (orchestrator).** Escape currently releases the mouse (`Learner._unhandled_input` on `ui_cancel`) and should be replaced by this overlay. The mouse is recaptured only by becoming local again, not on a second Escape.
 
 **From ticket 07 (orchestrator).** Escape closes the station screen while it is open (`StationScreen`); the overlay must not open over a station screen. Precedence: station open → Escape closes it; nothing open → Escape opens this overlay.
+
+**From ticket 11 (orchestrator).** The test area is a boxed car park (`scripts/test_area.gd`); Escape still only releases the mouse. Host Back must return everyone through the entrance with `RoomState.return_from_test_area()` (clears picks, holds, seats). Shared fate: guest quit in test area returns the rest; host quit lands guests in fresh rooms (`leave_to_own_room()`). Music restarts. Notice board is `scripts/notice_board.gd` reading `notice_board_line()`.
