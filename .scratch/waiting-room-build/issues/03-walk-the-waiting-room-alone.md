@@ -12,7 +12,7 @@ Arrival position: the kit's `Entrance` marker, facing −Z into the room.
 
 **Blocked by:** 01 (the game boots into the waiting room).
 
-**Status:** claimed
+**Status:** done
 
 - [x] On boot the player stands on the `Entrance` marker facing into the room, at eye height about 1.75 m.
 - [x] WASD moves at 3 m/s relative to where the camera looks; there is no sprint and no jump.
