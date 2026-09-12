@@ -2,7 +2,7 @@ class_name Learner
 extends CharacterBody3D
 ## A player's body in the waiting room: first-person walk, look, and collide. Ticket 04 wraps
 ## this in a replicated peer; `set_local` is the seam that turns input, the camera, and hiding
-## your own head on or off without a rewrite.
+## your own body on or off without a rewrite.
 
 ## Waiting-room movement speeds in metres per second.
 const WALK_SPEED := 3.0
@@ -161,9 +161,6 @@ func set_speaking(speaking: bool) -> void:
 
 func _apply_local() -> void:
 	camera.current = _local and not _using_station
-	var head := visual.find_child("HeadPivot", true, false)
-	if head != null:
-		head.visible = not _local
 	var walk := _local and _can_walk and not _seated and not _using_station
 	if not walk:
 		velocity = Vector3.ZERO
@@ -183,9 +180,8 @@ func _apply_local() -> void:
 func _apply_body_visible() -> void:
 	if visual == null or name_tag == null:
 		return
-	# The dock camera sits behind the local learner; hide the body from this
-	# machine only so the board matches the kit preview. Remotes still see them.
-	visual.visible = _body_visible and not (_local and _using_station)
+	# Each player sees only the other learners, including while using a station.
+	visual.visible = _body_visible and not _local
 	name_tag.visible = _body_visible and not _local
 
 
