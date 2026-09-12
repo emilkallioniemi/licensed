@@ -65,10 +65,10 @@ func _build() -> void:
 	sign.position = Vector3(0.0, 2.35, 5.94)
 	sign.rotation.y = PI
 
-	var hud := CanvasLayer.new()
-	hud.name = "OwnRole"
-	hud.layer = 20
-	add_child(hud)
+	var own_role_layer := CanvasLayer.new()
+	own_role_layer.name = "OwnRole"
+	own_role_layer.layer = 20
+	add_child(own_role_layer)
 	_own_role = Label.new()
 	_own_role.name = "Line"
 	_own_role.visible = false
@@ -77,7 +77,7 @@ func _build() -> void:
 	_own_role.add_theme_color_override("font_color", Color("f4ecd7"))
 	_own_role.add_theme_color_override("font_outline_color", Color(0.08, 0.08, 0.1, 1))
 	_own_role.add_theme_constant_override("outline_size", 4)
-	hud.add_child(_own_role)
+	own_role_layer.add_child(_own_role)
 
 
 func _add_box(box_name: String, size: Vector3, at: Vector3, color: Color, collide: bool) -> void:

@@ -236,7 +236,7 @@ func _examiner_voice() -> String:
 
 
 func _silence_stations() -> void:
-	for path in ["ChairStations", "BookingBoard", "ReceptionDesk", "NoticeBoard"]:
+	for path in ["ChairStations", "BookingBoard", "ReceptionDesk"]:
 		var node := get_node_or_null(path)
 		if node != null:
 			node.process_mode = Node.PROCESS_MODE_DISABLED
@@ -284,14 +284,15 @@ func _place_in_bays() -> void:
 			continue
 		var dealt: StringName = roles.get(occupant.steam_id, occupant.hold)
 		learner.set_held_role(dealt)
-		if not learner.is_local():
-			continue
 		learner.set_seated(false)
 		learner.set_using_station(false)
 		learner.set_can_walk(true)
+		# Every machine poses every learner so fade-up is three in a row, not a
+		# 200 m interpolate from the chairs. Authority then writes the same bay.
 		learner.global_transform = test_area.bay_transform(occupant.palette - 1)
 		learner.velocity = Vector3.ZERO
-		test_area.show_own_role(learner.displayed_role())
+		if learner.is_local():
+			test_area.show_own_role(Learner.role_label(dealt))
 
 
 func _occupant_of_learner(learner: Learner) -> RoomState.Player:

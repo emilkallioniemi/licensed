@@ -157,21 +157,8 @@ func _apply_display_name() -> void:
 	name_tag.text = _display_name
 
 
-## The name tag's second line as drawn, including after a deal. Local learners still
-## set this so the test area's corner line can read the same copy.
-func displayed_role() -> String:
-	if role_line == null:
-		return _role_copy(_held_role)
-	return role_line.text
-
-
-func _apply_held_role() -> void:
-	if role_line == null:
-		return
-	role_line.text = _role_copy(_held_role)
-
-
-func _role_copy(role: StringName) -> String:
+## Signage for a held or dealt role: "Driver" / "Spotter" / "Navigator" / "Random".
+static func role_label(role: StringName) -> String:
 	match role:
 		RoomState.DRIVER:
 			return "Driver"
@@ -183,6 +170,12 @@ func _role_copy(role: StringName) -> String:
 			return "Random"
 		_:
 			return ""
+
+
+func _apply_held_role() -> void:
+	if role_line == null:
+		return
+	role_line.text = role_label(_held_role)
 
 
 func _unhandled_input(event: InputEvent) -> void:
