@@ -28,3 +28,13 @@ The test is a headless `SceneTree` script run with `godot --headless --path . --
 ## Comments
 
 **From ticket 01 (orchestrator).** Autoloads do load under `--headless --script`, so every headless test inits Steam (works, prints identity). Headless scripts that fail an `assert` hang forever instead of exiting (same shape as `verify_assets.gd`); run them with a timeout. The very first `--headless --import` after the extension appears exits with 0xC0000005 at shutdown; the second import and all runs are clean. GodotSteam GDExtension for Godot 4.4+ lives on Codeberg (`v4.22.1-gde`); the vendored `addons/godotsteam/` is trimmed to win64.
+
+**Builder, 2026-09-12.** `scripts/room_state.gd` (`class_name RoomState`, a `RefCounted`) and `tests/verify_room_state.gd`. Decisions later tickets render from:
+
+- Commands return `bool` (applied or refused); every applied command ends in `_after_command`, which raises `booking_formed` / `booking_dissolved`, then arms or cancels the count. A stand, pick change, hold drop, or departure cancels a running count even when every condition still holds (only possible under `--min-players` with more players than N); the ready-up then re-arms from three and the examiner speaks again.
+- Vehicles and roles are `StringName` constants on `RoomState` (`MONSTER_TRUCK`, `DRIVER`, `SPOTTER`, `NAVIGATOR`, `RANDOM`); `Player.pick` / `hold` empty means none, `Player.chair` 0 means standing. Palettes are 1/2/3 (lowest free on arrival).
+- `sit` refuses a seated player (changing chairs means standing first) and an occupied chair; nothing else refuses it.
+- The notice board counts out of `max(N, players present)`, so a dev room of three waiting for two never reads "Roles: 2 of 2." while a third is unready.
+- `snapshot()` / `restore()` carry the whole record as plain data (`var_to_str`-safe) so a guest's copy derives booking, holders, line, and count with the same code; `restore` raises no events. Host-side event replication is the transport ticket's call.
+- `RoomState.min_players_from_args(OS.get_cmdline_user_args())` reads the flag, clamped to 1..3. The bookable list is a constructor argument only so the switch rule could be tested with two rows; production uses the default.
+- Headless `assert` here did not hang: it printed and aborted only the enclosing function, and the run would still have printed PASS. The test routes every check through `_check`, which counts failures and ends the run with FAIL and exit code 1. Worth copying into any later headless script.

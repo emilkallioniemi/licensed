@@ -38,6 +38,7 @@ func _verify() -> void:
 	_notice_board_counts_out_of_n()
 	_countdown_starts_only_when_everything_holds()
 	_countdown_is_cancelled_by_any_change()
+	_countdown_is_cancelled_even_when_the_booking_survives()
 	_deal_gives_random_holders_the_remaining_roles()
 	_return_from_the_test_area_clears_everything()
 	_departure_frees_the_leavers_pick_and_hold()
@@ -95,22 +96,6 @@ func _arrival_deals_palettes_in_order() -> void:
 	_check(room.player(FOURTH).palette == 2)
 	_check(room.players[2].steam_id == FOURTH)
 	_check(not room.leave(ASTRA))
-
-
-## Counts each event as it fires so a test can assert what the views would have reacted to.
-class Events extends RefCounted:
-	var formed := 0
-	var dissolved := 0
-	var countdown_started := 0
-	var countdown_cancelled := 0
-	var launches: Array[Dictionary] = []
-
-	func _init(room: RoomStateScript) -> void:
-		room.booking_formed.connect(func(_vehicle: StringName) -> void: formed += 1)
-		room.booking_dissolved.connect(func() -> void: dissolved += 1)
-		room.countdown_started.connect(func() -> void: countdown_started += 1)
-		room.countdown_cancelled.connect(func() -> void: countdown_cancelled += 1)
-		room.launched.connect(func(_vehicle: StringName, roles: Dictionary) -> void: launches.append(roles))
 
 
 func _booking_forms_on_the_third_matching_pick() -> void:
@@ -279,10 +264,10 @@ func _notice_board_states_what_the_room_waits_for() -> void:
 	_check(room.player(EMIL).chair == 0)
 	_check(not room.stand(EMIL), "already standing")
 	_check(room.notice_board_line() == "Seated: 1 of 3.")
-	# Moving chairs while seated is one command.
-	_check(room.sit(BROTHER, 3))
-	_check(room.player(BROTHER).chair == 3)
-	_check(room.sit(EMIL, 2))
+	# Changing chairs means standing first; a seated player's sit changes nothing.
+	_check(not room.sit(BROTHER, 3))
+	_check(room.player(BROTHER).chair == 2)
+	_check(room.sit(EMIL, 1))
 	_check(room.notice_board_line() == "Seated: 2 of 3.")
 	# A dropped hold outranks the seated count.
 	room.drop_hold(ASTRA)
@@ -308,6 +293,19 @@ func _notice_board_counts_out_of_n() -> void:
 	_check(room.notice_board_line() == "Seated: 0 of 2.")
 	room.sit(EMIL, 3)
 	_check(room.notice_board_line() == "Seated: 1 of 2.")
+
+
+## In a room that waits for two: Emil and Astra arrive, pick the monster truck, hold Spotter
+## and Random, and sit, so the ready-up fires with only two players.
+func _ready_up_two(room: RoomStateScript) -> void:
+	room.arrive(EMIL, "Emil")
+	room.arrive(ASTRA, "Astra")
+	room.pick(EMIL, RoomStateScript.MONSTER_TRUCK)
+	room.pick(ASTRA, RoomStateScript.MONSTER_TRUCK)
+	room.take(EMIL, RoomStateScript.SPOTTER)
+	room.take(ASTRA, RoomStateScript.RANDOM)
+	room.sit(EMIL, 1)
+	room.sit(ASTRA, 2)
 
 
 ## A booked room of three with Emil holding Driver and the other two holding Random, all seated
@@ -348,14 +346,7 @@ func _countdown_starts_only_when_everything_holds() -> void:
 	# Under --min-players=2 the count fires at two.
 	var short_room := RoomStateScript.new(2)
 	var short_events := Events.new(short_room)
-	short_room.arrive(EMIL, "Emil")
-	short_room.arrive(ASTRA, "Astra")
-	short_room.pick(EMIL, RoomStateScript.MONSTER_TRUCK)
-	short_room.pick(ASTRA, RoomStateScript.MONSTER_TRUCK)
-	short_room.take(EMIL, RoomStateScript.SPOTTER)
-	short_room.take(ASTRA, RoomStateScript.RANDOM)
-	short_room.sit(EMIL, 1)
-	short_room.sit(ASTRA, 2)
+	_ready_up_two(short_room)
 	_check(short_room.is_counting_down() and short_events.countdown_started == 1)
 	_check(short_room.notice_board_line() == "Monster truck. 3.")
 
@@ -397,6 +388,39 @@ func _countdown_is_cancelled_by_any_change() -> void:
 	_check(not room.is_counting_down() and events.countdown_cancelled == 2)
 	_check(room.notice_board_line() == "Waiting for 1.")
 	_check(events.launches.is_empty() and room.launched_roles().is_empty())
+
+
+## Under --min-players=2 a room of three can lose a pick or a player and keep its booking.
+## The spec still names a pick change and a departure as cancels; the count starts afresh
+## if everything still holds, so the launch stays undoable and the examiner speaks again.
+func _countdown_is_cancelled_even_when_the_booking_survives() -> void:
+	var room := _room_of_three(2)
+	var events := Events.new(room)
+	for id in [EMIL, ASTRA, BROTHER]:
+		room.pick(id, RoomStateScript.MONSTER_TRUCK)
+	room.take(EMIL, RoomStateScript.DRIVER)
+	room.take(ASTRA, RoomStateScript.RANDOM)
+	room.take(BROTHER, RoomStateScript.RANDOM)
+	room.sit(EMIL, 1)
+	room.sit(ASTRA, 2)
+	# Three players in a room that waits for two: the board counts out of the three present.
+	_check(room.notice_board_line() == "Seated: 2 of 3.")
+	room.sit(BROTHER, 3)
+	_check(room.is_counting_down() and events.countdown_started == 1)
+	room.tick(2.0)
+	_check(room.notice_board_line() == "Monster truck. 1.")
+	# A pick change with the booking intact: cancelled, then armed again from three.
+	room.drop_pick(BROTHER)
+	_check(room.has_booking())
+	_check(events.countdown_cancelled == 1 and events.countdown_started == 2)
+	_check(room.notice_board_line() == "Monster truck. 3.")
+	room.tick(2.0)
+	# A departure with the booking intact: the same.
+	room.leave(BROTHER)
+	_check(room.has_booking())
+	_check(events.countdown_cancelled == 2 and events.countdown_started == 3)
+	_check(room.notice_board_line() == "Monster truck. 3.")
+	_check(events.launches.is_empty())
 
 
 func _deal_gives_random_holders_the_remaining_roles() -> void:
@@ -445,14 +469,7 @@ func _deal_gives_random_holders_the_remaining_roles() -> void:
 	# Under --min-players=2, named plus dealt sums to two and the dealt role is one nobody holds.
 	var short_room := RoomStateScript.new(2)
 	var short_events := Events.new(short_room)
-	short_room.arrive(EMIL, "Emil")
-	short_room.arrive(ASTRA, "Astra")
-	short_room.pick(EMIL, RoomStateScript.MONSTER_TRUCK)
-	short_room.pick(ASTRA, RoomStateScript.MONSTER_TRUCK)
-	short_room.take(EMIL, RoomStateScript.SPOTTER)
-	short_room.take(ASTRA, RoomStateScript.RANDOM)
-	short_room.sit(EMIL, 1)
-	short_room.sit(ASTRA, 2)
+	_ready_up_two(short_room)
 	short_room.tick(3.0)
 	var short_roles: Dictionary = short_events.launches[0]
 	_check(short_roles.size() == 2)
@@ -505,10 +522,7 @@ func _return_from_the_test_area_clears_everything() -> void:
 func _departure_frees_the_leavers_pick_and_hold() -> void:
 	# Under --min-players=2 a booking of three survives one departure, so the leaver's role
 	# can be seen to come free while the column is still awake.
-	var room := RoomStateScript.new(2)
-	room.arrive(EMIL, "Emil")
-	room.arrive(ASTRA, "Astra")
-	room.arrive(BROTHER, "Brother")
+	var room := _room_of_three(2)
 	for id in [EMIL, ASTRA, BROTHER]:
 		room.pick(id, RoomStateScript.MONSTER_TRUCK)
 	room.take(BROTHER, RoomStateScript.DRIVER)
@@ -576,3 +590,19 @@ func _replicated_state_round_trips() -> void:
 	_check(guest.player_count() == 2 and guest.player(ASTRA) == null)
 	_check(guest.notice_board_line() == "Waiting for 1.")
 	_check(not guest.is_counting_down() and guest.launched_roles().is_empty())
+
+
+## Counts each event as it fires so a test can assert what the views would have reacted to.
+class Events extends RefCounted:
+	var formed := 0
+	var dissolved := 0
+	var countdown_started := 0
+	var countdown_cancelled := 0
+	var launches: Array[Dictionary] = []
+
+	func _init(room: RoomStateScript) -> void:
+		room.booking_formed.connect(func(_vehicle: StringName) -> void: formed += 1)
+		room.booking_dissolved.connect(func() -> void: dissolved += 1)
+		room.countdown_started.connect(func() -> void: countdown_started += 1)
+		room.countdown_cancelled.connect(func() -> void: countdown_cancelled += 1)
+		room.launched.connect(func(_vehicle: StringName, roles: Dictionary) -> void: launches.append(roles))
