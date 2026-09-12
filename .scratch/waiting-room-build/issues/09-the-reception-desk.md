@@ -18,7 +18,7 @@ Checked over real Steam on Emil's two computers; the dev transport cannot exerci
 
 **Blocked by:** 05 (arrival theatre on join and leave), 07 (the dock-and-cursor station screen).
 
-**Status:** claimed
+**Status:** ready-for-human
 
 - [x] "E  Reception" in the desk's zone; E docks on the desk screen drawn on the kit's screen surface with the placeholder hidden; Escape returns.
 - [x] The header reads "Reception" and "1 of 3" / "2 of 3" / "3 of 3" from the room state; at three it reads "The waiting room is full." and no row has a verb.
@@ -50,3 +50,5 @@ Could not walk the dock, press Join/Leave, or watch live friend grouping in a wi
 **Builder, 2026-09-12 (retry).** Playtested in a window. `--transport=enet`: walked the zone, `"E  Reception"` shown, E docked on the kit terminal with `FriendsScreenPlaceholder` hidden, Escape closed the dock. Header `"Reception"` / `"1 of 3"` alone and `"3 of 3"` plus `"The waiting room is full."` with three instances; no row verbs at three. Steam friends listed with 64 px avatars, names, `"Online. Not at the test centre."`, offline hidden, alphabetical. Footer `"Dev transport."`, no debug strip, no Leave. Steam debug (no `--transport`): `"Copy room ID"` / `"Join by ID"` present, host has no Leave. Join by ID `1` → `DOESNT_EXIST` → `"Nobody is at the test centre."`, room stayed `"1 of 3"`, desk stayed docked. `RoomState` tests PASS.
 
 Did not press Join on a friend at the test centre (none were running the game). Did not press guest Leave. Did not run two Steam accounts on two machines. Live friend open/close was not watched; `persona_state_change` / `friend_rich_presence_update` are connected and the list is the live Steam friends list. `"You have company."` is the at-centre state when `player_count() > 1`; no at-centre friend was online to show it on a row. Join by ID also refuses when you have company. Invite still drawn disabled (ticket 10). Occupancy still lobby data `n`. Failed Join still rehosts the Steam lobby in place (Steam has already left ours) but keeps pose and the dock so the failure line can show.
+
+**Orchestrator, second attempt blocked — parked.** Outcome: blocked. Commit: `073fed1` Ticket 09: playtest the desk; a failed Join stays docked. Unmet: Join on a friend at the test centre (no friend running the game); two real Steam accounts on two machines. The rest of the desk was playtested (enet dock, header, friends list, Dev transport footer, Join-by-ID failure line, debug strip). Human: open the game on two machines, Join a friend at the test centre, confirm arrival theatre and *In this room*, write the result in Comments, then set Status back to `ready-for-agent` or `done`.
