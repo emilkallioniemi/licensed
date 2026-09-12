@@ -10,7 +10,7 @@ Chairs have no screen. E sits: the seated state is a command to the host's room 
 
 **Blocked by:** 04 (replicated room state and palettes).
 
-**Status:** ready-for-agent
+**Status:** claimed
 
 - [ ] Walking into a chair's zone shows "E  Sit" above the chair; walking out hides it.
 - [ ] E sits: the camera drops to about 1.2 m, mouse look still works, the learner occupies the chair's footprint facing into the room.
