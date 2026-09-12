@@ -28,3 +28,4 @@ Areas: `examiner`, `controls`, `split`, `sight`, `sheet`, `scope`, `ui`, `scorin
 - 2026-09-12 | scope | Reception desk ticket recommended no way to leave a friend's room short of quitting to desktop → a player can always leave the room they are in and be back in a room of their own.
 - 2026-09-12 | other | A friend dropping mid-room had no decided read → they vanish where they stood and the entrance door sounds once; the reverse door theatre is only for a deliberate Leave, because a drop is not a walk out.
 - 2026-09-12 | ui | Reception Invite and Join appeared inert during friend updates → refreshing Steam status must not replace a button between mouse-down and mouse-up or continually request another refresh.
+- 2026-09-12 | ui | Looking down showed a stuttering body while walking or running → hide the player's own body locally; the other players still see their full learner.
