@@ -52,3 +52,7 @@ shadow_enabled = true
 [node name="Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_loop")
 volume_db = -6.0
+
+[node name="LearnerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://scenes/learner.tscn")
+spawn_path = NodePath(".")

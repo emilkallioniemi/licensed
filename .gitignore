@@ -1,5 +1,6 @@
 # Godot 4
 .godot/
+# Customize Run Instances (Debug → Customize Run Instances…) is per clone; see docs/run-instances.md.
 /android/
 *.translation
 # Copies of GDExtension libraries the editor makes while it has the project open

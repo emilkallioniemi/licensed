@@ -28,3 +28,5 @@ The booking (formed by the room state on the N-th matching pick): the booked row
 ## Comments
 
 **From ticket 02 (orchestrator).** `RoomState.tick(delta)` is the countdown; at the end `launched` carries `{steam_id: named_role}` for everyone (Random dealt); `launched_roles()` holds it until `return_from_test_area()`, which clears picks, holds, seats and the deal and emits `booking_dissolved`. Board strips are unchanged by the deal (spec section 7). Picks are `pick(steam_id, vehicle)` / `drop_pick(steam_id)`; a switch is a `pick` of a different vehicle. `booking_formed`/`booking_dissolved` fire on the host only; the view on a guest should react to the replicated state changing.
+
+**From ticket 04 (orchestrator).** Guests send sit/pick/hold through `WaitingRoom.submit_command` over reliable RPC. Under ENet the name suffix is the arrival slot 2/3 (Godot's ENet unique ids are not 2 and 3).

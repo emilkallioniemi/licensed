@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 SteamClient="*res://scripts/steam_client.gd"
+Transport="*res://scripts/transport.gd"
 
 [display]
 
