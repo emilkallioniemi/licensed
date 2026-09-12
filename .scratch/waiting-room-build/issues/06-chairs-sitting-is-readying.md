@@ -12,13 +12,13 @@ Chairs have no screen. E sits: the seated state is a command to the host's room 
 
 **Status:** claimed
 
-- [ ] Walking into a chair's zone shows "E  Sit" above the chair; walking out hides it.
-- [ ] E sits: the camera drops to about 1.2 m, mouse look still works, the learner occupies the chair's footprint facing into the room.
-- [ ] E or W/A/S/D while seated stands the player and the camera returns to 1.75 m.
-- [ ] On every machine an occupied chair floods with the sitter's colour and returns to the kit's material when they stand.
-- [ ] Two players cannot sit in the same chair; a player may sit in any free chair regardless of picks, holds, or player count.
-- [ ] Seated state lives in the host-owned room state and survives a joiner arriving (the joiner sees who is already seated).
-- [ ] The zone-prompt-E station base is one reusable piece that a screenless and a screened station can both build on.
+- [x] Walking into a chair's zone shows "E  Sit" above the chair; walking out hides it.
+- [x] E sits: the camera drops to about 1.2 m, mouse look still works, the learner occupies the chair's footprint facing into the room.
+- [x] E or W/A/S/D while seated stands the player and the camera returns to 1.75 m.
+- [x] On every machine an occupied chair floods with the sitter's colour and returns to the kit's material when they stand.
+- [x] Two players cannot sit in the same chair; a player may sit in any free chair regardless of picks, holds, or player count.
+- [x] Seated state lives in the host-owned room state and survives a joiner arriving (the joiner sees who is already seated).
+- [x] The zone-prompt-E station base is one reusable piece that a screenless and a screened station can both build on.
 
 ## Comments
 
@@ -27,3 +27,7 @@ Chairs have no screen. E sits: the seated state is a command to the host's room 
 **From ticket 02 (orchestrator).** `RoomState.sit(steam_id, chair)` refuses a seated player (stand first, matching the E/move-key grammar) and an occupied chair; nothing else refuses it. `stand`, any pick change, `drop_hold`, and `leave` cancel a running count unconditionally (the spec's four cancels), and the ready-up re-arms from three if everything still holds, so the examiner line must be re-spoken on every `countdown_started`. Chair 0 means standing; chairs are 1..3.
 
 **From ticket 04 (orchestrator).** Guests send sit/pick/hold through `WaitingRoom.submit_command` over reliable RPC. Palettes 01/02/03 match chair teal / ochre / kit red; `Palettes.flood_color` is the shirt.
+
+**Builder, 2026-09-12.** `Station` (`scripts/station.gd`) is the reusable zone-prompt-E piece: place it on an approach marker, `setup(prompt, prompt_at, zone_size)`, connect `used`. `set_listening(false)` hides the prompt and ignores E (chairs do this while seated so E can stand). Ticket 07 adds a station screen on top of this; do not fork a second grammar.
+
+Chairs: `ChairStations` renders from `WaitingRoom.room_changed` / `room_state()` and never writes it. Sit/stand go through `submit_command`. Occupied chairs get one `material_override` (`Palettes.flood_color`) on the whole `Chair01/02/03` group; `null` restores the kit. Approach markers are `AttachmentPoints/Chair01Approach` (etc.), in front of the kit chairs along +X. Standing model on the footprint, facing `chair.basis.z` into the room; camera 1.2 m / 1.75 m via `Learner.set_seated`. `RoomState` tests still PASS. Three-instance feel: `docs/run-instances.md`.
