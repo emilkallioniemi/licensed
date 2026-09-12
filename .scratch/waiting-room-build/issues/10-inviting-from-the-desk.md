@@ -16,7 +16,7 @@ Checked when a friend (Emil's brother) is online, and on Emil's two computers. A
 
 **Blocked by:** 09 (the reception desk and Join).
 
-**Status:** claimed
+**Status:** done
 
 - [x] Invite on a friend at the test centre sends the lobby invite; the row's verb reads "Invited." for 30 s and then returns to Invite.
 - [x] On the invitee's running game a row appears at the top of the desk with the inviter's avatar, name, "is asking for you", Accept, and Ignore; the desk prompt reads "E  <Name> is asking for you"; one beep rings at the desk, audible from the board.
