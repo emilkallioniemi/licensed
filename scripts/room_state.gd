@@ -205,6 +205,19 @@ func stand(steam_id: int) -> bool:
 	return true
 
 
+## Everyone is back from the test area: no picks, no holds, nobody seated, nothing dealt, so
+## the ritual runs again from the start. Whoever is still in the room keeps their palette.
+func return_from_test_area() -> void:
+	var before := booking()
+	for occupant in players:
+		occupant.pick = &""
+		occupant.hold = &""
+		occupant.chair = 0
+	_countdown_remaining = -1.0
+	_launched_roles = {}
+	_settle(before)
+
+
 ## Advance the countdown by `delta` seconds. At the end of the count the Random holders are
 ## dealt the remaining named roles and `launched` fires; nothing is dealt before that.
 func tick(delta: float) -> void:
@@ -269,6 +282,53 @@ func notice_board_line() -> String:
 	if seated < players.size():
 		return "Seated: %d of %d." % [seated, min_players]
 	return "%s. %d." % [_vehicle_name(booking()), countdown_count()]
+
+
+## The count the room waits for, read from the user args after `--`: `--min-players=N`, with
+## N kept between one and the room's capacity. Anything else means three (spec section 11).
+static func min_players_from_args(args: PackedStringArray) -> int:
+	const FLAG := "--min-players="
+	for arg in args:
+		if arg.begins_with(FLAG):
+			var value := arg.substr(FLAG.length())
+			if value.is_valid_int():
+				return clampi(value.to_int(), 1, CAPACITY)
+	return DEFAULT_MIN_PLAYERS
+
+
+## The whole record as plain data for the host to replicate over a reliable RPC.
+func snapshot() -> Dictionary:
+	var occupants: Array[Dictionary] = []
+	for occupant in players:
+		occupants.append({
+			"steam_id": occupant.steam_id,
+			"display_name": occupant.display_name,
+			"palette": occupant.palette,
+			"pick": occupant.pick,
+			"hold": occupant.hold,
+			"chair": occupant.chair,
+		})
+	return {
+		"min_players": min_players,
+		"players": occupants,
+		"countdown_remaining": _countdown_remaining,
+		"launched_roles": _launched_roles.duplicate(),
+	}
+
+
+## Replace this record with a replicated `snapshot()`. Silent: a guest's copy renders the
+## facts and raises no events of its own.
+func restore(data: Dictionary) -> void:
+	min_players = data["min_players"]
+	players.clear()
+	for occupant in data["players"]:
+		var restored := Player.new(occupant["steam_id"], occupant["display_name"], occupant["palette"])
+		restored.pick = occupant["pick"]
+		restored.hold = occupant["hold"]
+		restored.chair = occupant["chair"]
+		players.append(restored)
+	_countdown_remaining = data["countdown_remaining"]
+	_launched_roles = data["launched_roles"].duplicate()
 
 
 ## Whether the ready-up's conditions all hold: N players, a booking, every player holding a

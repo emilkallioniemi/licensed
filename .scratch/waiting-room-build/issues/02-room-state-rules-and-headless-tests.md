@@ -14,16 +14,16 @@ The test is a headless `SceneTree` script run with `godot --headless --path . --
 
 **Status:** claimed
 
-- [ ] The room-state script loads and runs with no scene tree, no autoload, no Steam, and no network.
-- [ ] Arrival order deals palettes 01/02/03; a departure never reshuffles the survivors.
-- [ ] A booking forms only on the third matching pick (N-th under `--min-players`), dissolves on any drop, switch, or departure, and an arrival never dissolves it.
-- [ ] Without a booking every take is rejected; on dissolution every hold is released; a taken role rejects a second taker; same-frame ties resolve in receive order; Random accepts any number of holders.
-- [ ] The notice board line follows the stated priority and counts out of the configured N.
-- [ ] The countdown starts only when the room holds N players, a booking exists, every player holds a named role or Random, and every player is seated; any stand, pick change, hold drop, or departure cancels it and nothing was dealt.
-- [ ] The deal at the end of the count gives every Random holder a distinct remaining named role and leaves named holders untouched; named plus dealt always sums to N.
-- [ ] Return from the test area clears everything and the line reads "No booking." (or "Waiting for …" if short).
-- [ ] A departure frees the leaver's pick and hold.
-- [ ] The headless test script runs green and prints `PASS`; the command to run it is written in one sentence at the top of the script.
+- [x] The room-state script loads and runs with no scene tree, no autoload, no Steam, and no network.
+- [x] Arrival order deals palettes 01/02/03; a departure never reshuffles the survivors.
+- [x] A booking forms only on the third matching pick (N-th under `--min-players`), dissolves on any drop, switch, or departure, and an arrival never dissolves it.
+- [x] Without a booking every take is rejected; on dissolution every hold is released; a taken role rejects a second taker; same-frame ties resolve in receive order; Random accepts any number of holders.
+- [x] The notice board line follows the stated priority and counts out of the configured N.
+- [x] The countdown starts only when the room holds N players, a booking exists, every player holds a named role or Random, and every player is seated; any stand, pick change, hold drop, or departure cancels it and nothing was dealt.
+- [x] The deal at the end of the count gives every Random holder a distinct remaining named role and leaves named holders untouched; named plus dealt always sums to N.
+- [x] Return from the test area clears everything and the line reads "No booking." (or "Waiting for …" if short).
+- [x] A departure frees the leaver's pick and hold.
+- [x] The headless test script runs green and prints `PASS`; the command to run it is written in one sentence at the top of the script.
 
 ## Comments
 
