@@ -24,3 +24,5 @@ Write down, in one short section of the repo's README or a release note next to 
 ## Comments
 
 **From ticket 01 (orchestrator).** One `--quit-after` run reported "2 ObjectDB instances leaked" at exit and the next did not; looks like a Steam callback/exit race, not reproducible, worth watching in the exported build.
+
+**From ticket 09 (orchestrator).** Emil: two-machine Steam checks are **assumed**, not observed — do not park for lack of a second Steam account. A debug zip already exists at `export/licensed-waiting-room.zip` (Desktop copy too); ticket 14 still needs a release preset, the four-file release zip, and the written reproduce steps. `export_presets.cfg` is already in the working tree from that debug export.

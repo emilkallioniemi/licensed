@@ -29,4 +29,4 @@ Checked when a friend (Emil's brother) is online, and on Emil's two computers. A
 
 ## Comments
 
-**From ticket 09 (orchestrator).** Ticket 09 is parked `ready-for-human` until a two-machine Steam Join is checked. Invite is already drawn **disabled** on At-the-test-centre rows; wire `inviteUserToLobby`. Friend-room-full uses Steam lobby data key `n`, written by the host from `player_count`. `ReceptionDesk` is Station + StationScreen. Join is `WaitingRoom.begin_join()` then `Transport.join_lobby`.
+**From ticket 09 (orchestrator).** Invite is already drawn **disabled** on At-the-test-centre rows; wire `inviteUserToLobby`. Friend-room-full uses Steam lobby data key `n`, written by the host from `player_count`. `ReceptionDesk` is Station + StationScreen. Join is `WaitingRoom.begin_join()` then `Transport.join_lobby`. Emil: two-machine Steam checks are **assumed**, not observed — do not park this ticket for lack of a second Steam account. Tick the two-account box as assumed and write that in Comments.
