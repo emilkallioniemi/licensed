@@ -12,19 +12,29 @@ The test is a headless `SceneTree` script run with `godot --headless --path . --
 
 **Blocked by:** None (can start immediately).
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] The room-state script loads and runs with no scene tree, no autoload, no Steam, and no network.
-- [ ] Arrival order deals palettes 01/02/03; a departure never reshuffles the survivors.
-- [ ] A booking forms only on the third matching pick (N-th under `--min-players`), dissolves on any drop, switch, or departure, and an arrival never dissolves it.
-- [ ] Without a booking every take is rejected; on dissolution every hold is released; a taken role rejects a second taker; same-frame ties resolve in receive order; Random accepts any number of holders.
-- [ ] The notice board line follows the stated priority and counts out of the configured N.
-- [ ] The countdown starts only when the room holds N players, a booking exists, every player holds a named role or Random, and every player is seated; any stand, pick change, hold drop, or departure cancels it and nothing was dealt.
-- [ ] The deal at the end of the count gives every Random holder a distinct remaining named role and leaves named holders untouched; named plus dealt always sums to N.
-- [ ] Return from the test area clears everything and the line reads "No booking." (or "Waiting for …" if short).
-- [ ] A departure frees the leaver's pick and hold.
-- [ ] The headless test script runs green and prints `PASS`; the command to run it is written in one sentence at the top of the script.
+- [x] The room-state script loads and runs with no scene tree, no autoload, no Steam, and no network.
+- [x] Arrival order deals palettes 01/02/03; a departure never reshuffles the survivors.
+- [x] A booking forms only on the third matching pick (N-th under `--min-players`), dissolves on any drop, switch, or departure, and an arrival never dissolves it.
+- [x] Without a booking every take is rejected; on dissolution every hold is released; a taken role rejects a second taker; same-frame ties resolve in receive order; Random accepts any number of holders.
+- [x] The notice board line follows the stated priority and counts out of the configured N.
+- [x] The countdown starts only when the room holds N players, a booking exists, every player holds a named role or Random, and every player is seated; any stand, pick change, hold drop, or departure cancels it and nothing was dealt.
+- [x] The deal at the end of the count gives every Random holder a distinct remaining named role and leaves named holders untouched; named plus dealt always sums to N.
+- [x] Return from the test area clears everything and the line reads "No booking." (or "Waiting for …" if short).
+- [x] A departure frees the leaver's pick and hold.
+- [x] The headless test script runs green and prints `PASS`; the command to run it is written in one sentence at the top of the script.
 
 ## Comments
 
 **From ticket 01 (orchestrator).** Autoloads do load under `--headless --script`, so every headless test inits Steam (works, prints identity). Headless scripts that fail an `assert` hang forever instead of exiting (same shape as `verify_assets.gd`); run them with a timeout. The very first `--headless --import` after the extension appears exits with 0xC0000005 at shutdown; the second import and all runs are clean. GodotSteam GDExtension for Godot 4.4+ lives on Codeberg (`v4.22.1-gde`); the vendored `addons/godotsteam/` is trimmed to win64.
+
+**Builder, 2026-09-12.** `scripts/room_state.gd` (`class_name RoomState`, a `RefCounted`) and `tests/verify_room_state.gd`. Decisions later tickets render from:
+
+- Commands return `bool` (applied or refused); every applied command ends in `_after_command`, which raises `booking_formed` / `booking_dissolved`, then arms or cancels the count. A stand, pick change, hold drop, or departure cancels a running count even when every condition still holds (only possible under `--min-players` with more players than N); the ready-up then re-arms from three and the examiner speaks again.
+- Vehicles and roles are `StringName` constants on `RoomState` (`MONSTER_TRUCK`, `DRIVER`, `SPOTTER`, `NAVIGATOR`, `RANDOM`); `Player.pick` / `hold` empty means none, `Player.chair` 0 means standing. Palettes are 1/2/3 (lowest free on arrival).
+- `sit` refuses a seated player (changing chairs means standing first) and an occupied chair; nothing else refuses it.
+- The notice board counts out of `max(N, players present)`, so a dev room of three waiting for two never reads "Roles: 2 of 2." while a third is unready.
+- `snapshot()` / `restore()` carry the whole record as plain data (`var_to_str`-safe) so a guest's copy derives booking, holders, line, and count with the same code; `restore` raises no events. Host-side event replication is the transport ticket's call.
+- `RoomState.min_players_from_args(OS.get_cmdline_user_args())` reads the flag, clamped to 1..3. The bookable list is a constructor argument only so the switch rule could be tested with two rows; production uses the default.
+- Headless `assert` here did not hang: it printed and aborted only the enclosing function, and the run would still have printed PASS. The test routes every check through `_check`, which counts failures and ends the run with FAIL and exit code 1. Worth copying into any later headless script.

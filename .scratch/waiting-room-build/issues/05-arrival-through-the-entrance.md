@@ -25,3 +25,5 @@ A deliberate departure (a guest's Leave, ticket 09, or a dev-transport instance 
 ## Comments
 
 **From ticket 01 (orchestrator).** Headless scripts that fail an `assert` hang forever instead of exiting; run them with a timeout. The editor drops `~libgodotsteam...dll` copies in `addons/godotsteam/win64/` while open; `.gitignore` covers `addons/**/~*`.
+
+**From ticket 02 (orchestrator).** `RoomState.snapshot()`/`restore()` carry the whole record as plain `var_to_str`-safe data; a guest's copy derives booking, holders, notice board line and count from the same code and raises no events, so a joiner restoring the host's snapshot sees the room exactly as it is. Under `--headless --script` a failed `assert` did not hang this time; it aborted only the enclosing function and the script still printed PASS. `tests/verify_room_state.gd` routes every check through `_check` (counts failures, ends with FAIL and exit 1); copy that pattern into any later headless script.
