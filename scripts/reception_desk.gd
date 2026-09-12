@@ -126,6 +126,7 @@ func _build(kit: Node3D) -> void:
 	_quad.mesh = mesh
 	var mat := StandardMaterial3D.new()
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
 	mat.albedo_texture = _viewport.get_texture()
 	_quad.set_surface_override_material(0, mat)
@@ -255,17 +256,21 @@ func _on_avatar_ready(steam_id: int) -> void:
 
 func _on_join_recovered() -> void:
 	_take_join_error()
-	if _screen != null and _screen.is_open():
-		_screen.close()
+	if _screen == null or not _screen.is_open():
+		return
+	var learner := _local_learner()
+	if learner != null:
+		_screen.rebind_learner(learner)
+		_station.set_listening(false)
 
 
 func _take_join_error() -> void:
 	var err := Transport.take_join_error()
 	if err.is_empty():
 		return
-	var line := _failure_line(int(err.get("response", 0)))
 	var steam_id := int(err.get("steam_id", 0))
 	var lobby := int(err.get("lobby_id", 0))
+	var line := _failure_line(int(err.get("response", 0)), steam_id)
 	if steam_id != 0:
 		_errors[steam_id] = line
 	if lobby != 0:
@@ -273,14 +278,14 @@ func _take_join_error() -> void:
 	_queue_list()
 
 
-func _failure_line(response: int) -> String:
-	match response:
-		Steam.CHAT_ROOM_ENTER_RESPONSE_FULL:
-			return FAIL_FULL
-		Steam.CHAT_ROOM_ENTER_RESPONSE_DOESNT_EXIST:
-			return FAIL_GONE
-		_:
-			return FAIL_SILENCE
+func _failure_line(response: int, friend_id: int = 0) -> String:
+	if response == Steam.CHAT_ROOM_ENTER_RESPONSE_FULL:
+		return FAIL_FULL
+	if response == Steam.CHAT_ROOM_ENTER_RESPONSE_DOESNT_EXIST:
+		return FAIL_GONE
+	if friend_id != 0 and not _at_the_test_centre(friend_id):
+		return FAIL_GONE
+	return FAIL_SILENCE
 
 
 func _queue_list() -> void:
@@ -366,7 +371,7 @@ func _collect_friends(room: RoomState) -> Array:
 			continue
 		Steam.requestFriendRichPresence(id)
 		var name := Steam.getFriendPersonaName(id)
-		var licensed := Steam.getFriendRichPresence(id, SteamClient.RICH_PRESENCE_KEY) == SteamClient.RICH_PRESENCE_VALUE
+		var licensed := _at_the_test_centre(id)
 		var game: Dictionary = Steam.getFriendGamePlayed(id)
 		var lobby := int(game.get("lobby", 0))
 		var group := GROUP_ONLINE
@@ -457,7 +462,7 @@ func _make_row(friend: Dictionary, room_full: bool, has_company: bool, verbs_liv
 	invite.disabled = true
 	verbs.add_child(invite)
 
-	if not has_company and int(friend["lobby_id"]) != 0:
+	if not has_company:
 		var join := _make_verb("Join")
 		join.disabled = not verbs_live
 		join.pressed.connect(_on_join_pressed.bind(int(friend["lobby_id"]), int(friend["steam_id"])))
@@ -523,8 +528,12 @@ func _on_join_pressed(lobby_id: int, friend_id: int) -> void:
 	if Transport.kind != Transport.STEAM:
 		return
 	_errors.erase(friend_id)
-	if lobby_id == 0:
+	if friend_id != 0 and not _at_the_test_centre(friend_id):
 		_errors[friend_id] = FAIL_GONE
+		_queue_list()
+		return
+	if lobby_id == 0:
+		_errors[friend_id] = FAIL_SILENCE
 		_queue_list()
 		return
 	_waiting.begin_join()
@@ -534,12 +543,19 @@ func _on_join_pressed(lobby_id: int, friend_id: int) -> void:
 func _on_join_by_id(text: String) -> void:
 	if Transport.kind != Transport.STEAM:
 		return
+	var room := _waiting.room_state()
+	if room != null and room.player_count() > 1:
+		return
 	var raw := text.strip_edges()
 	if not raw.is_valid_int():
 		return
 	var lobby_id := raw.to_int()
 	_waiting.begin_join()
 	Transport.join_lobby(lobby_id, 0)
+
+
+func _at_the_test_centre(friend_id: int) -> bool:
+	return Steam.getFriendRichPresence(friend_id, SteamClient.RICH_PRESENCE_KEY) == SteamClient.RICH_PRESENCE_VALUE
 
 
 func _on_leave_pressed() -> void:
@@ -553,7 +569,7 @@ func _on_copy_id() -> void:
 func _dock_pose() -> Transform3D:
 	var screen := _marker.global_position
 	var out := _marker.global_transform.basis.z
-	var origin := screen + out * 0.68 + Vector3(0.0, 0.02, 0.0)
+	var origin := screen + out * 0.9 + Vector3(0.0, 0.04, 0.0)
 	return Transform3D(Basis.looking_at(screen - origin, Vector3.UP), origin)
 
 

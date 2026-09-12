@@ -187,7 +187,7 @@ func _on_lobby_joined(joined_id: int, _permissions: int, _locked: bool, response
 	_join_target = 0
 	_join_friend = 0
 	if OS.is_debug_build():
-		print("Transport: joinLobby response %d lobby %d" % [response, joined_id])
+		print("Transport: joinLobby response %s (%d) lobby %d" % [_enter_response_name(response), response, joined_id])
 	if response != Steam.CHAT_ROOM_ENTER_RESPONSE_SUCCESS:
 		_fail_join(target, friend_id, response)
 		return
@@ -204,7 +204,7 @@ func _fail_join(target: int, friend_id: int, response: int) -> void:
 		"steam_id": friend_id,
 		"response": response,
 	}
-	print("Transport: join failed (response %d); rehosting" % response)
+	print("Transport: join failed (response %s, %d); rehosting" % [_enter_response_name(response), response])
 	host_fresh(false)
 
 
@@ -284,6 +284,20 @@ func _drop_godot_peer() -> void:
 	if multiplayer.multiplayer_peer != null:
 		multiplayer.multiplayer_peer.close()
 		multiplayer.multiplayer_peer = null
+
+
+func _enter_response_name(response: int) -> String:
+	match response:
+		Steam.CHAT_ROOM_ENTER_RESPONSE_SUCCESS:
+			return "SUCCESS"
+		Steam.CHAT_ROOM_ENTER_RESPONSE_DOESNT_EXIST:
+			return "DOESNT_EXIST"
+		Steam.CHAT_ROOM_ENTER_RESPONSE_FULL:
+			return "FULL"
+		Steam.CHAT_ROOM_ENTER_RESPONSE_ERROR:
+			return "ERROR"
+		_:
+			return "UNKNOWN"
 
 
 func _exit_tree() -> void:

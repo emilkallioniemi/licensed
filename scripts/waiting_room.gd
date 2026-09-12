@@ -265,6 +265,13 @@ func _on_join_recovered() -> void:
 
 
 func _reset_as_lone_host() -> void:
+	var pose := Transform3D.IDENTITY
+	var had_pose := false
+	for child in learner_spawner.get_children():
+		if child is Learner and (child as Learner).is_local():
+			pose = (child as Learner).global_transform
+			had_pose = true
+			break
 	_clean_leavers.clear()
 	_steam_id_of.clear()
 	_watching = false
@@ -274,6 +281,11 @@ func _reset_as_lone_host() -> void:
 		child.free()
 	_room = RoomState.new(RoomState.min_players_from_args(OS.get_cmdline_user_args()))
 	_accept_player(multiplayer.get_unique_id(), SteamClient.steam_id, SteamClient.persona_name)
+	if not had_pose:
+		return
+	var learner := _learner_of(multiplayer.get_unique_id())
+	if learner != null:
+		learner.global_transform = pose
 
 
 func _on_host_vanished() -> void:

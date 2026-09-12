@@ -66,6 +66,17 @@ func close() -> void:
 	closed.emit()
 
 
+## Keep the dock after a failed Join rehosts this room. The old learner is gone; the
+## new one must stand still at the desk so the row can show the failure line.
+func rebind_learner(learner: Learner) -> void:
+	if not _open or _closing or learner == null:
+		return
+	_learner = learner
+	_face_station(learner, _camera.global_transform)
+	learner.set_using_station(true)
+	_camera.current = true
+
+
 func _face_station(learner: Learner, dock: Transform3D) -> void:
 	var toward := -dock.basis.z
 	toward.y = 0.0
