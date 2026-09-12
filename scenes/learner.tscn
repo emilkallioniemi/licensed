@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/learner.gd" id="1_learner"]
+[ext_resource type="PackedScene" path="res://assets/slice_0/player/learner.tscn" id="2_visual"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_learner"]
+radius = 0.3
+height = 2.0
+
+[node name="Learner" type="CharacterBody3D"]
+floor_snap_length = 0.2
+script = ExtResource("1_learner")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_learner")
+
+[node name="Visual" parent="." instance=ExtResource("2_visual")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
+fov = 88.0
