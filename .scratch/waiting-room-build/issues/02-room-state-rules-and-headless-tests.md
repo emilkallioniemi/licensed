@@ -12,7 +12,7 @@ The test is a headless `SceneTree` script run with `godot --headless --path . --
 
 **Blocked by:** None (can start immediately).
 
-**Status:** ready-for-agent
+**Status:** claimed
 
 - [ ] The room-state script loads and runs with no scene tree, no autoload, no Steam, and no network.
 - [ ] Arrival order deals palettes 01/02/03; a departure never reshuffles the survivors.
