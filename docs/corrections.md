@@ -20,3 +20,4 @@ Areas: `examiner`, `controls`, `split`, `sight`, `sheet`, `scope`, `ui`, `scorin
 - 2026-09-12 | scope | Voice ticket recommended voice off under the dev transport → keep it on everywhere; the self-echo from three instances on one mic is the proof it works, and mute is the escape.
 - 2026-09-12 | ui | Walkthrough ticket recommended one fixed room camera, then third-person orbit → each player has their own first-person camera and can walk around and investigate the room.
 - 2026-09-12 | scope | Reception desk ticket recommended no way to leave a friend's room short of quitting to desktop → a player can always leave the room they are in and be back in a room of their own.
+- 2026-09-12 | other | A friend dropping mid-room had no decided read → they vanish where they stood and the entrance door sounds once; the reverse door theatre is only for a deliberate Leave, because a drop is not a walk out.

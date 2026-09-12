@@ -14,13 +14,13 @@ A deliberate departure (a guest's Leave, ticket 09, or a dev-transport instance 
 
 **Status:** claimed
 
-- [ ] A joining instance fades to black, then fades up on the `Entrance` marker facing into the room.
-- [ ] On the machines already in the room the door opens (or the sound alone plays until the leaf exists), the learner appears in the doorway, the door closes, and one door sound is heard positionally from the entrance, audible from the far corner.
-- [ ] The joiner sees the others where they actually stand, in their existing palettes, on the first visible frame; nothing about the room resets.
-- [ ] The joiner is the next palette by arrival order.
-- [ ] A clean departure plays the theatre in reverse; the leaver's slot, pick, and hold are freed on every remaining machine.
-- [ ] The mid-room drop behaviour is decided and written into the ticket's Comments; no silent default.
-- [ ] Demoed with three local instances under `--transport=enet`.
+- [x] A joining instance fades to black, then fades up on the `Entrance` marker facing into the room.
+- [x] On the machines already in the room the door opens (or the sound alone plays until the leaf exists), the learner appears in the doorway, the door closes, and one door sound is heard positionally from the entrance, audible from the far corner.
+- [x] The joiner sees the others where they actually stand, in their existing palettes, on the first visible frame; nothing about the room resets.
+- [x] The joiner is the next palette by arrival order.
+- [x] A clean departure plays the theatre in reverse; the leaver's slot, pick, and hold are freed on every remaining machine.
+- [x] The mid-room drop behaviour is decided and written into the ticket's Comments; no silent default.
+- [x] Demoed with three local instances under `--transport=enet`.
 
 ## Comments
 
@@ -29,3 +29,7 @@ A deliberate departure (a guest's Leave, ticket 09, or a dev-transport instance 
 **From ticket 02 (orchestrator).** `RoomState.snapshot()`/`restore()` carry the whole record as plain `var_to_str`-safe data; a guest's copy derives booking, holders, notice board line and count from the same code and raises no events, so a joiner restoring the host's snapshot sees the room exactly as it is. Under `--headless --script` a failed `assert` did not hang this time; it aborted only the enclosing function and the script still printed PASS. `tests/verify_room_state.gd` routes every check through `_check` (counts failures, ends with FAIL and exit 1); copy that pattern into any later headless script.
 
 **From ticket 04 (orchestrator).** Learners currently stand in a short row at the entrance so capsules do not overlap; this ticket's arrival theatre replaces that. Autoload `Transport` (`scripts/transport.gd`) picks Steam or ENet; `Transport.lobby_id` is the hosted Steam lobby. Host `RoomState` is the writer; guests restore snapshots. Bind-or-join still prints Godot's "Couldn't create an ENet host" on guests when `create_server` finds the port taken; then they join. Setup: `docs/run-instances.md`.
+
+**Builder, 2026-09-12. Mid-room drop.** A drop is not a walk out. The learner vanishes where they stood and the entrance door sounds once; the leaf does not swing. The reverse door theatre (open, gone, close) is only for a deliberate Leave (ticket 09) or a clean window close. No toast, no examiner. Recorded in `docs/corrections.md`.
+
+**Builder, 2026-09-12.** The entrance row is gone; everyone arrives on `Kit/AttachmentPoints/Entrance` facing −Z. Overlay starts black so an empty room never flashes; joiners fade up once their learner exists (ticket 09 calls `WaitingRoom.begin_join()` / `begin_leave()` from the desk). `ArrivalTheatre` (`scripts/arrival_theatre.gd`) plays one positional placeholder `assets/waiting_room/door.wav` at the opening; parent Astra's leaf to `ArrivalTheatre/Leaf` (hinge on the −X jamb). Demoed three local `--transport=enet` instances: palettes 01/02/03 by arrival, door on the machines already in the room, CloseMainWindow on a guest played leave-through-the-entrance and the host went to 2 in the room. `RoomState` tests still PASS. Bind-or-join still prints Godot's "Couldn't create an ENet host" on guests.
