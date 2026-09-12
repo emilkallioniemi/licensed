@@ -8,6 +8,8 @@ Areas: `examiner`, `controls`, `split`, `sight`, `sheet`, `scope`, `ui`, `scorin
 
 ## Log
 
+- 2026-09-12 | controls | Lobby movement was walking only → allow holding Shift to sprint and pressing Space to jump while waiting.
+
 - 2026-09-12 | controls | Smooth walking and remote movement and reduce unnecessary screen redraws while preserving the room's visual quality.
 
 - 2026-09-12 | ui | Start the game in fullscreen mode.

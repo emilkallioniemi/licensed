@@ -4,8 +4,10 @@ extends CharacterBody3D
 ## this in a replicated peer; `set_local` is the seam that turns input, the camera, and hiding
 ## your own head on or off without a rewrite.
 
-## Walk speed. No sprint, no jump (spec section 2).
+## Waiting-room movement speeds in metres per second.
 const WALK_SPEED := 3.0
+const SPRINT_SPEED := 6.0
+const JUMP_VELOCITY := 5.0
 ## First-person camera height, metres above the feet.
 const EYE_HEIGHT := 1.75
 ## Seated camera height, metres above the feet. Mouse look stays live (spec section 7).
@@ -164,6 +166,7 @@ func _apply_local() -> void:
 		head.visible = not _local
 	var walk := _local and _can_walk and not _seated and not _using_station
 	if not walk:
+		velocity = Vector3.ZERO
 		_previous_position = global_position
 		_current_position = global_position
 	var look := _local and not _using_station and not _escape_overlay_open and (_can_walk or _seated)
@@ -263,14 +266,17 @@ func _physics_process(delta: float) -> void:
 	_previous_position = global_position
 	if not is_on_floor():
 		velocity.y -= float(ProjectSettings.get_setting("physics/3d/default_gravity")) * delta
+	elif Input.is_action_just_pressed("jump"):
+		velocity.y = JUMP_VELOCITY
 	var wish := Vector2(
 		float(Input.is_physical_key_pressed(KEY_D)) - float(Input.is_physical_key_pressed(KEY_A)),
 		float(Input.is_physical_key_pressed(KEY_S)) - float(Input.is_physical_key_pressed(KEY_W)),
 	)
 	if wish != Vector2.ZERO:
 		var direction := (transform.basis * Vector3(wish.x, 0.0, wish.y)).normalized()
-		velocity.x = direction.x * WALK_SPEED
-		velocity.z = direction.z * WALK_SPEED
+		var speed := SPRINT_SPEED if Input.is_action_pressed("sprint") else WALK_SPEED
+		velocity.x = direction.x * speed
+		velocity.z = direction.z * speed
 	else:
 		velocity.x = 0.0
 		velocity.z = 0.0
