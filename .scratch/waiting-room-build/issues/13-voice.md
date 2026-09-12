@@ -1,0 +1,33 @@
+# 13: Voice
+
+**Spec:** `.scratch/waiting-room/spec.md`, section 10 and section 9 (the overlay's mic controls). Research with citations is on branch `research/steam-voice-through-godotsteam`. Vocabulary: voice.
+
+**Time box: one weekend of build.** If two real Steam accounts cannot hear each other by the end of it, set this ticket's Status to `wontfix`, write why in Comments, and Discord carries the demo. No re-litigation.
+
+**What to build:** The moment a player is in a room with friends they can hear them, from their learners' bodies, with nothing to set up. Escape gives them push-to-talk and a mute.
+
+Capture: `startVoiceRecording` / `getAvailableVoice` / `getVoice` with an 8 KiB buffer (not the tutorial's 1 KiB), polled per frame while recording; `setInGameVoiceSpeaking` on start and stop; keep polling after stopping until the result is not-recording. Open mic records whenever unmuted; push-to-talk records while the key is held.
+
+Transport: a plain unreliable RPC (`any_peer`, `call_remote`) on its own channel. Never `UNRELIABLE_ORDERED`, which the Steam peer silently sends reliable.
+
+Playback: `decompressVoice(bytes, 48000)` to 16-bit samples pushed to an `AudioStreamGeneratorPlayback`, clamped to the frames available, on one `AudioStreamPlayer3D` per remote learner with an `AudioStreamGenerator` at mix rate 48000 and buffer length about 0.1 s (the default 0.5 s is half a second of latency).
+
+Positional, gently: from the learner's body; attenuation tuned so the far corner of the room is noticeably quieter but always clearly intelligible. Direction and a little distance, never distance gating. Same attenuation in the test area.
+
+Settings: mic mode (default open mic; push-to-talk opt-in) and self-mute, both in the Escape overlay (ticket 12) as "Open mic" / "Push to talk" and "Mute microphone", persisted in a `ConfigFile` under `user://`. Speaking indicator on the name tag while that player's voice is being received.
+
+Every transport: on under `--transport=enet` too; three instances on one machine share one mic and you hear yourself back; that echo is the smoke test; push-to-talk or mute is how you stop it.
+
+Deferred, do not build: per-player mute, volume sliders, noise gate, mic device selection.
+
+**Blocked by:** 04 (learners and RPC), 12 (the Escape overlay).
+
+**Status:** ready-for-agent
+
+- [ ] Under three local instances, speaking into the mic is heard back from the other two learners' positions (the echo smoke test).
+- [ ] Voice comes from the friend's learner: it is audibly quieter from the far corner of the room than from beside them, and intelligible from both.
+- [ ] The name tag shows a speaking indicator while that player's voice is coming through and not otherwise.
+- [ ] The Escape overlay offers "Open mic" / "Push to talk" and "Mute microphone"; both survive a restart.
+- [ ] Push-to-talk transmits only while the key is held; mute stops your own microphone entirely.
+- [ ] Voice keeps working after the transition into the test area and after Back.
+- [ ] Two real Steam accounts on two machines hear each other; the result and the date are written into the ticket's Comments. If not achieved within the weekend, Status is `wontfix` with the reason.
