@@ -59,6 +59,8 @@ var _pending_invites: Array = []
 var _invited_until: Dictionary = {}
 var _list_queued := false
 var _lobby_refresh_queued := false
+var _presence_requested: Dictionary = {}
+var _left_mouse_down := false
 
 
 func _ready() -> void:
@@ -256,6 +258,9 @@ func _on_used() -> void:
 func _on_screen_closed() -> void:
 	set_process_input(false)
 	_station.set_listening(true)
+	_left_mouse_down = false
+	if _list_queued:
+		_flush_list.call_deferred()
 
 
 func _on_room_changed() -> void:
@@ -324,6 +329,10 @@ func _queue_list() -> void:
 
 
 func _flush_list() -> void:
+	# Buttons activate on release. Keep the pressed control alive while Steam
+	# callbacks arrive between mouse-down and mouse-up.
+	if _left_mouse_down:
+		return
 	_list_queued = false
 	if not is_inside_tree():
 		return
@@ -353,6 +362,11 @@ func _refresh_lobby_data() -> void:
 		var id: int = Steam.getFriendByIndex(i, Steam.FRIEND_FLAG_IMMEDIATE)
 		if id == 0:
 			continue
+		# Bootstrap once; Steam pushes later friend presence changes automatically.
+		# Requesting again in response to its callback creates a redraw loop.
+		if not _presence_requested.has(id):
+			_presence_requested[id] = true
+			Steam.requestFriendRichPresence(id)
 		var game: Dictionary = Steam.getFriendGamePlayed(id)
 		var lobby := int(game.get("lobby", 0))
 		if lobby != 0:
@@ -400,7 +414,6 @@ func _collect_friends(room: RoomState) -> Array:
 		var state: int = Steam.getFriendPersonaState(id)
 		if state == Steam.PERSONA_STATE_OFFLINE:
 			continue
-		Steam.requestFriendRichPresence(id)
 		var name := Steam.getFriendPersonaName(id)
 		var licensed := _at_the_test_centre(id)
 		var game: Dictionary = Steam.getFriendGamePlayed(id)
@@ -839,6 +852,10 @@ func _input(event: InputEvent) -> void:
 	if event.is_action("ui_cancel"):
 		return
 	if event is InputEventMouse:
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+			_left_mouse_down = event.pressed
+			if not _left_mouse_down and _list_queued:
+				_flush_list.call_deferred()
 		var mapped := _map_mouse((event as InputEventMouse).position)
 		if mapped.x < 0.0:
 			return
