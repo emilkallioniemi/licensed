@@ -27,3 +27,7 @@ The test area: a flat asphalt plane with painted bays as boxes, daylight, nothin
 - [ ] Each former Random holder sees a distinct dealt named role in the corner line; named holders see their own; the other two learners' name tags show the same roles.
 - [ ] A sign reading MONSTER TRUCK is visible in the car park.
 - [ ] Works with `--min-players=1` alone and with three local instances.
+
+## Comments
+
+**From ticket 08 (orchestrator).** The board never shows the Random deal; strips stay as held through launch. Name tag already has a second role line (blank when holding nothing). `RoomState.tick` / `launched` / `launched_roles` / `return_from_test_area` already exist. Examiner line must be re-spoken on every `countdown_started`. Chair 0 = standing.

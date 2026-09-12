@@ -18,20 +18,22 @@ Name tag: a second, smaller line under the name reading "Driver" / "Spotter" / "
 
 **Blocked by:** 07 (the booking board and its dock).
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Without a booking the three strips read "No booking.", lamps are off, and clicking any role or Random does nothing.
-- [ ] With a booking, clicking a free role floods its strip with the clicker's colour and display name and lights its lamp to match on every machine; the clicker's button reads pressed.
-- [ ] Clicking your own held role drops it (strip blank, lamp off); clicking another free role swaps in one move.
-- [ ] Clicking a role someone else holds does nothing.
-- [ ] Two players clicking the same free role in the same frame: one holds it, the other sees that name appear, nothing is said.
-- [ ] Any number of players may hold Random; each shows as a colour pip on the Random button in arrival order.
-- [ ] The other two learners' name tags show a second line with their held role; your own is never shown to you.
-- [ ] When the booking dissolves, every strip, lamp, pip, and name tag role line clears at once.
-- [ ] Under `--transport=enet` strips show the peer-suffixed display name.
+- [x] Without a booking the three strips read "No booking.", lamps are off, and clicking any role or Random does nothing.
+- [x] With a booking, clicking a free role floods its strip with the clicker's colour and display name and lights its lamp to match on every machine; the clicker's button reads pressed.
+- [x] Clicking your own held role drops it (strip blank, lamp off); clicking another free role swaps in one move.
+- [x] Clicking a role someone else holds does nothing.
+- [x] Two players clicking the same free role in the same frame: one holds it, the other sees that name appear, nothing is said.
+- [x] Any number of players may hold Random; each shows as a colour pip on the Random button in arrival order.
+- [x] The other two learners' name tags show a second line with their held role; your own is never shown to you.
+- [x] When the booking dissolves, every strip, lamp, pip, and name tag role line clears at once.
+- [x] Under `--transport=enet` strips show the peer-suffixed display name.
 
 ## Comments
 
 **From ticket 04 (orchestrator).** Guests send sit/pick/hold through `WaitingRoom.submit_command` over reliable RPC. Under ENet the name suffix is the arrival slot 2/3 (Godot's ENet unique ids are not 2 and 3). Palettes 01/02/03 match chair teal / ochre / kit red; `Palettes.flood_color` is the shirt.
 
 **From ticket 07 (orchestrator).** Role column still as the kit ships; the board dock and cursor already cover it. `StationScreen` (`scripts/station_screen.gd`) is dock/cursor/Escape. `BookingBoard` draws rows on SubViewport quads over `DisplaySurface` and raycasts the dock cursor. Chip names use kit Ink on `Palettes.flood_color`; teal/red floods are dark, and palette 02 is ochre on the ochre truck row. Holds go through `submit_command`.
+
+**Builder, 2026-09-12.** Role column is the same dock and cursor: `BookingBoard` raycasts the four kit buttons on the board's layer and sends `take` / `drop_hold` through `submit_command`. Named-role strips are SubViewport quads over `OccupantSurface` ("No booking." in ScreenInk until a booking, then blank or a flood + display name in Ink); lamps use `Palettes.flood_color` or the kit steel. Random is pips on the button's right edge in arrival order; nothing shows the deal. Own held button insets locally; everyone else's stays flat. Name tags gain a smaller `RoleLine` ("Driver" / "Spotter" / "Navigator" / "Random"), hidden with the name for the local learner. Without a booking, and on a taken named role, the view does not send a command. `RoomState` tests still PASS. Three-instance feel: `docs/run-instances.md`.
