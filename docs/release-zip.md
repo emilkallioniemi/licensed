@@ -1,6 +1,6 @@
 # Waiting-room playtest zip
 
-A friend downloads one zip from a GitHub release, unzips it, and double-clicks `licensed.exe` with Steam running. They arrive in a waiting room of their own.
+A friend downloads one zip from a GitHub release, unzips it, and double-clicks `licensed.exe` with Steam running. They arrive in a room of their own.
 
 ## Produce the next zip
 
