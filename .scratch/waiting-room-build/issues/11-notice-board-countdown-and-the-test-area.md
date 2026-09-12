@@ -16,7 +16,7 @@ The test area: a flat asphalt plane with painted bays as boxes, daylight, nothin
 
 **Blocked by:** 06 (seated state), 08 (holds and Random).
 
-**Status:** ready-for-agent
+**Status:** claimed
 
 - [ ] The notice board shows exactly the room state's line at all times and changes the instant the state does; it is not a station.
 - [ ] With fewer than N players it reads "Waiting for k."; at N without a booking "No booking."; with a booking "Roles: x of N." then "Seated: x of N."; the counts match the room.
