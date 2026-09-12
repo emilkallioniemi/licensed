@@ -27,4 +27,6 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 
 ## Comments
 
+- From ticket 02: Consume occupancy generations for driving intentions and preserve immediate release neutralization. Replace the debug ENet controlled-motion fixture with actual shared driving; retain boarding and guest free-look/release tests.
+
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.

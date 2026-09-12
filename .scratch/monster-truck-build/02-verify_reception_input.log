@@ -1,0 +1,5 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+SteamClient: hypps (76561198194031611) is at the test centre; rich presence licensed=1
+SteamClient: avatar loaded, 64 x 64
+PASS: reception mouse clicks reach Invite and Join handlers.

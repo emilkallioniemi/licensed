@@ -10,6 +10,8 @@ const BAY_SPACING := 1.5
 ## Daylight the waiting room swaps in for its WorldEnvironment.
 var daylight: Environment
 
+var truck: MonsterTruck
+var boarding: TruckBoarding
 var _bays: Array[Marker3D] = []
 var _own_role: Label
 
@@ -20,6 +22,13 @@ func _ready() -> void:
 
 
 func _build() -> void:
+	truck = MonsterTruck.new()
+	truck.name = "MonsterTruck"
+	add_child(truck)
+	truck.position = Vector3(0, 0, -9)
+	boarding = TruckBoarding.new()
+	boarding.name = "Boarding"
+	add_child(boarding)
 	daylight = Environment.new()
 	daylight.background_mode = Environment.BG_COLOR
 	daylight.background_color = Color(0.62, 0.78, 0.92)

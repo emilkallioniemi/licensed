@@ -20,8 +20,24 @@ func _initialize() -> void:
 	var guest := Attempt.new()
 	guest.restore(attempt.snapshot())
 	check(guest.id == id and guest.phase == &"active" and guest.remaining == 358.5)
+	# Host world observations, then player-level occupancy commands.
+	attempt.observe_learner(1001, Vector3(-1.2, 1.6, -1.3))
+	attempt.observe_learner(1002, Vector3(-1.2, 1.6, -1.3))
+	check(not attempt.request_control(9999, id, 1, &"front"))
+	check(not attempt.request_control(1001, "old", 1, &"front"))
+	check(attempt.request_control(1001, id, 1, &"front"))
+	check(not attempt.request_control(1002, id, 1, &"front"))
+	check(not attempt.request_control(1001, id, 2, &"rear"))
+	check(attempt.release_control(1001, id, 3))
+	check(not attempt.request_control(1001, id, 2, &"front"))
+	check(attempt.request_control(1002, id, 2, &"front"))
+	guest.restore(attempt.snapshot())
+	check(guest.control_of(1002) == &"front" and guest.control_of(1001) == &"")
+	attempt.observe_learner(1003, Vector3(50, 0, 0))
+	check(not attempt.request_control(1003, id, 1, &"rear"))
 	attempt.depart()
 	check(not attempt.scene_ready(1003, id))
+	check(not attempt.request_control(1003, id, 2, &"rear"))
 	attempt.tick(3.0)
 	check(attempt.phase == &"departing" and attempt.remaining == 358.5)
 	guest.restore(attempt.snapshot())
@@ -31,7 +47,7 @@ func _initialize() -> void:
 	attempt.tick(30.0)
 	check(attempt.phase == &"departing" and attempt.remaining == 360.0)
 	if failures == 0:
-		print("PASS: scene readiness barrier, stale/duplicate rejection, arrival timer and load timeout")
+		print("PASS: scene readiness barrier, stale/duplicate rejection, arrival timer, load timeout and physical occupancy rules")
 	quit(1 if failures else 0)
 
 func check(condition: bool) -> void:

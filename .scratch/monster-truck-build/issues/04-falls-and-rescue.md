@@ -27,4 +27,6 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 
 ## Comments
 
+- From ticket 02: Build violent ejection, entrapment and rescue on the tested support-relative movement and inherited detachment velocity. The isolated-world three-peer boarding fixture covers ordinary roof riding.
+
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.

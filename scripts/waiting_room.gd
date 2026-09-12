@@ -196,6 +196,17 @@ func room_state() -> RoomState:
 	return _room
 
 
+## The host's authenticated mapping; guests resolve replicated arrival identities.
+func player_id_for_peer(peer_id: int) -> int:
+	if multiplayer.is_server():
+		return _steam_id_of.get(peer_id, 0)
+	var learner := _learner_of(peer_id)
+	if learner == null:
+		return 0
+	var occupant := _occupant_of_learner(learner)
+	return occupant.steam_id if occupant != null else 0
+
+
 func is_in_test_area() -> bool:
 	return _in_test_area
 
@@ -378,6 +389,7 @@ func _enter_test_area() -> void:
 		world_environment.environment = test_area.daylight
 	test_area.visible = true
 	_place_in_bays()
+	test_area.boarding.start(self)
 
 
 func _place_in_bays() -> void:
@@ -440,6 +452,7 @@ func _restore_waiting_room() -> void:
 	if _waiting_environment != null:
 		world_environment.environment = _waiting_environment
 	test_area.visible = false
+	test_area.boarding.stop()
 	test_area.show_own_role("")
 	_set_stations_enabled(true)
 
