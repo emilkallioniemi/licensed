@@ -27,6 +27,17 @@ window/size/viewport_width=1280
 window/size/viewport_height=720
 window/size/mode=3
 
+[input]
+
+sprint={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":4194325)]
+}
+jump={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":32)]
+}
+
 [physics]
 
 common/physics_jitter_fix=0.0
