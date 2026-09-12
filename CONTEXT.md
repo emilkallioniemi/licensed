@@ -33,7 +33,7 @@ One of exactly three humans in a test. Never fewer, never more, never an AI.
 _Avoid_: user, teammate, participant
 
 **Role**:
-What one player holds for one vehicle: a mix of ingredients no other player has. Roles are per vehicle; there is no fixed set.
+A vehicle-specific responsibility made from control, sight, or knowledge. In the monster truck, players take over responsibilities at physical controls and can trade places during the test; roles are not assigned to players beforehand.
 _Avoid_: class, seat, position, job, character
 
 **Ingredient**:
@@ -45,7 +45,7 @@ Hands on something the vehicle needs: wheel, pedals, throttle, balance, gears, i
 _Avoid_: input, mechanic
 
 **Sight**:
-A view no other role has: forward, mirrors, the ground, an instrument.
+A view available to a player that others may lack: forward, mirrors, the ground, an instrument. In the monster truck, sight follows the learner's physical position rather than a preassigned role.
 _Avoid_: camera, view, perspective
 
 **Knowledge**:
@@ -57,11 +57,11 @@ How one vehicle divides its ingredients among the three roles.
 _Avoid_: loadout, assignment, role set
 
 **Test sheet**:
-The dry, precise, slightly ambiguous document describing the vehicle's procedures and the test. Held by one role, read aloud to the others.
+The dry, precise, slightly ambiguous document describing a vehicle's procedures and test, held by one role and read aloud to the others when the vehicle uses one. The monster truck has no test sheet; its examiner requests manoeuvres, with physical signs and markings identifying the route.
 _Avoid_: manual, handbook, instructions, guide
 
 **Driver**, **Spotter**, **Navigator**:
-The monster truck's three candidate roles, named so the role pickup can show them: hands on the controls with a hood view that hides the ground; outside the cab seeing the ground and the cones; holding the test sheet and the route. The split is a playtest candidate; the names are placeholders until it is.
+Names from the earlier monster-truck role-split candidate: driving, spotting hazards, and reading the test sheet. They remain existing waiting-room placeholders, not preassigned monster-truck roles in the current design.
 _Avoid_: instructor, reader, clerk, operator
 
 **Random**:
@@ -79,21 +79,25 @@ The deadpan NPC with the clipboard who scores the test and comments on it. Heard
 _Avoid_: instructor, judge, referee, narrator
 
 **Minor fault**:
-A point on the examiner's sheet. Enough of them fail the test.
+A point on the examiner's sheet. In the monster-truck test, minor faults lower the rating but never cause failure.
 _Avoid_: penalty, warning, strike, error
 
 **Serious fault**:
-An immediate fail: a crushed cone, a stall in the junction, the examiner's car.
+A fault that guarantees failure. In the monster-truck test, dangerous accidents such as hitting a worker or driving into the ravine qualify; the test ends after the physical aftermath and examiner response.
 _Avoid_: critical fault, game over, major fault
 
 **Comment**:
 One line from the examiner, spoken to all three players.
 _Avoid_: bark, quip, voice line, dialogue
 
+**Rating**:
+The quality of a monster-truck pass, determined only by minor faults. The best rating is retained alongside the earned stamp across retries.
+_Avoid_: rank, level, experience
+
 ### Progression
 
 **License**:
-The one record shared by all three players of which vehicles they have passed.
+A player's personal record of passed vehicles and best ratings, retained across hosts and groups of friends. Represented by a physical card bearing their portrait, earned stamps, and best ratings that their learner can hold up.
 _Avoid_: profile, save, progress
 
 **Stamp**:
@@ -175,7 +179,7 @@ The vehicle all three players in the room have picked. It forms on the third mat
 _Avoid_: selection, choice, vote
 
 **Role pickup**:
-The role column of the booking board, where a player takes one of the booked vehicle's roles, or random. A role held by one player is unavailable to the others. Dead until there is a booking; every held role is released if the booking dissolves.
+The role column of the booking board for vehicles with preassigned roles: a player takes an available role or random, and all holds end when the booking dissolves. The monster truck does not use preassigned roles.
 _Avoid_: role select, class select, loadout
 
 **Occupant strip**:
@@ -183,7 +187,7 @@ The strip on each role of the role pickup that names who holds it, in that playe
 _Avoid_: label, slot, owner field
 
 **Ready-up**:
-Signalling you are ready to start the test by sitting in one of the waiting room's chairs; standing up takes it back. The test starts when three players are seated, there is a booking, and every player holds a role or random.
+Signalling you are ready to start the test by sitting in one of the waiting room's chairs; standing up takes it back. Starting requires three seated players and a booking, plus a role or random held by each player only for vehicles with preassigned roles.
 _Avoid_: ready check, start, launch, go
 
 **Notice board**:
@@ -199,5 +203,5 @@ The players talking to each other inside the game. Always on by default and hear
 _Avoid_: voice chat, VoIP, comms
 
 **Escape overlay**:
-The small panel opened with Escape anywhere in the waiting room or the test area: mic mode, mute, quit, and for the host in the test area, back to the waiting room. Not a menu, not a pause; the room runs on behind it.
+The small panel opened with Escape anywhere in the waiting room or the test area: mic mode, mute, quit, and during the monster-truck test, a proposal to concede that requires all three players' agreement. Not a menu, not a pause; the room runs on behind it.
 _Avoid_: pause menu, settings menu, options, main menu

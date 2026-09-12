@@ -36,12 +36,12 @@ probably not needed.
 
 3. **Two kinds of pressure.**
    Every test has a timer: run out and you fail. And every test has a deadpan examiner
-   who deducts minor faults, fails you instantly for serious ones, and comments on
+   who records minor faults, guarantees failure for serious ones, and comments on
    everything. The timer makes you hurry. The examiner punishes you for hurrying.
 
 4. **Shared fate.**
-   Exactly three players, always. All three of you hold one license. One player's
-   mistake fails everyone.
+   Exactly three players, always. All three receive the same test result, earning
+   stamps on their personal licenses together. One player's mistake fails everyone.
 
 5. **Failure is the content.**
    A moped with three people on it falling over is the trailer. Design so that failing
@@ -170,14 +170,24 @@ yet, a parked car where the bay should be, rain, the examiner asking a question.
 The mascot. Humorless, clipboard, coffee. Sits in the passenger seat (or the sidecar,
 or the back of the trailer). Everyone hears him.
 
-**Scoring works like a real test, plus a clock:**
+**Scoring combines driving faults with a timer:**
 
 - **Timer**: every test has a time limit. Run out and you fail, regardless of how clean
   the drive was. How visible the timer is (a HUD countdown, the examiner checking his
   watch, only one player able to see it) is open.
-- **Minor fault**: a point on the sheet. Too many and you fail.
-- **Serious fault**: immediate fail. Hitting the cone, stalling in the junction,
-  reversing into the examiner's car.
+- **Minor fault**: a point on the sheet. In the monster-truck test, small mistakes
+  such as cone clips lower the passing rating but never cause failure.
+- **Serious fault**: guarantees failure. Monster-truck examples include hitting a
+  worker or driving into the ravine. Let the physical aftermath and examiner
+  response play out before ending the test; timer expiration likewise allows an
+  unfolding crash to finish.
+- **Monster-truck pass**: complete every required manoeuvre before the timer expires
+  without a serious fault. Earn the stamp regardless of minor-fault count. Ratings
+  depend only on minor faults, with no speed bonus; preserve the stamp and best
+  rating across retries, and show the latest result for comparison.
+- **Playtest candidates**: a six-minute limit against a roughly five-minute successful
+  attempt; passing ratings of Technically Licensed (4+ minor faults), Mostly Harmless
+  (1–3), and Suspiciously Competent (zero). Names and thresholds remain provisional.
 - **Comments**: occasional, deadpan, devastating. These are the lines people will quote.
 
 Examples of the register we want:
@@ -196,6 +206,14 @@ One mode to begin with.
 **Campaign**: the license progression. Pass each vehicle's test to unlock the next. Your
 license card fills with stamps. In the demo that's one vehicle, one test, and a card with
 one stamp and visibly more empty slots.
+
+Each player keeps a personal license across hosts and groups of friends. A pass awards
+all three players the vehicle's stamp and the same attempt rating; each retains their
+own best rating. There is no individual performance scoring. Learners can hold up a
+physical license showing their portrait, stamps, and best ratings. The booking board
+shows which current players already hold each vehicle's stamp.
+The license follows the player's Steam account across computers and reinstallations,
+using local saving with Steam Cloud backup; local saving works independently.
 
 Other modes (an endless test, a custom sandbox with the examiner's strictness and hazards
 as knobs) are ideas for after the campaign works, not commitments.
