@@ -20,6 +20,7 @@ const PITCH_LIMIT := deg_to_rad(89.0)
 var _local := false
 var _palette := 0
 var _display_name := ""
+var _held_role: StringName = &""
 ## False while the arrival theatre has this body hidden in the doorway.
 var _body_visible := true
 ## False for a joiner until the door has opened, so they fade up standing still on Entrance.
@@ -33,6 +34,7 @@ var _using_station := false
 @onready var camera: Camera3D = $Camera3D
 @onready var visual: Node3D = $Visual
 @onready var name_tag: Label3D = $NameTag
+@onready var role_line: Label3D = $NameTag/RoleLine
 
 
 func _ready() -> void:
@@ -40,6 +42,7 @@ func _ready() -> void:
 	_apply_local()
 	_apply_palette()
 	_apply_display_name()
+	_apply_held_role()
 
 
 ## Turns this learner into the one this machine walks (`true`) or a body someone else walks
@@ -70,6 +73,13 @@ func set_display_name(text: String) -> void:
 	_display_name = text
 	if is_node_ready():
 		_apply_display_name()
+
+
+## The name tag's second line: the held role, seen by the other two, never by yourself.
+func set_held_role(role: StringName) -> void:
+	_held_role = role
+	if is_node_ready():
+		_apply_held_role()
 
 
 ## Shown in the room (true) or hidden in the doorway until the door opens (false).
@@ -145,6 +155,22 @@ func _apply_palette() -> void:
 
 func _apply_display_name() -> void:
 	name_tag.text = _display_name
+
+
+func _apply_held_role() -> void:
+	if role_line == null:
+		return
+	match _held_role:
+		RoomState.DRIVER:
+			role_line.text = "Driver"
+		RoomState.SPOTTER:
+			role_line.text = "Spotter"
+		RoomState.NAVIGATOR:
+			role_line.text = "Navigator"
+		RoomState.RANDOM:
+			role_line.text = "Random"
+		_:
+			role_line.text = ""
 
 
 func _unhandled_input(event: InputEvent) -> void:

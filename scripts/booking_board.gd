@@ -1,8 +1,8 @@
 class_name BookingBoard
 extends Node3D
 ## The booking board as a station: zone, prompt, E, then the station screen on the
-## board's own surfaces. Renders picks and BOOKED from the host-owned room state and
-## never writes it. Clicks go through `WaitingRoom.submit_command`.
+## board's own surfaces. Renders picks, BOOKED, and the role pickup from the host-owned
+## room state and never writes it. Clicks go through `WaitingRoom.submit_command`.
 
 ## Spec copy table: station prompts, two spaces, signage register.
 const BOOKING_PROMPT := "E  Booking"
@@ -14,7 +14,13 @@ const PROMPT_HEIGHT := 3.25
 const ROW_LAYER := 8
 ## Drawn row resolution, matching the spec's ~560 × 100 px at the dock.
 const ROW_PX := Vector2i(560, 100)
+## Occupant strip: 0.65 × 0.105 m, about 180 × 30 px at the dock.
+const STRIP_PX := Vector2i(196, 40)
 const INK := Color("293a3d")
+## Signage on the kit Screen, as the friends-terminal placeholder uses.
+const SCREEN_INK := Color("a8d9c4")
+## Own held button moves this far into the board (world −Z); everyone else's stays flat.
+const BUTTON_INSET := Vector3(0.0, 0.0, -0.022)
 
 const ROWS: Array[Dictionary] = [
 	{
@@ -64,12 +70,44 @@ const ROWS: Array[Dictionary] = [
 	},
 ]
 
+const ROLES: Array[Dictionary] = [
+	{
+		"button": "DriverButton",
+		"label": "DriverButtonLabel",
+		"surface": "DriverOccupantSurface",
+		"lamp": "DriverStatusLamp",
+		"role": RoomState.DRIVER,
+	},
+	{
+		"button": "SpotterButton",
+		"label": "SpotterButtonLabel",
+		"surface": "SpotterOccupantSurface",
+		"lamp": "SpotterStatusLamp",
+		"role": RoomState.SPOTTER,
+	},
+	{
+		"button": "NavigatorButton",
+		"label": "NavigatorButtonLabel",
+		"surface": "NavigatorOccupantSurface",
+		"lamp": "NavigatorStatusLamp",
+		"role": RoomState.NAVIGATOR,
+	},
+	{
+		"button": "RandomButton",
+		"label": "RandomButtonLabel",
+		"surface": "",
+		"lamp": "",
+		"role": RoomState.RANDOM,
+	},
+]
+
 var _waiting: WaitingRoom
 var _station: Station
 var _screen: StationScreen
 var _board: Node3D
 var _sound: AudioStreamPlayer3D
 var _rows: Array[Dictionary] = []
+var _roles: Array[Dictionary] = []
 var _signals_connected := false
 
 
@@ -114,6 +152,8 @@ func _build(kit: Node3D) -> void:
 
 	for spec in ROWS:
 		_rows.append(_build_row(spec))
+	for spec in ROLES:
+		_roles.append(_build_role(spec))
 
 
 func _build_row(spec: Dictionary) -> Dictionary:
@@ -250,6 +290,139 @@ func _build_row(spec: Dictionary) -> Dictionary:
 	}
 
 
+func _build_role(spec: Dictionary) -> Dictionary:
+	var role: StringName = spec["role"]
+	var button := _board.find_child(String(spec["button"]), true, false) as MeshInstance3D
+	var label := _board.find_child(String(spec["label"]), true, false) as MeshInstance3D
+	if button == null:
+		push_error("Waiting room kit has no role button '%s'" % spec["button"])
+		return {}
+
+	var flood: Panel = null
+	var name_label: Label = null
+	var lamp: MeshInstance3D = null
+	var surface_name := String(spec["surface"])
+	if surface_name != "":
+		var surface := _board.find_child(surface_name, true, false) as MeshInstance3D
+		if surface == null:
+			push_error("Waiting room kit has no occupant surface '%s'" % surface_name)
+			return {}
+		var strip := _build_strip(surface, String(role))
+		flood = strip["flood"]
+		name_label = strip["name"]
+		name_label.text = "No booking."
+	var lamp_name := String(spec["lamp"])
+	if lamp_name != "":
+		lamp = _board.find_child(lamp_name, true, false) as MeshInstance3D
+
+	var aabb := button.mesh.get_aabb() if button.mesh != null else AABB(Vector3.ZERO, Vector3(0.87, 0.21, 0.055))
+	var area := Area3D.new()
+	area.name = String(role)
+	area.collision_layer = ROW_LAYER
+	area.collision_mask = 0
+	area.monitoring = false
+	area.monitorable = true
+	area.input_ray_pickable = true
+	var shape := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(aabb.size.x, aabb.size.y, 0.08)
+	shape.shape = box
+	area.add_child(shape)
+	add_child(area)
+	area.global_transform = button.global_transform
+	area.global_position = button.global_position + button.global_transform.basis.z * 0.02
+
+	var pips: Array[MeshInstance3D] = []
+	if role == RoomState.RANDOM:
+		pips = _build_pips(button)
+
+	return {
+		"role": role,
+		"button": button,
+		"label": label,
+		"button_rest": button.global_position,
+		"label_rest": label.global_position if label != null else Vector3.ZERO,
+		"flood": flood,
+		"name": name_label,
+		"lamp": lamp,
+		"pips": pips,
+	}
+
+
+func _build_strip(surface: MeshInstance3D, slot: String) -> Dictionary:
+	var viewport := SubViewport.new()
+	viewport.name = "%sStrip" % slot
+	viewport.size = STRIP_PX
+	viewport.transparent_bg = true
+	viewport.disable_3d = true
+	viewport.handle_input_locally = false
+	viewport.gui_disable_input = true
+	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	add_child(viewport)
+
+	var root := Control.new()
+	root.size = Vector2(STRIP_PX)
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	viewport.add_child(root)
+
+	var flood := Panel.new()
+	flood.name = "Flood"
+	flood.visible = false
+	flood.set_anchors_preset(Control.PRESET_FULL_RECT)
+	flood.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(flood)
+
+	var name_label := Label.new()
+	name_label.name = "Name"
+	name_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	name_label.offset_left = 6
+	name_label.offset_right = -6
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	name_label.add_theme_color_override("font_color", SCREEN_INK)
+	name_label.add_theme_font_size_override("font_size", 15)
+	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(name_label)
+
+	var quad := MeshInstance3D.new()
+	quad.name = "%sStripQuad" % slot
+	var mesh := QuadMesh.new()
+	mesh.size = Vector2(0.65, 0.105)
+	quad.mesh = mesh
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
+	mat.albedo_texture = viewport.get_texture()
+	quad.set_surface_override_material(0, mat)
+	add_child(quad)
+	quad.global_transform = surface.global_transform
+	quad.global_position = surface.global_position + surface.global_transform.basis.z * 0.008
+
+	return {"flood": flood, "name": name_label}
+
+
+func _build_pips(button: MeshInstance3D) -> Array[MeshInstance3D]:
+	var pips: Array[MeshInstance3D] = []
+	# Right edge of the Random button, top to bottom, in front of the cream face.
+	var ys := [0.07, 0.0, -0.07]
+	for i in ys.size():
+		var pip := MeshInstance3D.new()
+		pip.name = "RandomPip%d" % (i + 1)
+		pip.visible = false
+		var mesh := BoxMesh.new()
+		mesh.size = Vector3(0.038, 0.038, 0.016)
+		pip.mesh = mesh
+		var mat := StandardMaterial3D.new()
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		pip.set_surface_override_material(0, mat)
+		button.add_child(pip)
+		pip.position = Vector3(0.44, float(ys[i]), 0.032)
+		pips.append(pip)
+	return pips
+
+
 func _make_chip() -> Panel:
 	var chip := Panel.new()
 	chip.visible = false
@@ -285,17 +458,36 @@ func _on_screen_closed() -> void:
 
 
 func _on_cursor_hit(collider: Node3D) -> void:
-	var vehicle := StringName(collider.name)
+	var id := StringName(collider.name)
 	var room := _waiting.room_state()
-	if room == null or not room.bookable_vehicles.has(vehicle):
+	if room == null:
+		return
+	if _is_role(id):
+		_on_role_clicked(room, id)
+		return
+	if not room.bookable_vehicles.has(id):
 		return
 	var occupant := _local_occupant(room)
 	if occupant == null:
 		return
-	if occupant.pick == vehicle:
+	if occupant.pick == id:
 		_waiting.submit_command(&"drop_pick")
 	else:
-		_waiting.submit_command(&"pick", vehicle)
+		_waiting.submit_command(&"pick", id)
+
+
+func _on_role_clicked(room: RoomState, role: StringName) -> void:
+	var occupant := _local_occupant(room)
+	if occupant == null:
+		return
+	if occupant.hold == role:
+		_waiting.submit_command(&"drop_hold")
+	else:
+		_waiting.submit_command(&"take", role)
+
+
+func _is_role(id: StringName) -> bool:
+	return id == RoomState.DRIVER or id == RoomState.SPOTTER or id == RoomState.NAVIGATOR or id == RoomState.RANDOM
 
 
 func _on_room_changed() -> void:
@@ -341,6 +533,93 @@ func _redraw(room: RoomState) -> void:
 			else:
 				(chips[i] as Panel).visible = false
 				(chip_names[i] as Label).text = ""
+	_redraw_roles(room)
+	_redraw_name_tags(room)
+
+
+func _redraw_roles(room: RoomState) -> void:
+	var booked := room.has_booking()
+	var local := _local_occupant(room)
+	var local_hold: StringName = &"" if local == null else local.hold
+	for choice in _roles:
+		if choice.is_empty():
+			continue
+		var role: StringName = choice["role"]
+		_set_pressed(choice, local_hold == role)
+		if role == RoomState.RANDOM:
+			var holders: Array[RoomState.Player] = []
+			if booked:
+				holders = room.random_holders()
+			_redraw_pips(choice["pips"], holders)
+			continue
+		var holder := room.holder_of(role) if booked else null
+		var flood := choice["flood"] as Panel
+		var name_label := choice["name"] as Label
+		if not booked:
+			flood.visible = false
+			name_label.text = "No booking."
+			name_label.add_theme_color_override("font_color", SCREEN_INK)
+			_set_lamp(choice["lamp"] as MeshInstance3D, 0)
+		elif holder == null:
+			flood.visible = false
+			name_label.text = ""
+			_set_lamp(choice["lamp"] as MeshInstance3D, 0)
+		else:
+			flood.visible = true
+			_flood_chip(flood, holder.palette)
+			name_label.text = holder.display_name
+			name_label.add_theme_color_override("font_color", INK)
+			_set_lamp(choice["lamp"] as MeshInstance3D, holder.palette)
+
+
+func _redraw_pips(pips: Array, holders: Array[RoomState.Player]) -> void:
+	for i in pips.size():
+		var pip := pips[i] as MeshInstance3D
+		if i < holders.size():
+			pip.visible = true
+			var mat := pip.get_surface_override_material(0) as StandardMaterial3D
+			if mat != null:
+				mat.albedo_color = Palettes.flood_color(holders[i].palette)
+		else:
+			pip.visible = false
+
+
+func _redraw_name_tags(room: RoomState) -> void:
+	for learner in _learners():
+		var occupant := _occupant_of(room, learner)
+		learner.set_held_role(&"" if occupant == null else occupant.hold)
+
+
+func _set_pressed(choice: Dictionary, pressed: bool) -> void:
+	var button := choice["button"] as MeshInstance3D
+	var label := choice["label"] as MeshInstance3D
+	var inset := BUTTON_INSET if pressed else Vector3.ZERO
+	button.global_position = (choice["button_rest"] as Vector3) + inset
+	if label != null:
+		label.global_position = (choice["label_rest"] as Vector3) + inset
+
+
+func _set_lamp(lamp: MeshInstance3D, palette: int) -> void:
+	if lamp == null:
+		return
+	if palette < 1:
+		lamp.material_override = null
+		return
+	var mat := StandardMaterial3D.new()
+	var flood := Palettes.flood_color(palette)
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.albedo_color = flood
+	mat.emission_enabled = true
+	mat.emission = flood
+	mat.emission_energy_multiplier = 1.6
+	lamp.material_override = mat
+
+
+func _occupant_of(room: RoomState, learner: Learner) -> RoomState.Player:
+	for occupant in room.players:
+		if occupant.palette == learner.palette():
+			return occupant
+	return null
 
 
 func _flood_chip(chip: Panel, palette: int) -> void:
@@ -373,10 +652,7 @@ func _local_occupant(room: RoomState) -> RoomState.Player:
 	var learner := _local_learner()
 	if learner == null:
 		return null
-	for occupant in room.players:
-		if occupant.palette == learner.palette():
-			return occupant
-	return null
+	return _occupant_of(room, learner)
 
 
 func _learners() -> Array[Learner]:

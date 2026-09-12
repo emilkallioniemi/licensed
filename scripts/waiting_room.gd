@@ -6,6 +6,7 @@ extends Node3D
 ## Ticket 05: walking in is a fade and the entrance door, not a teleport.
 ## Ticket 06: chairs are stations; sitting is the ready-up.
 ## Ticket 07: the booking board is a screened station; picks and BOOKED render here.
+## Ticket 08: the role column holds Driver, Spotter, Navigator, or Random.
 
 ## Views (chairs, the board, later the desk) render from the replicated room state.
 signal room_changed
