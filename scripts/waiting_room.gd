@@ -1,8 +1,13 @@
+class_name WaitingRoom
 extends Node3D
 ## The game's main scene. There is no menu in front of it: Steam running puts the player
 ## straight in the room; Steam not running shows the one-line state instead and opens no room.
 ## Ticket 04: the host owns RoomState, learners replicate, and three instances meet here.
 ## Ticket 05: walking in is a fade and the entrance door, not a teleport.
+## Ticket 06: chairs are stations; sitting is the ready-up.
+
+## Views (chairs, later the board and desk) render from the replicated room state.
+signal room_changed
 
 const STEAM_NOT_RUNNING_SCENE := preload("res://scenes/steam_not_running.tscn")
 const LEARNER_SCENE := preload("res://scenes/learner.tscn")
@@ -148,10 +153,15 @@ func _apply_command(peer_id: int, verb: StringName, argument: Variant) -> void:
 		_replicate()
 
 
+func room_state() -> RoomState:
+	return _room
+
+
 func _replicate() -> void:
 	if not multiplayer.is_server():
 		return
 	_receive_state.rpc(_room.snapshot())
+	room_changed.emit()
 
 
 @rpc("authority", "call_remote", "reliable")
@@ -174,6 +184,7 @@ func _receive_state(data: Dictionary) -> void:
 		_room.countdown_cancelled.emit()
 	if not had_launched and not _room.launched_roles().is_empty():
 		_room.launched.emit(_room.booking(), _room.launched_roles())
+	room_changed.emit()
 
 
 func _spawn_learner(data: Variant) -> Node:
@@ -193,6 +204,10 @@ func _spawn_learner(data: Variant) -> Node:
 	print("WaitingRoom: spawned %s palette %02d local=%s" % [
 		learner.name, int(data["palette"]), learner.is_local(),
 	])
+	# A late joiner must see who is already seated. Deferred so the spawner has
+	# parented this learner before the chairs view looks for it.
+	if _room != null:
+		room_changed.emit.call_deferred()
 	if learner.is_local():
 		_watching = true
 		call_deferred("_reveal_local")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/waiting_room.gd" id="1_room"]
 [ext_resource type="PackedScene" path="res://assets/waiting_room/waiting_room.tscn" id="2_kit"]
@@ -6,6 +6,7 @@
 [ext_resource type="AudioStreamWAV" path="res://assets/waiting_room/door.wav" id="4_door"]
 [ext_resource type="Script" path="res://scripts/arrival_theatre.gd" id="5_theatre"]
 [ext_resource type="Script" path="res://scripts/fade_overlay.gd" id="6_fade"]
+[ext_resource type="Script" path="res://scripts/chair_stations.gd" id="7_chairs"]
 
 [sub_resource type="Environment" id="Environment_room"]
 background_mode = 1
@@ -86,3 +87,6 @@ stream = ExtResource("4_door")
 volume_db = 4.0
 unit_size = 20.0
 max_distance = 0.0
+
+[node name="ChairStations" type="Node3D" parent="."]
+script = ExtResource("7_chairs")

@@ -8,6 +8,8 @@ extends CharacterBody3D
 const WALK_SPEED := 3.0
 ## First-person camera height, metres above the feet.
 const EYE_HEIGHT := 1.75
+## Seated camera height, metres above the feet. Mouse look stays live (spec section 7).
+const SEATED_EYE_HEIGHT := 1.2
 ## Radians per mouse-pixel. Not a setting; ticket 12's overlay does not expose it.
 const MOUSE_SENSITIVITY := 0.0022
 ## Pitch stops just short of straight up/down so the camera cannot flip.
@@ -22,6 +24,8 @@ var _display_name := ""
 var _body_visible := true
 ## False for a joiner until the door has opened, so they fade up standing still on Entrance.
 var _can_walk := true
+## True while this learner occupies a chair. Walk is off; look stays on.
+var _seated := false
 
 @onready var camera: Camera3D = $Camera3D
 @onready var visual: Node3D = $Visual
@@ -80,13 +84,27 @@ func set_can_walk(enabled: bool) -> void:
 		_apply_local()
 
 
+## Sit on a chair's footprint. Camera drops to seated height; mouse look stays live.
+func set_seated(seated: bool) -> void:
+	_seated = seated
+	if is_node_ready():
+		_apply_local()
+
+
+func is_seated() -> bool:
+	return _seated
+
+
 func _apply_local() -> void:
 	camera.current = _local
 	var head := visual.find_child("HeadPivot", true, false)
 	if head != null:
 		head.visible = not _local
-	set_physics_process(_local and _can_walk)
-	set_process_unhandled_input(_local and _can_walk)
+	camera.position.y = SEATED_EYE_HEIGHT if _seated else EYE_HEIGHT
+	var walk := _local and _can_walk and not _seated
+	var look := _local and (_can_walk or _seated)
+	set_physics_process(walk)
+	set_process_unhandled_input(look)
 	if _local:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	_apply_body_visible()
