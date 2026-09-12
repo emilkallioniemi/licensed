@@ -15,6 +15,15 @@ const MONSTER_TRUCK := &"monster_truck"
 ## them is refused, so a click on a locked row does nothing wherever it is sent from.
 const BOOKABLE_VEHICLES: Array[StringName] = [MONSTER_TRUCK]
 
+const DRIVER := &"driver"
+const SPOTTER := &"spotter"
+const NAVIGATOR := &"navigator"
+## Not a fourth role: holding Random means being dealt whichever named role is left at launch.
+const RANDOM := &"random"
+## The monster truck's three roles; the role column shows the booked vehicle's roles, and only
+## the monster truck can be booked this slice.
+const NAMED_ROLES: Array[StringName] = [DRIVER, SPOTTER, NAVIGATOR]
+
 ## A booking formed: `vehicle` is now booked and the role column wakes.
 signal booking_formed(vehicle: StringName)
 ## The booking dissolved (a drop, a switch, or a departure); every hold was released.
@@ -28,6 +37,16 @@ class Player extends RefCounted:
 	var palette: int
 	## The vehicle this player has picked on the booking board, or empty.
 	var pick: StringName = &""
+	## The role this player holds at the role pickup (a named role or RANDOM), or empty.
+	var hold: StringName = &""
+	## The chair (1 to 3) this player sits in, which is the ready-up, or 0 when standing.
+	var chair: int = 0
+
+	func is_seated() -> bool:
+		return chair != 0
+
+	func holds_a_role() -> bool:
+		return hold != &""
 
 	func _init(id: int, name: String, palette_number: int) -> void:
 		steam_id = id
@@ -101,6 +120,71 @@ func drop_pick(steam_id: int) -> bool:
 	return true
 
 
+## Take a role, or swap to it from the one held. Dead without a booking; a taken named role
+## refuses a second taker, which is how a same-frame tie resolves in receive order.
+func take(steam_id: int, role: StringName) -> bool:
+	var taker := player(steam_id)
+	if taker == null or not has_booking() or taker.hold == role:
+		return false
+	if role == RANDOM:
+		taker.hold = role
+		return true
+	if not NAMED_ROLES.has(role) or holder_of(role) != null:
+		return false
+	taker.hold = role
+	return true
+
+
+## Drop the held role.
+func drop_hold(steam_id: int) -> bool:
+	var holder := player(steam_id)
+	if holder == null or holder.hold == &"":
+		return false
+	holder.hold = &""
+	return true
+
+
+## The one player holding this named role, or null when it is free (or for RANDOM).
+func holder_of(role: StringName) -> Player:
+	if role == RANDOM:
+		return null
+	for occupant in players:
+		if occupant.hold == role:
+			return occupant
+	return null
+
+
+## Every player holding Random, in arrival order.
+func random_holders() -> Array[Player]:
+	var holders: Array[Player] = []
+	for occupant in players:
+		if occupant.hold == RANDOM:
+			holders.append(occupant)
+	return holders
+
+
+## Sit in a chair, or move to it from another. Any chair, first come; the chair never refuses
+## for any other reason, in any room state.
+func sit(steam_id: int, chair: int) -> bool:
+	var sitter := player(steam_id)
+	if sitter == null or chair < 1 or chair > CAPACITY or sitter.chair == chair:
+		return false
+	for occupant in players:
+		if occupant.chair == chair:
+			return false
+	sitter.chair = chair
+	return true
+
+
+## Stand up, taking the ready-up back.
+func stand(steam_id: int) -> bool:
+	var sitter := player(steam_id)
+	if sitter == null or not sitter.is_seated():
+		return false
+	sitter.chair = 0
+	return true
+
+
 func has_booking() -> bool:
 	return booking() != &""
 
@@ -118,12 +202,35 @@ func booking() -> StringName:
 	return &""
 
 
+## The one line of signage on the notice board: the first thing the room is still waiting
+## for, counting out of N (spec section 7). Signage register: short, full stop, nobody addressed.
+func notice_board_line() -> String:
+	if players.size() < min_players:
+		return "Waiting for %d." % (min_players - players.size())
+	if not has_booking():
+		return "No booking."
+	var holding := 0
+	var seated := 0
+	for occupant in players:
+		if occupant.holds_a_role():
+			holding += 1
+		if occupant.is_seated():
+			seated += 1
+	if holding < players.size():
+		return "Roles: %d of %d." % [holding, min_players]
+	if seated < players.size():
+		return "Seated: %d of %d." % [seated, min_players]
+	return ""
+
+
 ## Raises the booking events for a change from `before` to the booking as it now stands.
 func _settle_booking(before: StringName) -> void:
 	var after := booking()
 	if before == after:
 		return
 	if before != &"":
+		for occupant in players:
+			occupant.hold = &""
 		booking_dissolved.emit()
 	if after != &"":
 		booking_formed.emit(after)
