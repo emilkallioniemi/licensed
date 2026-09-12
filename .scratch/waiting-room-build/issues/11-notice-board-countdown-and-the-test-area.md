@@ -18,16 +18,18 @@ The test area: a flat asphalt plane with painted bays as boxes, daylight, nothin
 
 **Status:** claimed
 
-- [ ] The notice board shows exactly the room state's line at all times and changes the instant the state does; it is not a station.
-- [ ] With fewer than N players it reads "Waiting for k."; at N without a booking "No booking."; with a booking "Roles: x of N." then "Seated: x of N."; the counts match the room.
-- [ ] When N players are seated with a booking and a hold each, every machine hears TTS "Monster truck." once and the board reads "Monster truck. 3.", "2.", "1." over three seconds.
-- [ ] Standing, changing a pick, dropping a hold, or a departure during the count returns the board to its state line with no sound and no line; re-arming replays the call.
-- [ ] At "1." the room fades to black over about a second with the door sound and the music fading on its player; no door opens.
-- [ ] Everyone fades up in the car park in three bays 1.5 m apart facing the same way, walking with the same controller; nobody is missing or duplicated.
-- [ ] Each former Random holder sees a distinct dealt named role in the corner line; named holders see their own; the other two learners' name tags show the same roles.
-- [ ] A sign reading MONSTER TRUCK is visible in the car park.
-- [ ] Works with `--min-players=1` alone and with three local instances.
+- [x] The notice board shows exactly the room state's line at all times and changes the instant the state does; it is not a station.
+- [x] With fewer than N players it reads "Waiting for k."; at N without a booking "No booking."; with a booking "Roles: x of N." then "Seated: x of N."; the counts match the room.
+- [x] When N players are seated with a booking and a hold each, every machine hears TTS "Monster truck." once and the board reads "Monster truck. 3.", "2.", "1." over three seconds.
+- [x] Standing, changing a pick, dropping a hold, or a departure during the count returns the board to its state line with no sound and no line; re-arming replays the call.
+- [x] At "1." the room fades to black over about a second with the door sound and the music fading on its player; no door opens.
+- [x] Everyone fades up in the car park in three bays 1.5 m apart facing the same way, walking with the same controller; nobody is missing or duplicated.
+- [x] Each former Random holder sees a distinct dealt named role in the corner line; named holders see their own; the other two learners' name tags show the same roles.
+- [x] A sign reading MONSTER TRUCK is visible in the car park.
+- [x] Works with `--min-players=1` alone and with three local instances.
 
 ## Comments
 
 **From ticket 08 (orchestrator).** The board never shows the Random deal; strips stay as held through launch. Name tag already has a second role line (blank when holding nothing). `RoomState.tick` / `launched` / `launched_roles` / `return_from_test_area` already exist. Examiner line must be re-spoken on every `countdown_started`. Chair 0 = standing.
+
+**Builder, 2026-09-12.** Notice board is a view on `FutureDisplay` that assigns `RoomState.notice_board_line()`. Host `tick`s and replicates when the shown count changes; every machine speaks TTS on `countdown_started` and stops it on cancel. Launch fades the overlay and the music player over one second, plays `door.wav` at `TestDoor` with no leaf, and places each local learner in a bay 1.5 m apart on a boxed asphalt plane with a MONSTER TRUCK sign and a corner role line from `launched_roles`. Strips stay on hold. Solo `--min-players=1` walked pick → Random → sit → stand (board back to "Seated: 0 of 1.") → sit → launch into bay 0 with a dealt named role. Three-instance path is the same host tick plus guest `_receive_state` diff already used for booking and chairs. Escape still only releases the mouse.

@@ -8,12 +8,17 @@ extends Node3D
 ## Ticket 07: the booking board is a screened station; picks and BOOKED render here.
 ## Ticket 08: the role column holds Driver, Spotter, Navigator, or Random.
 ## Ticket 09: the reception desk lists friends and joins or leaves a room.
+## Ticket 11: the notice board, the examiner's call, the fade, and the test area.
 
-## Views (chairs, the board, the desk) render from the replicated room state.
+## Views (chairs, the board, the desk, the notice board) render from the replicated room state.
 signal room_changed
 
 const STEAM_NOT_RUNNING_SCENE := preload("res://scenes/steam_not_running.tscn")
 const LEARNER_SCENE := preload("res://scenes/learner.tscn")
+const DOOR_SOUND := preload("res://assets/waiting_room/door.wav")
+## Fade and music share this second; the examiner's only line in the room.
+const TRANSITION := 1.0
+const EXAMINER_LINE := "Monster truck."
 
 ## Furniture the spec names for box colliders, looked up on the kit by node name.
 const FURNITURE_GROUPS: PackedStringArray = [
@@ -30,6 +35,8 @@ const FURNITURE_GROUPS: PackedStringArray = [
 @onready var learner_spawner: MultiplayerSpawner = $LearnerSpawner
 @onready var fade: FadeOverlay = $Fade
 @onready var theatre: ArrivalTheatre = $ArrivalTheatre
+@onready var test_area: TestArea = $TestArea
+@onready var world_environment: WorldEnvironment = $WorldEnvironment
 
 ## Host-owned on the server; guests restore snapshots into their copy and never write.
 var _room: RoomState
@@ -40,6 +47,9 @@ var _clean_leavers: Dictionary = {}
 ## True once this machine has its own learner, so a live arrival can hide in the doorway
 ## without a late joiner hiding people who are already in the room.
 var _watching := false
+## True once `launched` has started the fade; stations and the tick stop owning the room.
+var _in_test_area := false
+var _test_door: AudioStreamPlayer3D
 
 
 func _ready() -> void:
@@ -51,6 +61,7 @@ func _ready() -> void:
 	music.play()
 	get_tree().set_auto_accept_quit(false)
 	_add_room_collision()
+	_add_test_area_door()
 	learner_spawner.spawn_function = _spawn_learner
 	Transport.became_ready.connect(_on_transport_ready, CONNECT_ONE_SHOT)
 	Transport.room_switched.connect(_on_room_switched)
@@ -61,6 +72,7 @@ func _ready() -> void:
 
 func _on_transport_ready() -> void:
 	_room = RoomState.new(RoomState.min_players_from_args(OS.get_cmdline_user_args()))
+	_bind_room(_room)
 	print("WaitingRoom: the room waits for %d" % _room.min_players)
 	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
@@ -163,6 +175,157 @@ func room_state() -> RoomState:
 	return _room
 
 
+func _bind_room(room: RoomState) -> void:
+	if not room.countdown_started.is_connected(_on_countdown_started):
+		room.countdown_started.connect(_on_countdown_started)
+	if not room.countdown_cancelled.is_connected(_on_countdown_cancelled):
+		room.countdown_cancelled.connect(_on_countdown_cancelled)
+	if not room.launched.is_connected(_on_launched):
+		room.launched.connect(_on_launched)
+
+
+func _process(delta: float) -> void:
+	if _room == null or not multiplayer.is_server() or _in_test_area:
+		return
+	if not _room.is_counting_down():
+		return
+	var shown := _room.countdown_count()
+	_room.tick(delta)
+	if not _room.is_counting_down() or _room.countdown_count() != shown:
+		_replicate()
+
+
+func _on_countdown_started() -> void:
+	_speak_examiner()
+	# The line changed the instant the ready-up fired; don't wait for the next replicate.
+	room_changed.emit()
+
+
+func _on_countdown_cancelled() -> void:
+	DisplayServer.tts_stop()
+
+
+func _on_launched(_vehicle: StringName, _roles: Dictionary) -> void:
+	if _in_test_area:
+		return
+	_in_test_area = true
+	_silence_stations()
+	_play_test_area_door()
+	fade.to_black(TRANSITION)
+	_fade_music(TRANSITION)
+	await get_tree().create_timer(TRANSITION).timeout
+	if not is_inside_tree():
+		return
+	_enter_test_area()
+	fade.to_clear(TRANSITION)
+
+
+func _speak_examiner() -> void:
+	DisplayServer.tts_stop()
+	DisplayServer.tts_speak(EXAMINER_LINE, _examiner_voice(), 50, 1.0, 0.92)
+
+
+func _examiner_voice() -> String:
+	var english := DisplayServer.tts_get_voices_for_language("en")
+	if english.size() > 0:
+		return english[0]
+	var voices := DisplayServer.tts_get_voices()
+	if voices.size() > 0:
+		return String(voices[0].get("id", ""))
+	return ""
+
+
+func _silence_stations() -> void:
+	for path in ["ChairStations", "BookingBoard", "ReceptionDesk", "NoticeBoard"]:
+		var node := get_node_or_null(path)
+		if node != null:
+			node.process_mode = Node.PROCESS_MODE_DISABLED
+
+
+func _play_test_area_door() -> void:
+	if _test_door == null or _test_door.stream == null:
+		return
+	if _test_door.playing:
+		_test_door.stop()
+	_test_door.play()
+
+
+func _fade_music(duration: float) -> void:
+	var tween := create_tween()
+	tween.tween_property(music, "volume_db", -80.0, duration)
+	tween.tween_callback(music.stop)
+
+
+func _enter_test_area() -> void:
+	kit.visible = false
+	for path in ["NoticeBoard", "BookingBoard", "ReceptionDesk", "ChairStations"]:
+		var node := get_node_or_null(path) as Node3D
+		if node != null:
+			node.visible = false
+	for light_name in [
+		"CeilingFrontLeft", "CeilingFrontRight", "CeilingBackLeft", "CeilingBackRight",
+	]:
+		var light := get_node_or_null(light_name) as Light3D
+		if light != null:
+			light.visible = false
+	if test_area.daylight != null:
+		world_environment.environment = test_area.daylight
+	test_area.visible = true
+	_place_in_bays()
+
+
+func _place_in_bays() -> void:
+	if _room == null:
+		return
+	var roles := _room.launched_roles()
+	for learner in _learners():
+		var occupant := _occupant_of_learner(learner)
+		if occupant == null:
+			continue
+		var dealt: StringName = roles.get(occupant.steam_id, occupant.hold)
+		learner.set_held_role(dealt)
+		if not learner.is_local():
+			continue
+		learner.set_seated(false)
+		learner.set_using_station(false)
+		learner.set_can_walk(true)
+		learner.global_transform = test_area.bay_transform(occupant.palette - 1)
+		learner.velocity = Vector3.ZERO
+		test_area.show_own_role(learner.displayed_role())
+
+
+func _occupant_of_learner(learner: Learner) -> RoomState.Player:
+	if _room == null:
+		return null
+	for occupant in _room.players:
+		if occupant.palette == learner.palette():
+			return occupant
+	return null
+
+
+func _learners() -> Array[Learner]:
+	var found: Array[Learner] = []
+	for child in learner_spawner.get_children():
+		if child is Learner:
+			found.append(child)
+	return found
+
+
+func _add_test_area_door() -> void:
+	_test_door = AudioStreamPlayer3D.new()
+	_test_door.name = "TestAreaDoor"
+	_test_door.stream = DOOR_SOUND
+	_test_door.volume_db = 4.0
+	_test_door.unit_size = 20.0
+	_test_door.max_distance = 0.0
+	add_child(_test_door)
+	var door := kit.find_child("TestDoor", true, false) as Node3D
+	if door != null:
+		_test_door.global_position = door.global_position + Vector3(0.0, 1.4, 0.0)
+	else:
+		_test_door.position = Vector3(0.55, 1.4, -4.82)
+
+
 func _replicate() -> void:
 	if not multiplayer.is_server():
 		return
@@ -175,6 +338,7 @@ func _replicate() -> void:
 func _receive_state(data: Dictionary) -> void:
 	if _room == null:
 		_room = RoomState.new()
+		_bind_room(_room)
 	var had_booking := _room.has_booking()
 	var was_counting := _room.is_counting_down()
 	var had_launched := not _room.launched_roles().is_empty()
@@ -280,6 +444,7 @@ func _reset_as_lone_host() -> void:
 		learner_spawner.remove_child(child)
 		child.free()
 	_room = RoomState.new(RoomState.min_players_from_args(OS.get_cmdline_user_args()))
+	_bind_room(_room)
 	_accept_player(multiplayer.get_unique_id(), SteamClient.steam_id, SteamClient.persona_name)
 	if not had_pose:
 		return

@@ -66,6 +66,11 @@ func _on_room_changed() -> void:
 	var room := _waiting.room_state()
 	if room == null:
 		return
+	# Launch has placed everyone in the test area; chairs no longer own the bodies.
+	if not room.launched_roles().is_empty():
+		for station in _stations:
+			station.set_listening(false)
+		return
 	_sync_floods(room)
 	var local_seated := false
 	for learner in _learners():

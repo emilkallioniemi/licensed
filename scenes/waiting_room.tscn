@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/waiting_room.gd" id="1_room"]
 [ext_resource type="PackedScene" path="res://assets/waiting_room/waiting_room.tscn" id="2_kit"]
@@ -9,6 +9,8 @@
 [ext_resource type="Script" path="res://scripts/chair_stations.gd" id="7_chairs"]
 [ext_resource type="Script" path="res://scripts/booking_board.gd" id="8_board"]
 [ext_resource type="Script" path="res://scripts/reception_desk.gd" id="9_desk"]
+[ext_resource type="Script" path="res://scripts/notice_board.gd" id="10_notice"]
+[ext_resource type="Script" path="res://scripts/test_area.gd" id="11_test"]
 
 [sub_resource type="Environment" id="Environment_room"]
 background_mode = 1
@@ -98,3 +100,11 @@ script = ExtResource("8_board")
 
 [node name="ReceptionDesk" type="Node3D" parent="."]
 script = ExtResource("9_desk")
+
+[node name="NoticeBoard" type="Node3D" parent="."]
+script = ExtResource("10_notice")
+
+[node name="TestArea" type="Node3D" parent="."]
+visible = false
+position = Vector3(0, 0, 200)
+script = ExtResource("11_test")

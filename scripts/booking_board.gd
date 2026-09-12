@@ -518,6 +518,9 @@ func _on_booking_formed(_vehicle: StringName) -> void:
 
 
 func _redraw(room: RoomState) -> void:
+	# The deal is revealed in the test area; strips and chips stay as held (spec section 7).
+	if not room.launched_roles().is_empty():
+		return
 	var booked_vehicle := room.booking()
 	for row in _rows:
 		if row.is_empty():
