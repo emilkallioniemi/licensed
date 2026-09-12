@@ -18,7 +18,7 @@ Checked over real Steam on Emil's two computers; the dev transport cannot exerci
 
 **Blocked by:** 05 (arrival theatre on join and leave), 07 (the dock-and-cursor station screen).
 
-**Status:** claimed
+**Status:** ready-for-agent
 
 - [ ] "E  Reception" in the desk's zone; E docks on the desk screen drawn on the kit's screen surface with the placeholder hidden; Escape returns.
 - [ ] The header reads "Reception" and "1 of 3" / "2 of 3" / "3 of 3" from the room state; at three it reads "The waiting room is full." and no row has a verb.
@@ -44,3 +44,5 @@ Checked over real Steam on Emil's two computers; the dev transport cannot exerci
 **Builder, 2026-09-12.** `ReceptionDesk` (`scripts/reception_desk.gd`) is a `Station` + `StationScreen` at `AttachmentPoints/ReceptionApproach`, prompt `"E  Reception"`. 740×460 SubViewport quad on `FriendsScreen`; `FriendsScreenPlaceholder` hidden. Header and occupancy come from `RoomState`; Invite is drawn disabled (ticket 10). Join goes through `WaitingRoom.begin_join()` then `Transport.join_lobby`; Leave through `begin_leave()` / `Transport.host_fresh()`; a guest whose host vanishes takes `leave_to_own_room()`. A failed Join rehosts the Steam lobby in place (Steam has already left ours) and keeps the desk so the row can show the failure line. Occupancy is lobby data `n` so a friend's full room hides Invite and Join. `RoomState` tests still PASS. Headless Steam and `--transport=enet` boots construct the desk without script errors.
 
 Could not walk the dock, press Join/Leave, or watch live friend grouping in a window this session. Could not run two real Steam accounts on two machines; that criterion stays open.
+
+**Orchestrator, first attempt blocked.** Outcome: blocked. Commits: `b138d02` Ticket 09: the reception desk lists friends and joins a room; `43be6c8` Ticket 09: review fixes; a failed Join keeps this room. The builder implemented the desk but left every criterion unticked because they could not playtest in a window. Unmet as reported: all ten boxes, including the two-machine Steam check. Notes they left: ticket 10 Invite is drawn disabled; friend-room-full uses Steam lobby data key `n`.
