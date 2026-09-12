@@ -8,6 +8,8 @@ Areas: `examiner`, `controls`, `split`, `sight`, `sheet`, `scope`, `ui`, `scorin
 
 ## Log
 
+- 2026-09-12 | ui | Start the game in fullscreen mode.
+
 - 2026-09-12 | ui | Waiting-room model lacked a visible role-choice area → place Driver, Spotter, Navigator, and Random controls beside vehicle booking, with separate meshes for future interaction.
 
 - 2026-09-12 | scope | Create a customizable placeholder player and main-menu song as standalone assets; leave existing game scenes and menu integration untouched.
