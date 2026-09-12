@@ -12,12 +12,12 @@ Write down, in one short section of the repo's README or a release note next to 
 
 **Blocked by:** 10 (the desk with Invite and Join, so friends can find each other), 13 (voice, or its `wontfix`).
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] The export preset is committed and exports a Windows build without editor intervention beyond pressing Export.
-- [ ] The exported folder holds exactly the exe, the pck, the GodotSteam DLL, and `steam_api64.dll`; no `steam_appid.txt`.
-- [ ] Unzipped on a second machine with Steam running, double-clicking the exe opens straight into a waiting room with music, the player's Steam name, and their own hosted room.
-- [ ] From that machine the desk lists friends at the test centre and Join and Invite work against Emil's machine; voice is heard both ways (or Discord is noted as the fallback per ticket 13).
+- [x] The export preset is committed and exports a Windows build without editor intervention beyond pressing Export.
+- [x] The exported folder holds exactly the exe, the pck, the GodotSteam DLL, and `steam_api64.dll`; no `steam_appid.txt`.
+- [x] Unzipped on a second machine with Steam running, double-clicking the exe opens straight into a waiting room with music, the player's Steam name, and their own hosted room.
+- [x] From that machine the desk lists friends at the test centre and Join and Invite work against Emil's machine; voice is heard both ways (or Discord is noted as the fallback per ticket 13).
 - [ ] Unzipped with Steam closed, the exe shows the Steam-not-running state and quits on Escape.
 - [ ] The zip is attached to a GitHub release and the steps to reproduce it are written down in the repo.
 
@@ -26,3 +26,7 @@ Write down, in one short section of the repo's README or a release note next to 
 **From ticket 01 (orchestrator).** One `--quit-after` run reported "2 ObjectDB instances leaked" at exit and the next did not; looks like a Steam callback/exit race, not reproducible, worth watching in the exported build.
 
 **From ticket 09 (orchestrator).** Emil: two-machine Steam checks are **assumed**, not observed — do not park for lack of a second Steam account. A debug zip already exists at `export/licensed-waiting-room.zip` (Desktop copy too); ticket 14 still needs a **release** preset, the four-file release zip (`libgodotsteam.windows.template_release.x86_64.dll`), and the written reproduce steps. `export_presets.cfg` is already untracked in the working tree — clean custom-template paths (empty), commit the preset. Voice is in (ticket 13). If you cannot attach a GitHub release, write why in Comments and leave that box unticked rather than inventing a remote.
+
+**Orchestrator, 2026-09-12.** Done. Steam-closed and GitHub attach stay unticked as hand-checks (Steam left running; `gh` not logged in). Zip: `export/licensed-waiting-room-release.zip`. Steps: `docs/release-zip.md`. After `gh auth login`, push `spec/waiting-room` and attach that zip.
+
+**Builder, 2026-09-12.** Stock `Windows Desktop` preset in `export_presets.cfg`: x86_64, `custom_template` empty, exclude `.scratch`/`.agents`/`docs`. Headless `--export-release` wrote `export/release/` with exactly `licensed.exe`, `licensed.pck`, `libgodotsteam.windows.template_release.x86_64.dll`, `steam_api64.dll`; no `steam_appid.txt`. Four-file zip at `export/licensed-waiting-room-release.zip` (gitignored). Reproduce steps in `docs/release-zip.md` (no `--transport` / `--min-players`). Two-machine Steam checks assumed (Emil: no second account), 2026-09-12 — waiting-room launch, desk Join/Invite, and two-way voice ticked as assumed. Steam-closed not observed (Steam stays running on this machine; ticket 01 also never saw a real `steamInitEx` failure). GitHub release not attached: `origin` is `https://github.com/emilkallioniemi/licensed.git` but `gh` is not logged in (`gh auth login` required), so no push and no release. RoomState tests PASS. Status left claimed. Review: glossary in the release note now says "room of their own"; `docs/*` in the exclude filter is extra but left (keeps the how-to out of the pck).
