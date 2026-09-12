@@ -12,7 +12,7 @@ Arrival position: the kit's `Entrance` marker, facing −Z into the room.
 
 **Blocked by:** 01 (the game boots into the waiting room).
 
-**Status:** ready-for-agent
+**Status:** claimed
 
 - [ ] On boot the player stands on the `Entrance` marker facing into the room, at eye height about 1.75 m.
 - [ ] WASD moves at 3 m/s relative to where the camera looks; there is no sprint and no jump.
@@ -21,3 +21,7 @@ Arrival position: the kit's `Entrance` marker, facing −Z into the room.
 - [ ] Looking straight down shows your own body but never your own head.
 - [ ] The mouse is captured in the room and released on Escape.
 - [ ] The kit's scene and materials are unchanged; collision and the controller are added around it, not by greyboxing.
+
+## Comments
+
+**From ticket 02 (orchestrator).** `RoomState` (`scripts/room_state.gd`, `class_name`, RefCounted) is the record every view renders from; commands return bool (applied/refused) and end in one `_after_command` that raises `booking_formed`/`booking_dissolved` then `countdown_started`/`countdown_cancelled`/`launched(vehicle, roles)`. Vehicles/roles are StringName constants on it (`MONSTER_TRUCK`, `DRIVER`, `SPOTTER`, `NAVIGATOR`, `RANDOM`); empty pick/hold = none, chair 0 = standing, palettes 1/2/3. Nothing in this ticket needs it yet, but the learner should be built so 04 can wrap it in a replicated peer without a rewrite.
