@@ -57,6 +57,7 @@ func _on_transport_ready() -> void:
 	if multiplayer.is_server():
 		_accept_player(multiplayer.get_unique_id(), SteamClient.steam_id, SteamClient.persona_name)
 		return
+	begin_join()
 	_report_identity.rpc_id(1, SteamClient.steam_id, SteamClient.persona_name)
 
 
@@ -198,17 +199,17 @@ func _spawn_learner(data: Variant) -> Node:
 	return learner
 
 
-func _place_at_entrance(learner: Learner) -> void:
+func _place_at_entrance(learner: Learner, facing_out: bool = false) -> void:
 	# AttachmentPoints/Entrance, not the GLB's Entrance frame group of the same name.
 	var entrance := kit.get_node_or_null("AttachmentPoints/Entrance") as Marker3D
 	if entrance == null:
 		push_error("Waiting room kit has no Entrance marker")
 		return
 	learner.position = entrance.global_position
-	var into_room := -entrance.global_transform.basis.z
-	into_room.y = 0.0
-	if into_room.length_squared() > 0.0001:
-		learner.basis = Basis.looking_at(into_room.normalized(), Vector3.UP)
+	var facing := entrance.global_transform.basis.z if facing_out else -entrance.global_transform.basis.z
+	facing.y = 0.0
+	if facing.length_squared() > 0.0001:
+		learner.basis = Basis.looking_at(facing.normalized(), Vector3.UP)
 
 
 ## Ticket 09 calls this when Join or Accept is pressed, before the host's room loads.
@@ -239,14 +240,18 @@ func _play_arrival(peer_id: int) -> void:
 	var learner := await _wait_for_learner(peer_id)
 	if learner == null:
 		return
+	# The door beat is for machines already in the room. The joiner fades up in the
+	# doorway and stands still until the others would see them, then walks.
+	if learner.is_local():
+		await get_tree().create_timer(ArrivalTheatre.SWING).timeout
+		if is_instance_valid(learner):
+			learner.set_can_walk(true)
+		return
 	print("WaitingRoom: the door for peer %d" % peer_id)
-	if not learner.is_local():
-		learner.set_body_visible(false)
+	learner.set_body_visible(false)
 	await theatre.open_door()
 	if is_instance_valid(learner):
 		learner.set_body_visible(true)
-		if learner.is_local():
-			learner.set_can_walk(true)
 	await theatre.close_door()
 
 
@@ -255,6 +260,8 @@ func _play_departure(peer_id: int, clean: bool) -> void:
 	var learner := _learner_of(peer_id)
 	if clean:
 		print("WaitingRoom: leave through the entrance (peer %d)" % peer_id)
+		if is_instance_valid(learner):
+			_place_at_entrance(learner, true)
 		await theatre.open_door()
 		if multiplayer.is_server() and is_instance_valid(learner):
 			learner.queue_free()
