@@ -1,0 +1,60 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/waiting_room.gd" id="1_room"]
+[ext_resource type="PackedScene" path="res://assets/waiting_room/waiting_room.tscn" id="2_kit"]
+[ext_resource type="AudioStreamWAV" path="res://assets/slice_0/music/please_take_a_number.wav" id="3_loop"]
+
+[sub_resource type="Environment" id="Environment_room"]
+background_mode = 1
+background_color = Color(0.64, 0.72, 0.7, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.86, 0.89, 0.82, 1)
+ambient_light_energy = 0.65
+tonemap_mode = 2
+ssao_enabled = true
+
+[node name="WaitingRoom" type="Node3D"]
+script = ExtResource("1_room")
+
+[node name="Kit" parent="." instance=ExtResource("2_kit")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_room")
+
+[node name="EntranceCamera" type="Camera3D" parent="."]
+position = Vector3(1, 1.8, 4.55)
+rotation = Vector3(-0.018, 0.152, 0)
+current = true
+fov = 88.0
+
+[node name="CeilingFrontLeft" type="OmniLight3D" parent="."]
+position = Vector3(-3, 3.25, 2)
+light_color = Color(1, 0.94, 0.8, 1)
+light_energy = 1.4
+omni_range = 7.0
+shadow_enabled = true
+
+[node name="CeilingFrontRight" type="OmniLight3D" parent="."]
+position = Vector3(3, 3.25, 2)
+light_color = Color(1, 0.94, 0.8, 1)
+light_energy = 1.4
+omni_range = 7.0
+shadow_enabled = true
+
+[node name="CeilingBackLeft" type="OmniLight3D" parent="."]
+position = Vector3(-3, 3.25, -2)
+light_color = Color(1, 0.94, 0.8, 1)
+light_energy = 1.4
+omni_range = 7.0
+shadow_enabled = true
+
+[node name="CeilingBackRight" type="OmniLight3D" parent="."]
+position = Vector3(3, 3.25, -2)
+light_color = Color(1, 0.94, 0.8, 1)
+light_energy = 1.4
+omni_range = 7.0
+shadow_enabled = true
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_loop")
+volume_db = -6.0

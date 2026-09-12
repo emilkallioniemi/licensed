@@ -20,3 +20,7 @@ Write down, in one short section of the repo's README or a release note next to 
 - [ ] From that machine the desk lists friends at the test centre and Join and Invite work against Emil's machine; voice is heard both ways (or Discord is noted as the fallback per ticket 13).
 - [ ] Unzipped with Steam closed, the exe shows the Steam-not-running state and quits on Escape.
 - [ ] The zip is attached to a GitHub release and the steps to reproduce it are written down in the repo.
+
+## Comments
+
+**From ticket 01 (orchestrator).** One `--quit-after` run reported "2 ObjectDB instances leaked" at exit and the next did not; looks like a Steam callback/exit race, not reproducible, worth watching in the exported build.

@@ -12,9 +12,13 @@ config_version=5
 
 config/name="licensed"
 config/description="Three friends. One vehicle. One driving test. Everyone passes or nobody does."
-run/main_scene="res://scenes/main.tscn"
+run/main_scene="res://scenes/waiting_room.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+SteamClient="*res://scripts/steam_client.gd"
 
 [display]
 

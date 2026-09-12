@@ -26,3 +26,7 @@ Document the three-learners-in-under-a-minute setup: Godot *Debug → Customize 
 - [ ] The host's room state is the only writer: a guest disconnecting frees their slot on every machine, a joiner appears in the state on every machine.
 - [ ] `--min-players=N` is parsed and reaches the room state's configured count (checked by log, or by the notice board once ticket 11 lands).
 - [ ] The run-instances setup is documented in one place in the repo and the generated per-clone config is gitignored.
+
+## Comments
+
+**From ticket 01 (orchestrator).** `change_scene_to_packed` called directly from the main scene's `_ready` at boot fails to remove the scene (root is busy adding it) and prints an error; `call_deferred` lands the swap before the first frame, which is what `waiting_room.gd` does. The room scene reuses the kit preview's environment and four ceiling omni lights (the kit has no lights of its own); the fixed `EntranceCamera` is at (1, 1.8, 4.55) and is what the learner's camera replaces. The gate on `SteamClient.is_running()` sits at the top of `waiting_room.gd`.

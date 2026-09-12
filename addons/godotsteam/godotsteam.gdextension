@@ -1,0 +1,15 @@
+; GodotSteam GDExtension 4.22.1 (Steamworks SDK 1.65), from the Codeberg release
+; v4.22.1-gde, godotsteam-4.22.1-gdextension-plugin-4.4.zip. Trimmed to Windows
+; x86_64: the waiting-room spec puts every other platform out of scope, so the
+; other platforms' binaries and the editor updater plug-in are not vendored.
+
+[configuration]
+entry_symbol = "godotsteam_init"
+compatibility_minimum = "4.4"
+
+[libraries]
+windows.debug.x86_64 = "res://addons/godotsteam/win64/libgodotsteam.windows.template_debug.x86_64.dll"
+windows.release.x86_64 = "res://addons/godotsteam/win64/libgodotsteam.windows.template_release.x86_64.dll"
+
+[dependencies]
+windows.x86_64 = { "res://addons/godotsteam/win64/steam_api64.dll": "" }

@@ -2,6 +2,8 @@
 .godot/
 /android/
 *.translation
+# Copies of GDExtension libraries the editor makes while it has the project open
+addons/**/~*
 
 # Exports
 /build/
