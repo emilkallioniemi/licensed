@@ -40,3 +40,7 @@ Checked over real Steam on Emil's two computers; the dev transport cannot exerci
 **From ticket 06 (orchestrator).** Reception uses the same `Station` (`scripts/station.gd`) with `"E  Reception"` at `AttachmentPoints/ReceptionApproach`. `set_listening` / `used` / `setup(prompt, prompt_at, zone_size)`. Do not fork a second grammar.
 
 **From ticket 07 (orchestrator).** `StationScreen` (`scripts/station_screen.gd`) is the desk's dock/cursor/Escape half of the grammar. Do not fork a second grammar. Escape closes the station screen while it is open.
+
+**Builder, 2026-09-12.** `ReceptionDesk` (`scripts/reception_desk.gd`) is a `Station` + `StationScreen` at `AttachmentPoints/ReceptionApproach`, prompt `"E  Reception"`. 740×460 SubViewport quad on `FriendsScreen`; `FriendsScreenPlaceholder` hidden. Header and occupancy come from `RoomState`; Invite is drawn disabled (ticket 10). Join goes through `WaitingRoom.begin_join()` then `Transport.join_lobby`; Leave through `begin_leave()` / `Transport.host_fresh()`; a guest whose host vanishes takes the same path. Occupancy is lobby data `n` so a friend's full room hides Invite and Join. `RoomState` tests still PASS. Headless Steam and `--transport=enet` boots construct the desk without script errors.
+
+Could not walk the dock, press Join/Leave, or watch live friend grouping in a window this session. Could not run two real Steam accounts on two machines; that criterion stays open.

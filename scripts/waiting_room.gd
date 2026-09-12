@@ -7,8 +7,9 @@ extends Node3D
 ## Ticket 06: chairs are stations; sitting is the ready-up.
 ## Ticket 07: the booking board is a screened station; picks and BOOKED render here.
 ## Ticket 08: the role column holds Driver, Spotter, Navigator, or Random.
+## Ticket 09: the reception desk lists friends and joins or leaves a room.
 
-## Views (chairs, the board, later the desk) render from the replicated room state.
+## Views (chairs, the board, the desk) render from the replicated room state.
 signal room_changed
 
 const STEAM_NOT_RUNNING_SCENE := preload("res://scenes/steam_not_running.tscn")
@@ -52,6 +53,7 @@ func _ready() -> void:
 	_add_room_collision()
 	learner_spawner.spawn_function = _spawn_learner
 	Transport.became_ready.connect(_on_transport_ready, CONNECT_ONE_SHOT)
+	Transport.session_changed.connect(_on_session_changed)
 	if Transport.is_ready():
 		_on_transport_ready()
 
@@ -65,6 +67,7 @@ func _on_transport_ready() -> void:
 		_accept_player(multiplayer.get_unique_id(), SteamClient.steam_id, SteamClient.persona_name)
 		return
 	begin_join()
+	multiplayer.server_disconnected.connect(_on_host_vanished, CONNECT_ONE_SHOT)
 	_report_identity.rpc_id(1, SteamClient.steam_id, SteamClient.persona_name)
 
 
@@ -162,6 +165,7 @@ func room_state() -> RoomState:
 func _replicate() -> void:
 	if not multiplayer.is_server():
 		return
+	Transport.set_occupancy(_room.player_count())
 	_receive_state.rpc(_room.snapshot())
 	room_changed.emit()
 
@@ -237,8 +241,33 @@ func begin_join() -> void:
 ## Ticket 09 calls this on Leave. Remaining machines play the reverse theatre on disconnect.
 func begin_leave() -> void:
 	fade.to_black()
-	if not multiplayer.is_server() and multiplayer.multiplayer_peer != null:
+	if not multiplayer.is_server() and _peer_connected():
 		_announce_leave.rpc_id(1)
+
+
+## Guest Leave, or a guest whose host vanished: a fresh hosted room, alone at the entrance.
+func leave_to_own_room() -> void:
+	begin_leave()
+	await get_tree().create_timer(0.25).timeout
+	if is_inside_tree():
+		Transport.host_fresh()
+
+
+func _on_session_changed() -> void:
+	get_tree().reload_current_scene.call_deferred()
+
+
+func _on_host_vanished() -> void:
+	print("WaitingRoom: the host vanished")
+	if Transport.kind != Transport.STEAM:
+		return
+	begin_leave()
+	Transport.host_fresh()
+
+
+func _peer_connected() -> bool:
+	var peer := multiplayer.multiplayer_peer
+	return peer != null and peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED
 
 
 func _reveal_local() -> void:
@@ -314,7 +343,7 @@ func _notification(what: int) -> void:
 
 
 func _quit_cleanly() -> void:
-	if multiplayer.multiplayer_peer != null and not multiplayer.is_server():
+	if _peer_connected() and not multiplayer.is_server():
 		_announce_leave.rpc_id(1)
 		await get_tree().create_timer(0.2).timeout
 	get_tree().quit()

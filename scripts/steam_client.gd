@@ -11,6 +11,10 @@ const APP_ID := 480
 const RICH_PRESENCE_KEY := "licensed"
 const RICH_PRESENCE_VALUE := "1"
 
+## Fires for any Steam id whose medium avatar has arrived, local or friend. The desk
+## draws from `avatar_of` and listens here rather than polling.
+signal avatar_ready(steam_id: int)
+
 ## One of `Steam.SteamAPIInitResult`; `STEAM_API_INIT_RESULT_OK` means Steam is usable.
 var init_status: int = Steam.STEAM_API_INIT_RESULT_FAILED_GENERIC
 ## Valve's own description of the init result, shown beneath the signage when Steam is not running.
@@ -21,6 +25,10 @@ var steam_id: int = 0
 var persona_name: String = ""
 ## The local player's medium (64 px) avatar; null until `avatar_loaded` has delivered it.
 var avatar: ImageTexture
+## steam_id → medium ImageTexture, filled as `avatar_loaded` delivers them.
+var _avatars: Dictionary = {}
+## steam_id → true once `getPlayerAvatar` has been asked, so a redraw does not ask again.
+var _avatar_asked: Dictionary = {}
 
 
 func _init() -> void:
@@ -48,6 +56,18 @@ func is_running() -> bool:
 	return init_status == Steam.STEAM_API_INIT_RESULT_OK
 
 
+## The medium avatar if it has already arrived; otherwise requests it and returns null.
+func avatar_of(who: int) -> ImageTexture:
+	if _avatars.has(who):
+		return _avatars[who]
+	if not is_running():
+		return null
+	if not _avatar_asked.get(who, false):
+		_avatar_asked[who] = true
+		Steam.getPlayerAvatar(Steam.AVATAR_MEDIUM, who)
+	return null
+
+
 ## Turns the RGBA byte buffer `avatar_loaded` delivers into a texture. Avatars are square.
 static func avatar_texture_from(width: int, rgba: PackedByteArray) -> ImageTexture:
 	var image := Image.create_from_data(width, width, false, Image.FORMAT_RGBA8, rgba)
@@ -55,7 +75,9 @@ static func avatar_texture_from(width: int, rgba: PackedByteArray) -> ImageTextu
 
 
 func _on_avatar_loaded(avatar_id: int, width: int, rgba: PackedByteArray) -> void:
-	if avatar_id != steam_id:
-		return
-	avatar = avatar_texture_from(width, rgba)
-	print("SteamClient: avatar loaded, %d x %d" % [width, width])
+	var texture := avatar_texture_from(width, rgba)
+	_avatars[avatar_id] = texture
+	if avatar_id == steam_id:
+		avatar = texture
+		print("SteamClient: avatar loaded, %d x %d" % [width, width])
+	avatar_ready.emit(avatar_id)

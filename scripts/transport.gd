@@ -3,6 +3,7 @@ extends Node
 ## talks to `multiplayer` only (spec section 0, ADR-0002). Steam is the shipping path; ENet
 ## on localhost is the dev flag. Steam is still required under every transport: if init
 ## failed, this autoload does nothing and ticket 01's gate shows Steam-not-running.
+## Ticket 09 adds joining another Steam lobby and hosting a fresh one on Leave.
 
 ## Shipping path: GodotSteam's SteamMultiplayerPeer on a FRIENDS_ONLY lobby of three.
 const STEAM := &"steam"
@@ -10,20 +11,32 @@ const STEAM := &"steam"
 const ENET := &"enet"
 ## Fixed localhost port every instance uses; first to listen hosts, the others join.
 const ENET_PORT := 34197
-## Lobby data the desk (ticket 09) will read to tell our rooms from other Spacewar lobbies.
+## Lobby data the desk reads to tell our rooms from other Spacewar lobbies.
 const GAME_KEY := "game"
 const GAME_VALUE := "licensed"
+## Occupancy, written by the host so a friend's desk can hide Invite and Join at three.
+const OCCUPANCY_KEY := "n"
 
 ## Fires once the peer is plugged in and, for a guest, the handshake has completed.
 signal became_ready
+## Fires when this machine swaps room (Join succeeded, Leave, failed Join rehost, host vanished).
+signal session_changed
 
 ## `STEAM` or `ENET`, read from `--transport=` in the user args after `--`.
 var kind: StringName = STEAM
-## Steam lobby id when hosting the shipping path; 0 otherwise.
+## Steam lobby id of the room this machine is in (hosted or joined); 0 otherwise.
 var lobby_id: int = 0
+## True while this machine owns the current Steam lobby. The host has no Leave.
+var hosting := false
+## Last failed Join, consumed by the desk so the row can show a dry line after a rehost.
+var last_join_error: Dictionary = {}
 
 var _enet_attempt := 0
 var _ready_to_play := false
+var _expecting_lobby := false
+var _join_target := 0
+var _join_friend := 0
+var _session := 0
 
 
 func _ready() -> void:
@@ -45,9 +58,10 @@ func _start() -> void:
 		print("Transport: --transport=enet, bind-or-join localhost:%d" % ENET_PORT)
 		_try_enet()
 		return
+	Steam.lobby_created.connect(_on_lobby_created)
+	Steam.lobby_joined.connect(_on_lobby_joined)
 	print("Transport: creating FRIENDS_ONLY Steam lobby of max %d" % RoomState.CAPACITY)
-	Steam.lobby_created.connect(_on_lobby_created, CONNECT_ONE_SHOT)
-	Steam.createLobby(Steam.LOBBY_TYPE_FRIENDS_ONLY, RoomState.CAPACITY)
+	_create_hosted_lobby()
 
 
 func is_ready() -> bool:
@@ -88,12 +102,67 @@ func display_name_for(persona_name: String, slot: int) -> String:
 	return persona_name
 
 
+## Join another Steam lobby. Steam leaves the current lobby as part of joinLobby; the
+## Godot room is only swapped after `lobby_joined` reports success and `game=licensed`.
+## On failure the machine rehosts so the waiting room stays a room of its own.
+func join_lobby(target_lobby_id: int, friend_id: int = 0) -> void:
+	if kind != STEAM or target_lobby_id == 0 or _join_target != 0:
+		return
+	if target_lobby_id == lobby_id:
+		print("Transport: already in lobby %d" % target_lobby_id)
+		return
+	_join_target = target_lobby_id
+	_join_friend = friend_id
+	print("Transport: joinLobby %d" % target_lobby_id)
+	Steam.joinLobby(target_lobby_id)
+
+
+## Leave the current room and host a fresh FRIENDS_ONLY lobby. The waiting room reloads
+## on `session_changed` so the player is alone at the entrance.
+func host_fresh() -> void:
+	if kind != STEAM:
+		return
+	_join_target = 0
+	_join_friend = 0
+	_session += 1
+	_drop_godot_peer()
+	if lobby_id != 0:
+		Steam.leaveLobby(lobby_id)
+		lobby_id = 0
+	hosting = false
+	_ready_to_play = false
+	print("Transport: hosting a fresh room")
+	_create_hosted_lobby()
+
+
+func take_join_error() -> Dictionary:
+	var err := last_join_error.duplicate()
+	last_join_error = {}
+	return err
+
+
+func set_occupancy(count: int) -> void:
+	if kind != STEAM or lobby_id == 0 or not hosting:
+		return
+	Steam.setLobbyData(lobby_id, OCCUPANCY_KEY, str(count))
+
+
+func _create_hosted_lobby() -> void:
+	_expecting_lobby = true
+	Steam.createLobby(Steam.LOBBY_TYPE_FRIENDS_ONLY, RoomState.CAPACITY)
+
+
 func _on_lobby_created(result: int, new_lobby_id: int) -> void:
+	if not _expecting_lobby:
+		return
+	_expecting_lobby = false
 	if result != Steam.RESULT_OK:
 		push_error("Transport: createLobby failed (result %d)" % result)
 		return
 	lobby_id = new_lobby_id
+	hosting = true
 	Steam.setLobbyData(lobby_id, GAME_KEY, GAME_VALUE)
+	Steam.setLobbyData(lobby_id, OCCUPANCY_KEY, "1")
 	var peer := SteamMultiplayerPeer.new()
 	var err := peer.host_with_lobby(lobby_id)
 	if err != OK:
@@ -102,6 +171,63 @@ func _on_lobby_created(result: int, new_lobby_id: int) -> void:
 	multiplayer.multiplayer_peer = peer
 	print("Transport: hosting FRIENDS_ONLY Steam lobby %d game=%s" % [lobby_id, GAME_VALUE])
 	_become_ready()
+
+
+func _on_lobby_joined(joined_id: int, _permissions: int, _locked: bool, response: int) -> void:
+	if _join_target == 0:
+		return
+	var target := _join_target
+	var friend_id := _join_friend
+	_join_target = 0
+	_join_friend = 0
+	if OS.is_debug_build():
+		print("Transport: joinLobby response %d lobby %d" % [response, joined_id])
+	if response != Steam.CHAT_ROOM_ENTER_RESPONSE_SUCCESS:
+		_fail_join(target, friend_id, response)
+		return
+	if Steam.getLobbyData(joined_id, GAME_KEY) != GAME_VALUE:
+		Steam.leaveLobby(joined_id)
+		_fail_join(target, friend_id, Steam.CHAT_ROOM_ENTER_RESPONSE_DOESNT_EXIST)
+		return
+	_adopt_as_guest(joined_id, friend_id)
+
+
+func _fail_join(target: int, friend_id: int, response: int) -> void:
+	last_join_error = {
+		"lobby_id": target,
+		"steam_id": friend_id,
+		"response": response,
+	}
+	print("Transport: join failed (response %d); rehosting" % response)
+	host_fresh()
+
+
+func _adopt_as_guest(joined_id: int, friend_id: int) -> void:
+	_session += 1
+	_drop_godot_peer()
+	# joinLobby already left the hosted lobby; do not leave the one we just entered.
+	lobby_id = joined_id
+	hosting = false
+	var peer := SteamMultiplayerPeer.new()
+	var err := peer.connect_to_lobby(joined_id)
+	if err != OK:
+		push_error("Transport: connect_to_lobby failed (%s)" % error_string(err))
+		_fail_join(joined_id, friend_id, Steam.CHAT_ROOM_ENTER_RESPONSE_ERROR)
+		return
+	multiplayer.multiplayer_peer = peer
+	print("Transport: guest in Steam lobby %d" % joined_id)
+	if peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED:
+		_become_ready()
+		return
+	_join_friend = friend_id
+	multiplayer.connected_to_server.connect(_become_ready, CONNECT_ONE_SHOT)
+	multiplayer.connection_failed.connect(_on_steam_join_connection_failed, CONNECT_ONE_SHOT)
+
+
+func _on_steam_join_connection_failed() -> void:
+	var friend_id := _join_friend
+	_join_friend = 0
+	_fail_join(lobby_id, friend_id, Steam.CHAT_ROOM_ENTER_RESPONSE_ERROR)
 
 
 func _try_enet() -> void:
@@ -137,17 +263,22 @@ func _retry_enet() -> void:
 
 
 func _become_ready() -> void:
-	if _ready_to_play:
-		return
+	var first := not _ready_to_play
 	_ready_to_play = true
-	became_ready.emit()
+	if first:
+		became_ready.emit()
+	if _session > 0:
+		session_changed.emit()
+
+
+func _drop_godot_peer() -> void:
+	if multiplayer.multiplayer_peer != null:
+		multiplayer.multiplayer_peer.close()
+		multiplayer.multiplayer_peer = null
 
 
 func _exit_tree() -> void:
 	if lobby_id != 0:
 		Steam.leaveLobby(lobby_id)
 		lobby_id = 0
-	if multiplayer.multiplayer_peer != null:
-		multiplayer.multiplayer_peer.close()
-		multiplayer.multiplayer_peer = null
-
+	_drop_godot_peer()
