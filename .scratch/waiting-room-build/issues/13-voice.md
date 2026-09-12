@@ -22,7 +22,7 @@ Deferred, do not build: per-player mute, volume sliders, noise gate, mic device 
 
 **Blocked by:** 04 (learners and RPC), 12 (the Escape overlay).
 
-**Status:** claimed
+**Status:** done
 
 - [x] Under three local instances, speaking into the mic is heard back from the other two learners' positions (the echo smoke test).
 - [x] Voice comes from the friend's learner: it is audibly quieter from the far corner of the room than from beside them, and intelligible from both.
