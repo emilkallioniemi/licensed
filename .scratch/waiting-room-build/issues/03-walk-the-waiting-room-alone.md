@@ -12,12 +12,22 @@ Arrival position: the kit's `Entrance` marker, facing −Z into the room.
 
 **Blocked by:** 01 (the game boots into the waiting room).
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] On boot the player stands on the `Entrance` marker facing into the room, at eye height about 1.75 m.
-- [ ] WASD moves at 3 m/s relative to where the camera looks; there is no sprint and no jump.
-- [ ] Mouse look turns the camera; the learner's body turns with it; pitch is not applied to the body.
-- [ ] Walls, floor, counter, cupboards, chairs, plant, and bin block movement; the player cannot leave the room through the entrance opening or any wall.
-- [ ] Looking straight down shows your own body but never your own head.
-- [ ] The mouse is captured in the room and released on Escape.
-- [ ] The kit's scene and materials are unchanged; collision and the controller are added around it, not by greyboxing.
+- [x] On boot the player stands on the `Entrance` marker facing into the room, at eye height about 1.75 m.
+- [x] WASD moves at 3 m/s relative to where the camera looks; there is no sprint and no jump.
+- [x] Mouse look turns the camera; the learner's body turns with it; pitch is not applied to the body.
+- [x] Walls, floor, counter, cupboards, chairs, plant, and bin block movement; the player cannot leave the room through the entrance opening or any wall.
+- [x] Looking straight down shows your own body but never your own head.
+- [x] The mouse is captured in the room and released on Escape.
+- [x] The kit's scene and materials are unchanged; collision and the controller are added around it, not by greyboxing.
+
+## Comments
+
+**From ticket 02 (orchestrator).** `RoomState` (`scripts/room_state.gd`, `class_name`, RefCounted) is the record every view renders from; commands return bool (applied/refused) and end in one `_after_command` that raises `booking_formed`/`booking_dissolved` then `countdown_started`/`countdown_cancelled`/`launched(vehicle, roles)`. Vehicles/roles are StringName constants on it (`MONSTER_TRUCK`, `DRIVER`, `SPOTTER`, `NAVIGATOR`, `RANDOM`); empty pick/hold = none, chair 0 = standing, palettes 1/2/3. Nothing in this ticket needs it yet, but the learner should be built so 04 can wrap it in a replicated peer without a rewrite.
+
+**Builder, 2026-09-12.** `scenes/learner.tscn` / `scripts/learner.gd` (`class_name Learner`, a `CharacterBody3D` around the kit visual). Ticket 04 wraps this in a replicated peer:
+
+- `set_local(bool)` is the seam: input, the current camera, mouse capture, and hiding `HeadPivot` are on only for the learner this machine walks. Safe before or after `add_child`. The kit visual is `$Visual` (palette exports unchanged).
+- Arrival is `WaitingRoom._place_local_learner()` on `Kit/AttachmentPoints/Entrance` facing the marker's −Z. The GLB also has an `Entrance` frame group; do not `find_child("Entrance")`.
+- Collision lives on the waiting-room scene at runtime, not in the kit file: trimesh from `Architecture` (floor slab and walls; the 1.4 cm floor tiles are skipped so they do not jitter), AABB boxes on Reception / chairs / plant / bin / cupboards, and `EntrancePlug` in the opening. The kit's `EntranceCamera` is gone; the learner's camera replaces it.

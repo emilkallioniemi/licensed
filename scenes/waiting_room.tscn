@@ -21,12 +21,6 @@ script = ExtResource("1_room")
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_room")
 
-[node name="EntranceCamera" type="Camera3D" parent="."]
-position = Vector3(1, 1.8, 4.55)
-rotation = Vector3(-0.018, 0.152, 0)
-current = true
-fov = 88.0
-
 [node name="CeilingFrontLeft" type="OmniLight3D" parent="."]
 position = Vector3(-3, 3.25, 2)
 light_color = Color(1, 0.94, 0.8, 1)

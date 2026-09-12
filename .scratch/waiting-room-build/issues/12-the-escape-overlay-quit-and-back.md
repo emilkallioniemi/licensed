@@ -23,3 +23,7 @@ Ticket 03's stand-in (Escape merely releasing the mouse) is replaced by this.
 - [ ] Host presses Back: every player arrives back in the same room through the entrance with the door theatre; the board has no chips, the strips read "No booking.", no chair is flooded, the notice board reads "No booking.", the desk header reads "3 of 3", the music is playing from the start.
 - [ ] A guest quitting in the test area returns the other two to the waiting room with nothing booked.
 - [ ] The host quitting in the test area lands each guest alone in a fresh room of their own.
+
+## Comments
+
+**From ticket 03 (orchestrator).** Escape currently releases the mouse (`Learner._unhandled_input` on `ui_cancel`) and should be replaced by this overlay. The mouse is recaptured only by becoming local again, not on a second Escape.
