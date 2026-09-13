@@ -58,6 +58,10 @@ func verify() -> void:
 			check(false, "network fixture requires real spawned learners")
 			quit(1)
 			return
+	if OS.get_cmdline_user_args().has("--checkpoint-diagnostics"):
+		await create_timer(2.0).timeout
+		for room in rooms:
+			check(room.test_area.boarding.has_node("CheckpointDiagnostics"), "opt-in capture is attached to each real peer")
 	if OS.get_cmdline_user_args().has("--capture-truck"):
 		await capture_truck()
 	if OS.get_cmdline_user_args().has("--boarding"):

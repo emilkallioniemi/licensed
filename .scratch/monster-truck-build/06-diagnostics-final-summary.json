@@ -1,0 +1,119 @@
+[
+  {
+    "file": ".scratch/monster-truck-build/checkpoint-06/agent-capture-final/checkpoint-1789262722.42364-92635-1984595683.jsonl",
+    "malformed_lines": 0,
+    "frame_ms": {
+      "count": 4410,
+      "p50": 7.586,
+      "p95": 12.281,
+      "p99": 14.102,
+      "max": 233.828
+    },
+    "application_rtt_ms": {
+      "count": 67,
+      "p50": 7.792,
+      "p95": 15.208,
+      "p99": 18.611,
+      "max": 18.611
+    },
+    "successive_rtt_delta_ms": {
+      "count": 66,
+      "p50": 3.622,
+      "p95": 10.967,
+      "p99": 16.051,
+      "max": 16.051
+    },
+    "resolved_probes": 71,
+    "timeout_fraction": 0.056338028169014086,
+    "unresolved_probes": 0,
+    "transport_packet_loss": null,
+    "input_ack_age_ms": {
+      "count": 621,
+      "p50": 34.762,
+      "p95": 37.184,
+      "p99": 40.679,
+      "max": 241.74
+    },
+    "learner_reconciliation_m": {
+      "count": 622,
+      "p50": 0.0,
+      "p95": 0.00119737256318331,
+      "p99": 0.084320068359375,
+      "max": 10.6633911132812
+    },
+    "active_seconds": 30.73473300000001,
+    "large_corrections_per_active_second": 0.09760943750511837,
+    "all_reconciliations_per_active_second": 20.237690042727873,
+    "input_to_visible_response_ms": null
+  },
+  {
+    "file": ".scratch/monster-truck-build/checkpoint-06/agent-capture-final/checkpoint-1789262722.27786-92635-1.jsonl",
+    "malformed_lines": 0,
+    "frame_ms": {
+      "count": 5583,
+      "p50": 7.433,
+      "p95": 11.93,
+      "p99": 13.956,
+      "max": 181.455
+    },
+    "application_rtt_ms": null,
+    "successive_rtt_delta_ms": null,
+    "resolved_probes": 0,
+    "timeout_fraction": null,
+    "unresolved_probes": 0,
+    "transport_packet_loss": null,
+    "input_ack_age_ms": null,
+    "learner_reconciliation_m": null,
+    "active_seconds": 31.793312000000007,
+    "large_corrections_per_active_second": null,
+    "all_reconciliations_per_active_second": null,
+    "input_to_visible_response_ms": null
+  },
+  {
+    "file": ".scratch/monster-truck-build/checkpoint-06/agent-capture-final/checkpoint-1789262722.3396-92635-26539147.jsonl",
+    "malformed_lines": 0,
+    "frame_ms": {
+      "count": 5583,
+      "p50": 7.43,
+      "p95": 11.949,
+      "p99": 13.975,
+      "max": 232.696
+    },
+    "application_rtt_ms": {
+      "count": 87,
+      "p50": 10.861,
+      "p95": 16.281,
+      "p99": 19.928,
+      "max": 19.928
+    },
+    "successive_rtt_delta_ms": {
+      "count": 86,
+      "p50": 3.406,
+      "p95": 10.189,
+      "p99": 18.121,
+      "max": 18.121
+    },
+    "resolved_probes": 87,
+    "timeout_fraction": 0.0,
+    "unresolved_probes": 0,
+    "transport_packet_loss": null,
+    "input_ack_age_ms": {
+      "count": 602,
+      "p50": 34.593,
+      "p95": 36.621,
+      "p99": 55.379,
+      "max": 733.781
+    },
+    "learner_reconciliation_m": {
+      "count": 604,
+      "p50": 0.0,
+      "p95": 0.00135443918406963,
+      "p99": 1.00007629394531,
+      "max": 12.727367401123
+    },
+    "active_seconds": 31.794062,
+    "large_corrections_per_active_second": 0.15726206987958946,
+    "all_reconciliations_per_active_second": 18.99725804145441,
+    "input_to_visible_response_ms": null
+  }
+]

@@ -1,0 +1,42 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[S_API FAIL] SteamAPI_Init() failed; ipcserver GetSteamPath failed.
+[S_API] SteamAPI_Init(): SteamAPI_IsSteamRunning() did not locate a running instance of Steam.
+[S_API] SteamAPI_Init(): Could not determine Steam client install directory.
+SteamClient: Steam is not running (status 1: Could not determine Steam client install directory.)
+FIXTURE: native ENet room bootstrap; Steam login is not under test
+WaitingRoom: the room waits for 3
+WaitingRoom: spawned Learner_1 palette 01 local=true
+WaitingRoom:  arrived as palette 01 (1 of 3)
+FIXTURE: native ENet room bootstrap; Steam login is not under test
+WaitingRoom: the room waits for 3
+FIXTURE: native ENet room bootstrap; Steam login is not under test
+WaitingRoom: peer 132145933 connected
+WaitingRoom: spawned Learner_1 palette 01 local=false
+WaitingRoom: spawned Learner_132145933 palette 02 local=false
+WaitingRoom:  (2) arrived as palette 02 (2 of 3)
+WaitingRoom: the door for peer 132145933
+WaitingRoom: spawned Learner_132145933 palette 02 local=true
+WaitingRoom: the room waits for 3
+WaitingRoom: peer 1744328539 connected
+WaitingRoom: spawned Learner_1 palette 01 local=false
+WaitingRoom: spawned Learner_132145933 palette 02 local=false
+WaitingRoom: spawned Learner_1744328539 palette 03 local=false
+WaitingRoom:  (3) arrived as palette 03 (3 of 3)
+WaitingRoom: the door for peer 1744328539
+WaitingRoom: spawned Learner_1744328539 palette 03 local=false
+WaitingRoom: the door for peer 1744328539
+WaitingRoom: spawned Learner_1744328539 palette 03 local=true
+FAIL: opt-in capture is attached to each real peer
+FAIL: opt-in capture is attached to each real peer
+FAIL: opt-in capture is attached to each real peer
+WaitingRoom: peer 1744328539 left; 2 in the room
+WARNING: 3 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 528, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/Users/emka/Downloads/Godot.app/Contents/MacOS/Godot', '--headless', '--path', '/private/tmp/licensed-04-macos-verification', '--script', 'res://tests/verify_launch_network.gd', '--', '--checkpoint-diagnostics']' returned non-zero exit status 1.

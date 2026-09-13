@@ -1,0 +1,119 @@
+[
+  {
+    "file": ".scratch/monster-truck-build/checkpoint-06/agent-capture/checkpoint-1789262570.64085-92128-1.jsonl",
+    "malformed_lines": 0,
+    "frame_ms": {
+      "count": 5599,
+      "p50": 6.896,
+      "p95": 7.653,
+      "p99": 9.303,
+      "max": 68.96
+    },
+    "application_rtt_ms": null,
+    "successive_rtt_delta_ms": null,
+    "resolved_probes": 0,
+    "timeout_fraction": null,
+    "unresolved_probes": 0,
+    "transport_packet_loss": null,
+    "input_ack_age_ms": null,
+    "learner_reconciliation_m": null,
+    "active_seconds": 31.719080000000016,
+    "large_corrections_per_active_second": null,
+    "all_reconciliations_per_active_second": null,
+    "input_to_visible_response_ms": null
+  },
+  {
+    "file": ".scratch/monster-truck-build/checkpoint-06/agent-capture/checkpoint-1789262570.70301-92128-1567570981.jsonl",
+    "malformed_lines": 0,
+    "frame_ms": {
+      "count": 5599,
+      "p50": 6.896,
+      "p95": 7.653,
+      "p99": 9.303,
+      "max": 68.96
+    },
+    "application_rtt_ms": {
+      "count": 87,
+      "p50": 10.223,
+      "p95": 16.397,
+      "p99": 17.322,
+      "max": 17.322
+    },
+    "successive_rtt_delta_ms": {
+      "count": 86,
+      "p50": 3.371,
+      "p95": 12.203,
+      "p99": 13.221,
+      "max": 13.221
+    },
+    "resolved_probes": 87,
+    "timeout_fraction": 0.0,
+    "unresolved_probes": 0,
+    "transport_packet_loss": null,
+    "input_ack_age_ms": {
+      "count": 603,
+      "p50": 34.348,
+      "p95": 36.629,
+      "p99": 38.514,
+      "max": 732.397
+    },
+    "learner_reconciliation_m": {
+      "count": 607,
+      "p50": 0.0,
+      "p95": 0.000824936025310308,
+      "p99": 1.00016784667969,
+      "max": 12.727367401123
+    },
+    "active_seconds": 31.719080000000016,
+    "large_corrections_per_active_second": 0.15763382796726758,
+    "all_reconciliations_per_active_second": 19.136746715226284,
+    "input_to_visible_response_ms": null
+  },
+  {
+    "file": ".scratch/monster-truck-build/checkpoint-06/agent-capture/checkpoint-1789262570.7892-92128-1733295668.jsonl",
+    "malformed_lines": 0,
+    "frame_ms": {
+      "count": 4433,
+      "p50": 6.896,
+      "p95": 8.026,
+      "p99": 9.42,
+      "max": 68.96
+    },
+    "application_rtt_ms": {
+      "count": 69,
+      "p50": 9.849,
+      "p95": 17.485,
+      "p99": 18.1,
+      "max": 18.1
+    },
+    "successive_rtt_delta_ms": {
+      "count": 68,
+      "p50": 3.687,
+      "p95": 12.416,
+      "p99": 17.538,
+      "max": 17.538
+    },
+    "resolved_probes": 71,
+    "timeout_fraction": 0.028169014084507043,
+    "unresolved_probes": 0,
+    "transport_packet_loss": null,
+    "input_ack_age_ms": {
+      "count": 624,
+      "p50": 34.55,
+      "p95": 36.921,
+      "p99": 38.875,
+      "max": 96.126
+    },
+    "learner_reconciliation_m": {
+      "count": 625,
+      "p50": 0.0,
+      "p95": 0.00104586291126907,
+      "p99": 0.08135986328125,
+      "max": 10.6556243896484
+    },
+    "active_seconds": 30.710088000000013,
+    "large_corrections_per_active_second": 0.09768776956940009,
+    "all_reconciliations_per_active_second": 20.351618660291685,
+    "input_to_visible_response_ms": null
+  }
+]

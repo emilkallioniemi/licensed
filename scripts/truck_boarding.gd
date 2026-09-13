@@ -25,6 +25,13 @@ var driving_armed := false
 var hint_time := 0.0
 var release_pending := false
 var recovery := TruckRecovery.new()
+var diagnostics: Node
+
+func _ready() -> void:
+	if OS.get_cmdline_user_args().has("--checkpoint-diagnostics"):
+		diagnostics = load("res://scripts/checkpoint_diagnostics.gd").new()
+		diagnostics.name = "CheckpointDiagnostics"
+		add_child(diagnostics)
 
 func start(owner_room: WaitingRoom) -> void:
 	room = owner_room
@@ -176,6 +183,8 @@ func _physics_process(_delta: float) -> void:
 	if multiplayer.is_server():
 		_accept_input(multiplayer.get_unique_id(), room.room_state().attempt.id, command)
 	else:
+		if diagnostics != null:
+			diagnostics.command_sent(sequence)
 		_walk.rpc_id(1, room.room_state().attempt.id, command)
 		state.drive(player_id, state.id, sequence, command.generation, command)
 		pending.append(command)
@@ -330,6 +339,8 @@ func _apply_snapshot(data: Dictionary) -> void:
 	var error := visible_position - local.global_position
 	if error.length() > 1.5:
 		correction_count += 1
+	if diagnostics != null:
+		diagnostics.reconciled(ack, error.length())
 	local.smooth_truck_correction(error)
 	truck.smooth_correction(visible_truck)
 	# Remote supported bodies share the predicted truck frame as well.
