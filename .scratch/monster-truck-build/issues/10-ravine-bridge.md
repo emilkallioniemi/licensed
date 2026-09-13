@@ -27,4 +27,6 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 
 ## Comments
 
+- From ticket 03: Shared controls are implemented on a flat test apron; this route ticket must add its specified geometry and scored completion observations, not treat the driving fixture as route acceptance.
+
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.

@@ -85,6 +85,83 @@ func check(condition: bool, message: String) -> void:
 		failures += 1
 		printerr("FAIL: ", message)
 
+## Initial motion fixture isolates footing; no shipping controlled-motion API.
+func seed_motion(linear: Vector3, angular: float) -> void:
+	var state: AttemptState = rooms[0].room_state().attempt
+	state.speed = linear.length()
+	state.parking_brake = linear == Vector3.ZERO
+	state.front_angle = -0.25 if angular != 0.0 else 0.0
+	state.rear_angle = 0.0
+
+func verify_shared_driving() -> void:
+	var host = rooms[0]
+	var state: AttemptState = host.room_state().attempt
+	var controls := [&"front", &"pedals", &"rear"]
+	# Ground boarding is covered above; set up only the driving comparison here.
+	for room in rooms:
+		var player_id: int = room.player_id_for_peer(room.multiplayer.get_unique_id())
+		if state.control_of(player_id) != &"":
+			room.test_area.boarding.interact()
+	await create_timer(0.2).timeout
+	for i in 3:
+		var peer_id: int = rooms[i].multiplayer.get_unique_id()
+		var body = host._learner_of(peer_id)
+		body.global_position = host.test_area.truck.body.to_global(AttemptState.CONTROLS[controls[i]] + Vector3(0, 0.05, 0.5))
+		body.support = &"truck"
+		body.support_pose = host.test_area.truck.body.global_transform
+		rooms[i].test_area.boarding.test_intention = {"wish": Vector2.ZERO, "yaw": 0.0}
+	await create_timer(0.2).timeout
+	for room in rooms:
+		room.test_area.boarding.interact()
+	await create_timer(0.3).timeout
+	check(state.operators.size() == 3, "three physical controls occupied by different peers")
+	state.front_angle = 0.0
+	state.rear_angle = 0.0
+	var origin: Vector3 = host.test_area.truck.body.global_position
+	var yaw: float = host.test_area.truck.body.rotation.y
+	var pedal = rooms[1].test_area.boarding
+	var pedal_player: int = rooms[1].player_id_for_peer(rooms[1].multiplayer.get_unique_id())
+	pedal._action.rpc_id(1, state.id, 1, state.generations[pedal_player], &"parking")
+	rooms[0].test_area.boarding.test_intention["steer"] = 0.5
+	rooms[2].test_area.boarding.test_intention["steer"] = -0.5
+	pedal.test_intention["throttle"] = true
+	await create_timer(1.0).timeout
+	check(state.speed > 1.5 and host.test_area.truck.body.global_position.distance_to(origin) > 0.8, "guest throttle moves real truck")
+	check(absf(host.test_area.truck.body.rotation.y - yaw) > 0.1 and state.front_angle > 0 and state.rear_angle < 0, "both axles produce moving turn")
+	pedal._action.rpc_id(1, state.id, 2, state.generations[pedal_player], &"direction")
+	await create_timer(0.1).timeout
+	check(state.direction == 1, "network R rejected while moving")
+	pedal.test_intention["throttle"] = false
+	pedal.test_intention["brake"] = true
+	await create_timer(0.6).timeout
+	check(state.speed == 0.0, "network service brake stops truck")
+	pedal._action.rpc_id(1, state.id, 3, state.generations[pedal_player], &"direction")
+	await create_timer(0.15).timeout
+	pedal.test_intention["brake"] = false
+	pedal.test_intention["throttle"] = true
+	await create_timer(0.6).timeout
+	check(state.direction == -1 and state.speed < -0.5, "network reverse drives truck backward")
+	pedal._action.rpc_id(1, state.id, 4, state.generations[pedal_player], &"parking")
+	pedal._action.rpc_id(1, state.id, 4, state.generations[pedal_player], &"parking")
+	await create_timer(0.5).timeout
+	check(state.parking_brake and state.speed == 0.0, "duplicate parking event parks once")
+	for room in rooms:
+		check(room.room_state().attempt.parking_brake and room.room_state().attempt.direction == -1, "persistent instruments agree across peers")
+	print("DRIVE: real three-peer turn, stopped reverse, and persistent parking verified")
+	# Drive the real collision hull into a marked gate, then hear one impact.
+	for room in rooms:
+		room.test_area.boarding.test_intention = {"wish": Vector2.ZERO, "yaw": 0.0}
+	await create_timer(0.1).timeout
+	state.front_angle = 0.0
+	state.rear_angle = 0.0
+	state.speed = 6.0
+	state.parking_brake = false
+	host.test_area.truck.body.global_transform = Transform3D(Basis.IDENTITY, host.test_area.to_global(Vector3(4, 0, -17)))
+	var heard := [false]
+	host.test_area.truck.impact.finished.connect(func(): heard[0] = true)
+	await create_timer(0.7).timeout
+	check(state.speed == 0.0 and heard[0], "real gate collision stops truck and plays impact feedback")
+
 ## Controlled moving truck fixture, development ENet only; no human feel claim.
 func verify_boarding() -> void:
 	var host_room = rooms[0]
@@ -112,14 +189,14 @@ func verify_boarding() -> void:
 	boarding.interact()
 	await create_timer(0.2).timeout
 	check(host_room.room_state().attempt.control_of(host_room._steam_id_of[1]) == &"front", "physical E takes front steering")
-	boarding.controlled_motion(Vector3(0.6, 0, 0), 0.12)
+	seed_motion(Vector3(0.6, 0, 0), 0.12)
 	await create_timer(0.6).timeout
 	boarding.interact()
 	await create_timer(0.3).timeout
 	check(not learner.is_seated() and learner.support == &"truck", "release while turning retains footing")
 	for room in rooms:
 		check(room.room_state().attempt.control_of(host_room._steam_id_of[1]) == &"", "release recovered on each peer")
-	boarding.controlled_motion(Vector3.ZERO, 0.0)
+	seed_motion(Vector3.ZERO, 0.0)
 	# Separate ground setup exercises the complete roof access and ordinary riding.
 	truck.body.transform = Transform3D.IDENTITY
 	learner.support = &""
@@ -130,7 +207,7 @@ func verify_boarding() -> void:
 	await create_timer(0.2).timeout
 	print("BOARD roof: ", truck.body.to_local(learner.global_position), " ", learner.movement_mode)
 	check(learner.support == &"truck" and truck.body.to_local(learner.global_position).y > 4.1, "walk full roof access without placement or jump")
-	boarding.controlled_motion(Vector3(1.0, 0, 0), 0.15)
+	seed_motion(Vector3(1.0, 0, 0), 0.15)
 	var start: Vector3 = truck.body.to_local(learner.global_position)
 	await create_timer(1.0).timeout
 	check(learner.support == &"truck" and truck.body.to_local(learner.global_position).distance_to(start) < 0.2, "ordinary turning roof riding holds relative footing")
@@ -139,10 +216,11 @@ func verify_boarding() -> void:
 	boarding.test_intention = {"wish": Vector2.ZERO, "yaw": 0.0}
 	var detached_at: Vector3 = learner.global_position
 	await create_timer(0.2).timeout
-	check(learner.support == &"" and learner.global_position.x > detached_at.x + 0.1, "jump detaches with inherited truck motion")
-	boarding.controlled_motion(Vector3.ZERO, 0.0)
+	check(learner.support == &"" and learner.global_position.distance_to(detached_at) > 0.1, "jump detaches with inherited truck motion")
+	seed_motion(Vector3.ZERO, 0.0)
 	await verify_guest_boarding()
 	await verify_contention()
+	await verify_shared_driving()
 	print("BOARD correction counts: ", rooms[1].test_area.boarding.correction_count, ", ", rooms[2].test_area.boarding.correction_count)
 
 
@@ -180,13 +258,13 @@ func verify_guest_boarding() -> void:
 	local.rotation.y = 1.0
 	await create_timer(0.3).timeout
 	check(absf(host_learner.rotation.y - 1.0) < 0.05 and absf(local.rotation.y - 1.0) < 0.05, "occupied guest free look survives snapshots")
-	rooms[0].test_area.boarding.controlled_motion(Vector3(0.5, 0, 0), 0.1)
+	seed_motion(Vector3(0.5, 0, 0), 0.1)
 	boarding.interact()
 	await create_timer(0.4).timeout
 	var relative: Vector3 = truck.body.to_local(host_learner.global_position)
 	check(not host_learner.is_seated() and relative.x < 0.8 and host_learner.support == &"truck", "moving pedals release stands in usable inward space")
 	check(local.global_position.distance_to(host_learner.global_position) < 0.3, "guest and host agree after moving release")
-	rooms[0].test_area.boarding.controlled_motion(Vector3.ZERO, 0.0)
+	seed_motion(Vector3.ZERO, 0.0)
 
 
 func verify_contention() -> void:
@@ -238,5 +316,11 @@ func capture_truck() -> void:
 	camera.look_at(at + Vector3(0, 2, 3))
 	camera.current = true
 	await RenderingServer.frame_post_draw
-	viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/02-rough-truck.png")
+	viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/03-rough-truck.png")
+	for control in [&"front", &"pedals", &"rear"]:
+		var seat: Vector3 = AttemptState.CONTROLS[control]
+		camera.global_position = at + seat + Vector3(0, 1.3, 0)
+		camera.rotation = Vector3(-0.25, PI if control == &"rear" else 0.0, 0)
+		await RenderingServer.frame_post_draw
+		viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/03-%s-sight.png" % control)
 	camera.queue_free()

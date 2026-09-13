@@ -19,6 +19,11 @@ var test_intention: Dictionary = {}
 var correction_count := 0
 var queued_snapshot: Dictionary = {}
 var _local_control: StringName = &""
+var action_sequence := 0
+var pending_actions: Array[Dictionary] = []
+var driving_armed := false
+var hint_time := 0.0
+var release_pending := false
 
 func start(owner_room: WaitingRoom) -> void:
 	room = owner_room
@@ -34,6 +39,11 @@ func start(owner_room: WaitingRoom) -> void:
 	acknowledged.clear()
 	queued_snapshot.clear()
 	_local_control = &""
+	action_sequence = 0
+	pending_actions.clear()
+	driving_armed = false
+	release_pending = false
+	get_parent().announce_arrival()
 	truck.body.transform = Transform3D.IDENTITY
 	truck.motion = Vector3.ZERO
 	truck.angular_motion = 0.0
@@ -42,17 +52,31 @@ func start(owner_room: WaitingRoom) -> void:
 
 func stop() -> void:
 	active = false
+	truck.engine.stop()
+	truck.impact.stop()
+	get_parent().examiner_audio.stop()
 	if room != null:
 		for learner in room._learners():
 			learner.set_truck_movement(false)
 
-## Development fixture only; never enabled by shipping input or a solo mode.
-func controlled_motion(linear: Vector3, angular: float) -> void:
-	if OS.is_debug_build() and multiplayer.is_server() and Transport.kind == &"enet":
-		truck.motion = linear
-		truck.angular_motion = angular
-
 func _unhandled_input(event: InputEvent) -> void:
+	if active and event is InputEventKey and event.pressed and not event.echo:
+		var state: AttemptState = room.room_state().attempt
+		var player_id: int = room.player_id_for_peer(multiplayer.get_unique_id())
+		var control := state.control_of(player_id)
+		if event.physical_keycode == KEY_H and control != &"":
+			hint_time = 6.0
+		if control == &"pedals" and driving_armed and event.physical_keycode in [KEY_R, KEY_SPACE]:
+			action_sequence += 1
+			var action: StringName = &"direction" if event.physical_keycode == KEY_R else &"parking"
+			var generation: int = state.generations.get(player_id, 0)
+			if multiplayer.is_server():
+				_accept_action(multiplayer.get_unique_id(), state.id, action_sequence, generation, action)
+			else:
+				_action.rpc_id(1, state.id, action_sequence, generation, action)
+				pending_actions.append({"sequence": action_sequence, "generation": generation, "action": action})
+				state.driving_action(player_id, state.id, action_sequence, generation, action)
+			get_viewport().set_input_as_handled()
 	if active and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_E:
 		interact()
 		get_viewport().set_input_as_handled()
@@ -74,6 +98,9 @@ func interact() -> void:
 				control = candidate
 	else:
 		control = &""
+		release_pending = true
+		driving_armed = false
+		room.room_state().attempt.neutralize_driving(player_id)
 	get_parent().show_own_role("Releasing control..." if control == &"" else "Taking control...")
 	if multiplayer.is_server():
 		_accept_interaction(multiplayer.get_unique_id(), room.room_state().attempt.id, interaction_sequence, control)
@@ -117,6 +144,20 @@ func _physics_process(_delta: float) -> void:
 		return
 	sequence += 1
 	var command := local.walk_intention()
+	var state: AttemptState = room.room_state().attempt
+	var player_id: int = room.player_id_for_peer(multiplayer.get_unique_id())
+	var control := state.control_of(player_id)
+	if control != _local_control:
+		driving_armed = false
+		hint_time = 6.0
+		_local_control = control
+	if control == &"":
+		release_pending = false
+	if not driving_armed and not release_pending:
+		driving_armed = not (Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_SPACE) or Input.is_physical_key_pressed(KEY_R))
+	command["steer"] = float(Input.is_physical_key_pressed(KEY_D)) - float(Input.is_physical_key_pressed(KEY_A)) if driving_armed else 0.0
+	command["throttle"] = driving_armed and Input.is_physical_key_pressed(KEY_W)
+	command["brake"] = driving_armed and Input.is_physical_key_pressed(KEY_S)
 	if not test_intention.is_empty():
 		command = test_intention.duplicate()
 	command["sequence"] = sequence
@@ -125,11 +166,14 @@ func _physics_process(_delta: float) -> void:
 		_accept_input(multiplayer.get_unique_id(), room.room_state().attempt.id, command)
 	else:
 		_walk.rpc_id(1, room.room_state().attempt.id, command)
+		state.drive(player_id, state.id, sequence, command.generation, command)
 		pending.append(command)
 		if pending.size() > 120:
 			pending.pop_front()
 	var previous := truck.body.global_transform
-	truck.advance(STEP)
+	advance_truck()
+	hint_time = maxf(0.0, hint_time - STEP)
+	_present_controls()
 	if multiplayer.is_server():
 		for learner in room._learners():
 			var peer_id := learner.get_multiplayer_authority()
@@ -173,6 +217,23 @@ func _accept_input(peer_id: int, attempt_id: String, command: Dictionary) -> voi
 		return
 	inputs[peer_id] = {"sequence": seq, "wish": wish.limit_length(), "yaw": yaw, "jump": command.get("jump", false) == true, "sprint": command.get("sprint", false) == true}
 	ages[peer_id] = 0.0
+	room.room_state().attempt.drive(player_id, attempt_id, seq, command.generation, command)
+
+@rpc("any_peer", "call_remote", "reliable", 1)
+func _action(attempt_id: String, seq: int, generation: int, action: StringName) -> void:
+	if multiplayer.is_server():
+		_accept_action(multiplayer.get_remote_sender_id(), attempt_id, seq, generation, action)
+
+func _accept_action(peer_id: int, attempt_id: String, seq: int, generation: int, action: StringName) -> void:
+	if not active:
+		return
+	room.room_state().attempt.driving_action(room.player_id_for_peer(peer_id), attempt_id, seq, generation, action)
+	_send_snapshot(true)
+
+func advance_truck(present := true) -> void:
+	var state: AttemptState = room.room_state().attempt
+	state.advance_driving(STEP)
+	truck.drive(state, STEP, present)
 
 func _send_snapshot(reliable: bool) -> void:
 	snapshot_sequence += 1
@@ -182,19 +243,31 @@ func _send_snapshot(reliable: bool) -> void:
 		learners[peer_id] = learner.truck_snapshot()
 		learners[peer_id]["ack"] = acknowledged.get(peer_id, 0)
 	var data := {"attempt": room.room_state().attempt.id, "sequence": snapshot_sequence, "truck": truck.body.global_transform, "motion": truck.motion, "angular": truck.angular_motion, "learners": learners, "operators": room.room_state().attempt.operators.duplicate(), "generations": room.room_state().attempt.generations.duplicate()}
+	data["driving"] = room.room_state().attempt.driving_snapshot()
+	data["remaining"] = room.room_state().attempt.remaining
 	if reliable:
-		_control_snapshot.rpc(data)
+		_control_snapshot.rpc(var_to_bytes(data).compress(FileAccess.COMPRESSION_DEFLATE))
 	else:
-		_world_snapshot.rpc(data)
+		_world_snapshot.rpc(var_to_bytes(data).compress(FileAccess.COMPRESSION_DEFLATE))
 	_present_controls()
 
 @rpc("authority", "call_remote", "reliable", 1)
-func _control_snapshot(data: Dictionary) -> void:
-	_receive_snapshot(data)
+func _control_snapshot(data: PackedByteArray) -> void:
+	_decode_snapshot(data)
 
 @rpc("authority", "call_remote", "unreliable", 3)
-func _world_snapshot(data: Dictionary) -> void:
-	_receive_snapshot(data)
+func _world_snapshot(data: PackedByteArray) -> void:
+	_decode_snapshot(data)
+
+func _decode_snapshot(data: PackedByteArray) -> void:
+	if data.size() > 8192 or data.is_empty():
+		return
+	var unpacked := data.decompress_dynamic(65536, FileAccess.COMPRESSION_DEFLATE)
+	if unpacked.size() < 4:
+		return
+	var decoded: Variant = bytes_to_var(unpacked)
+	if decoded is Dictionary:
+		_receive_snapshot(decoded)
 
 func _receive_snapshot(data: Dictionary) -> void:
 	if not active or data.attempt != room.room_state().attempt.id or data.sequence <= received_snapshot:
@@ -205,17 +278,27 @@ func _receive_snapshot(data: Dictionary) -> void:
 func _apply_snapshot(data: Dictionary) -> void:
 	var local := room._learner_of(multiplayer.get_unique_id())
 	var visible_position := local.global_position
+	var visible_truck := truck.visuals.global_transform
 	var local_yaw := local.rotation.y
 	var player_id: int = room.player_id_for_peer(multiplayer.get_unique_id())
 	var prior_control := _local_control
 	room.room_state().attempt.operators = data.operators.duplicate()
 	room.room_state().attempt.generations = data.generations.duplicate()
+	room.room_state().attempt.restore_driving(data.driving)
+	room.room_state().attempt.remaining = data.remaining
+	var action_ack: int = data.driving.toggles.get(player_id, 0)
+	while not pending_actions.is_empty() and pending_actions[0].sequence <= action_ack:
+		pending_actions.pop_front()
+	for action in pending_actions:
+		room.room_state().attempt.driving_action(player_id, data.attempt, action.sequence, action.generation, action.action)
 	truck.body.global_transform = data.truck
 	truck.motion = data.motion
 	truck.angular_motion = data.angular
 	var confirmed_control := room.room_state().attempt.control_of(player_id)
 	_local_control = confirmed_control
 	if confirmed_control != &"" and prior_control != confirmed_control:
+		driving_armed = false
+		hint_time = 6.0
 		local_yaw = truck.body.global_rotation.y + (PI if confirmed_control == &"rear" else 0.0)
 	for peer_id in data.learners:
 		var learner := room._learner_of(peer_id)
@@ -226,14 +309,17 @@ func _apply_snapshot(data: Dictionary) -> void:
 		pending.pop_front()
 	for command in pending:
 		var previous := truck.body.global_transform
-		truck.advance(STEP)
 		var valid_generation: bool = command.generation == data.generations.get(player_id, 0)
+		if valid_generation:
+			room.room_state().attempt.drive(player_id, data.attempt, command.sequence, command.generation, command)
+		advance_truck(false)
 		_simulate(local, command if valid_generation else {}, previous)
 	local.rotation.y = local_yaw
 	var error := visible_position - local.global_position
 	if error.length() > 1.5:
 		correction_count += 1
 	local.smooth_truck_correction(error)
+	truck.smooth_correction(visible_truck)
 	# Remote supported bodies share the predicted truck frame as well.
 	for learner in room._learners():
 		if learner != local and learner.support == &"truck":
@@ -245,4 +331,11 @@ func _apply_snapshot(data: Dictionary) -> void:
 func _present_controls() -> void:
 	var player_id: int = room.player_id_for_peer(multiplayer.get_unique_id())
 	var control := room.room_state().attempt.control_of(player_id)
-	get_parent().show_own_role("E · Leave " + str(control) if control != &"" else "")
+	var copy := ""
+	if control != &"" and hint_time > 0.0:
+		copy = "W · Throttle   S · Service brake   R · Forward/reverse (stopped)   Space · Parking brake" if control == &"pedals" else "A / D · Axle left / right (truck-relative; angle holds)"
+		copy += "\nE · Leave control   H · Show bindings"
+		if control == &"pedals":
+			copy += "\nPedals below: W throttle / S brake"
+	truck.highlight(control, hint_time > 0.0)
+	get_parent().show_own_role(copy)

@@ -27,6 +27,8 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 
 ## Comments
 
+- From tickets 02–03: Agent fixtures verify physical boarding, roof riding, moving releases and actual shared driving. Exactly three humans must still judge control necessity, cooperation and Steam feel; see 02-evidence.md and 03-evidence.md.
+
 - From ticket 01: Three-peer development ENet launch and display transition checks pass; these do not establish three-human Steam cooperation or feel acceptance.
 
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.

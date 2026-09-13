@@ -19,6 +19,17 @@ var remaining := DURATION
 var _participants: Array[int] = []
 var _ready: Array[int] = []
 var _loading_elapsed := 0.0
+const INPUT_FRESHNESS := 0.35
+const AXLE_LIMIT := 0.6
+var front_angle := 0.0
+var rear_angle := 0.0
+var speed := 0.0
+var direction := 1
+var parking_brake := true
+var driving_inputs: Dictionary = {}
+var driving_sequences: Dictionary = {}
+var driving_ages: Dictionary = {}
+var toggle_sequences: Dictionary = {}
 
 
 func begin(booked_vehicle: StringName, participants: Array[int]) -> void:
@@ -30,6 +41,15 @@ func begin(booked_vehicle: StringName, participants: Array[int]) -> void:
 	generations.clear()
 	_learner_positions.clear()
 	_interaction_sequences.clear()
+	front_angle = 0.0
+	rear_angle = 0.0
+	speed = 0.0
+	direction = 1
+	parking_brake = true
+	driving_inputs.clear()
+	driving_sequences.clear()
+	driving_ages.clear()
+	toggle_sequences.clear()
 	remaining = DURATION
 	_loading_elapsed = 0.0
 	phase = &"loading"
@@ -64,7 +84,7 @@ func depart() -> void:
 func snapshot() -> Dictionary:
 	return {"id": id, "phase": phase, "vehicle": vehicle, "remaining": remaining,
 		"participants": _participants.duplicate(), "ready": _ready.duplicate(),
-		"loading_elapsed": _loading_elapsed, "operators": operators.duplicate(), "generations": generations.duplicate()}
+		"loading_elapsed": _loading_elapsed, "operators": operators.duplicate(), "generations": generations.duplicate(), "driving": driving_snapshot()}
 
 
 func restore(data: Dictionary) -> void:
@@ -77,6 +97,8 @@ func restore(data: Dictionary) -> void:
 	_loading_elapsed = data["loading_elapsed"]
 	operators = data.get("operators", {}).duplicate()
 	generations = data.get("generations", {}).duplicate()
+	if data.has("driving"):
+		restore_driving(data.driving)
 
 
 ## Only the authoritative physical world supplies positions, in truck space.
@@ -111,6 +133,7 @@ func release_control(player_id: int, attempt_id: String, sequence: int) -> bool:
 	if control == &"":
 		return false
 	operators.erase(control)
+	driving_inputs.erase(player_id)
 	generations[player_id] = generations.get(player_id, 0) + 1
 	return true
 
@@ -122,3 +145,69 @@ func _accept_interaction(player_id: int, attempt_id: String, sequence: int) -> b
 		return false
 	_interaction_sequences[player_id] = sequence
 	return true
+
+## Held commands are resubmitted, while reliable discrete actions have their own
+## sequence: a newer held packet must not discard a delayed parking-brake press.
+func drive(player_id: int, attempt_id: String, sequence: int, generation: int, command: Dictionary) -> bool:
+	if not _valid_operator(player_id, attempt_id, generation) or sequence <= driving_sequences.get(player_id, 0):
+		return false
+	var steer: float = command.get("steer", 0.0)
+	if not is_finite(steer):
+		return false
+	driving_sequences[player_id] = sequence
+	driving_inputs[player_id] = {"steer": clampf(steer, -1.0, 1.0), "throttle": command.get("throttle", false) == true, "brake": command.get("brake", false) == true}
+	driving_ages[player_id] = 0.0
+	return true
+
+func driving_action(player_id: int, attempt_id: String, sequence: int, generation: int, action: StringName) -> bool:
+	if not _valid_operator(player_id, attempt_id, generation) or control_of(player_id) != &"pedals" or sequence <= toggle_sequences.get(player_id, 0):
+		return false
+	toggle_sequences[player_id] = sequence
+	if action == &"parking":
+		parking_brake = not parking_brake
+		return true
+	if action == &"direction" and absf(speed) < 0.05:
+		direction *= -1
+		return true
+	return false
+
+func neutralize_driving(player_id: int) -> void:
+	driving_inputs.erase(player_id)
+
+func _valid_operator(player_id: int, attempt_id: String, generation: int) -> bool:
+	return phase == &"active" and attempt_id == id and control_of(player_id) != &"" and generations.get(player_id, 0) == generation
+
+func advance_driving(delta: float) -> void:
+	var throttle := false
+	var brake := false
+	for player_id in driving_inputs:
+		driving_ages[player_id] = driving_ages.get(player_id, 0.0) + delta
+		if driving_ages[player_id] > INPUT_FRESHNESS:
+			continue
+		var command: Dictionary = driving_inputs[player_id]
+		match control_of(player_id):
+			&"front": front_angle = clampf(front_angle + command.steer * 1.8 * delta, -AXLE_LIMIT, AXLE_LIMIT)
+			&"rear": rear_angle = clampf(rear_angle + command.steer * 1.8 * delta, -AXLE_LIMIT, AXLE_LIMIT)
+			&"pedals":
+				throttle = command.throttle
+				brake = command.brake
+	if parking_brake or brake:
+		speed = move_toward(speed, 0.0, (12.0 if parking_brake else 8.0) * delta)
+	elif throttle:
+		speed = move_toward(speed, direction * 8.0, 3.0 * delta)
+	else:
+		speed = move_toward(speed, 0.0, 0.45 * delta)
+
+func driving_snapshot() -> Dictionary:
+	return {"front": front_angle, "rear": rear_angle, "speed": speed, "direction": direction, "parking": parking_brake, "inputs": driving_inputs.duplicate(true), "ages": driving_ages.duplicate(), "sequences": driving_sequences.duplicate(), "toggles": toggle_sequences.duplicate()}
+
+func restore_driving(data: Dictionary) -> void:
+	front_angle = data.front
+	rear_angle = data.rear
+	speed = data.speed
+	direction = data.direction
+	parking_brake = data.parking
+	driving_inputs = data.inputs.duplicate(true)
+	driving_ages = data.ages.duplicate()
+	driving_sequences = data.sequences.duplicate()
+	toggle_sequences = data.toggles.duplicate()

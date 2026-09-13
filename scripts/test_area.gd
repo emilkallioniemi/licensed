@@ -14,6 +14,9 @@ var truck: MonsterTruck
 var boarding: TruckBoarding
 var _bays: Array[Marker3D] = []
 var _own_role: Label
+var examiner_audio: AudioStreamPlayer
+var examiner_subtitle: Label
+var subtitle_time := 0.0
 
 
 func _ready() -> void:
@@ -26,6 +29,9 @@ func _build() -> void:
 	truck.name = "MonsterTruck"
 	add_child(truck)
 	truck.position = Vector3(0, 0, -9)
+	examiner_audio = AudioStreamPlayer.new()
+	examiner_audio.stream = load("res://assets/monster_truck/temporary_request.wav")
+	add_child(examiner_audio)
 	boarding = TruckBoarding.new()
 	boarding.name = "Boarding"
 	add_child(boarding)
@@ -88,6 +94,28 @@ func _build() -> void:
 	_own_role.add_theme_color_override("font_outline_color", Color(0.08, 0.08, 0.1, 1))
 	_own_role.add_theme_constant_override("outline_size", 4)
 	own_role_layer.add_child(_own_role)
+	examiner_subtitle = Label.new()
+	examiner_subtitle.position = Vector2(16, 550)
+	examiner_subtitle.add_theme_font_size_override("font_size", 22)
+	own_role_layer.add_child(examiner_subtitle)
+	# Cooperation course only. Tickets 09–12 replace this apron with the fixed route.
+	for at in [Vector3(-4, 0.6, -21), Vector3(4, 0.6, -21), Vector3(4, 0.6, -30), Vector3(12, 0.6, -30)]:
+		_add_box("Gate", Vector3(0.5, 1.2, 0.5), at, Color("e4b752"), true)
+	for at in [Vector3(16, 0.7, -18), Vector3(16, 0.7, -7)]:
+		_add_box("ParkingWreck", Vector3(3, 1.4, 3), at, Color("705f56"), true)
+	for x in [12.0, 20.0]:
+		_add_box("ParkingLine", Vector3(0.12, 0.02, 8), Vector3(x, 0.02, -12.5), Color("e4b752"), false)
+	for z in [-16.5, -8.5]:
+		_add_box("ParkingLine", Vector3(8, 0.02, 0.12), Vector3(16, 0.02, z), Color("e4b752"), false)
+
+func announce_arrival() -> void:
+	examiner_audio.play()
+	examiner_subtitle.text = "I would like to see a turn, a reverse, and a parked vehicle."
+	subtitle_time = 7.0
+
+func _process(delta: float) -> void:
+	subtitle_time = maxf(0.0, subtitle_time - delta)
+	examiner_subtitle.visible = visible and subtitle_time > 0.0
 
 
 func _add_box(box_name: String, size: Vector3, at: Vector3, color: Color, collide: bool) -> void:
@@ -105,6 +133,8 @@ func _add_box(box_name: String, size: Vector3, at: Vector3, color: Color, collid
 	if not collide:
 		return
 	var body := StaticBody3D.new()
+	if box_name in ["Gate", "ParkingWreck"]:
+		body.collision_layer = 5
 	body.name = "%sCollision" % box_name
 	var shape := CollisionShape3D.new()
 	var box := BoxShape3D.new()
