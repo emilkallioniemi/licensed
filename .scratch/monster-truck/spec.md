@@ -242,6 +242,8 @@ Good tests send player-level commands or authoritative world observations throug
 
 ### Playable checkpoint 1: cooperation and early online feel
 
+User sequencing override (2026-09-13): produce implementation tickets 07–08 (modeled truck and animated learners) after 05, before the three-human checkpoint 06. This overrides the earlier rough-first production sequence only for these two tickets. Driving, sight, cooperation and Steam feel remain provisional until recorded human acceptance; all other downstream expansion remains gated by 06.
+
 Build boarding, a moving turn, tight reversing, and parking to climb onto the roof as retained implementation. Include networking now, with rough presentation and a timer/examiner wrapper. Identify temporary recovery/result scaffolding and replace it as the full test develops.
 
 Exactly three humans rotate through every control and rotate the host, including the user over Steam. After familiarisation, compare coordinated play with one person deliberately not contributing while remaining connected. Try holding rear steering fixed and having two people hop between controls. Observe anticipation, enjoyment, information exchange, ordinary footing, handovers, and shared visibility of consequences.

@@ -56,14 +56,13 @@ func start(owner_room: WaitingRoom) -> void:
 	truck.motion = Vector3.ZERO
 	truck.angular_motion = 0.0
 	truck.vertical_speed = 0.0
-	truck.visuals.transform = Transform3D.IDENTITY
+	truck.reset_presentation()
 	for learner in room._learners():
 		learner.set_truck_movement(true)
 
 func stop() -> void:
 	active = false
-	truck.engine.stop()
-	truck.impact.stop()
+	truck.sound.reset()
 	get_parent().examiner_audio.stop()
 	if room != null:
 		for learner in room._learners():
@@ -156,6 +155,8 @@ func _physics_process(_delta: float) -> void:
 			for learner in room._learners():
 				_simulate(learner, {}, previous)
 			_send_snapshot(false)
+		else:
+			truck.present_state(room.room_state().attempt, STEP)
 		return
 	var local := room._learner_of(multiplayer.get_unique_id())
 	if local == null:

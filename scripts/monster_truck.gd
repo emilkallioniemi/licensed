@@ -1,18 +1,15 @@
 class_name MonsterTruck
 extends Node3D
-## Retained rough cab and arcade two-axle driving. Production bodywork: ticket 07.
+## Retained arcade mechanics with modeled, state-driven mechanical presentation.
 var body: AnimatableBody3D
 var motion := Vector3.ZERO
 var angular_motion := 0.0
-var instruments: Label3D
-var pointers: Dictionary = {}
-var needles: Dictionary = {}
 var tyres: Array[Node3D] = []
 var engine: AudioStreamPlayer3D
 var impact: AudioStreamPlayer3D
 var impact_cooldown := 0.0
-var visuals: Node3D
-var control_meshes: Dictionary = {}
+var visuals: TruckPresentation
+var sound: TruckSound
 var vertical_speed := 0.0
 var jolt := Vector3.ZERO
 var impact_speed := 0.0
@@ -22,74 +19,56 @@ func _ready() -> void:
 	body.name = "Body"
 	body.sync_to_physics = false
 	add_child(body)
-	box("Deck", Vector3(4.8, 0.3, 5.0), Vector3(0, 1.45, 0), Color("ba713d"))
-	box("Roof", Vector3(4.8, 0.2, 5.0), Vector3(0, 4.15, 0), Color("ba713d"))
+	box("Deck", Vector3(4.8, 0.3, 5.0), Vector3(0, 1.45, 0))
+	box("Roof", Vector3(4.8, 0.24, 5.0), Vector3(0, 4.16, 0))
 	for x in [-2.25, 2.25]:
-		box("FrontPillar", Vector3(0.3, 2.6, 0.3), Vector3(x, 2.8, -2.3), Color("a95232"))
-		box("RearPillar", Vector3(0.3, 2.6, 0.3), Vector3(x, 2.8, 2.3), Color("a95232"))
-		box("Sill", Vector3(0.2, 0.65, 2.7), Vector3(x, 1.9, -0.95), Color("a95232"))
+		box("FrontPillar", Vector3(0.3, 2.6, 0.3), Vector3(x, 2.8, -2.3))
+		box("RearPillar", Vector3(0.3, 2.6, 0.3), Vector3(x, 2.8, 2.3))
+		box("Sill", Vector3(0.2, 0.65, 2.7), Vector3(x, 1.9, -0.95))
 		for z in [-1.8, 1.8]:
-			tyres.append(box("Tyre", Vector3(1.0, 2.2, 1.7), Vector3(x * 1.22, 1.1, z), Color("27282b")))
-	# Walkable ramps are rough access, no teleport ladder.
-	ramp("BoardingRamp", Vector3(1.4, 0.16, 4.1), Vector3(1.1, 0.8, 4.4), deg_to_rad(23))
-	ramp("RoofRamp", Vector3(1.4, 0.16, 11.0), Vector3(-1.5, 2.1, 7.5), deg_to_rad(23))
+			# Direct-body shapes participate in AnimatableBody collision. Steering
+			# cylinders are symmetric about the rolling axle, with tread envelope.
+			var tyre := CollisionShape3D.new()
+			var shape := CylinderShape3D.new()
+			shape.radius = 1.1
+			shape.height = 1.0
+			tyre.shape = shape
+			body.add_child(tyre)
+			tyre.position = Vector3(x / 2.25 * 2.75, 1.1, z)
+			tyre.rotation.z = PI / 2.0
+			tyres.append(tyre)
+	# Continuous supporting surfaces coincide with modeled metal stair beds.
+	stair("Boarding", 1.15, 6.3, 3.35, -0.05, 1.60, 1.4)
+	box("RearAccessLanding", Vector3(4.1, 0.10, 0.85), Vector3(-0.1, 1.55, 2.925))
+	stair("RoofLower", -1.5, 3.3, 5.5, 1.60, 2.9, 1.1)
+	box("RoofLanding", Vector3(2.6, 0.10, 0.8), Vector3(-0.75, 2.85, 5.9))
+	stair("RoofUpper", 0, 5.5, 2.5, 2.9, 4.28, 1.1)
 	for control in AttemptState.CONTROLS:
 		var at: Vector3 = AttemptState.CONTROLS[control]
-		var back := 1.0 if control != &"rear" else -1.0
-		box("Seat", Vector3(0.65, 0.35, 0.65), at + Vector3(0, 0.175, 0), Color("334b55"))
-		control_meshes[control] = box("Control", Vector3(0.6, 0.16, 0.2), at + Vector3(0, 0.9, -back * 0.5), Color("e6ce72")).get_child(0)
-		var name_sign := label(str(control).to_upper(), at + Vector3(0.32, 1.25, -back * 0.65), PI if back < 0 else 0.0)
-		name_sign.pixel_size = 0.0015
-	box("ExaminerSeat", Vector3(0.7, 0.4, 0.7), Vector3(1.2, 1.8, 1.4), Color("394049"))
-	box("Examiner", Vector3(0.55, 0.85, 0.45), Vector3(1.2, 2.35, 1.4), Color("655951"))
-	box("ExaminerHead", Vector3(0.4, 0.4, 0.4), Vector3(1.2, 2.98, 1.4), Color("c59a79"))
-	box("Clipboard", Vector3(0.45, 0.06, 0.5), Vector3(1.2, 2.2, 0.95), Color("d0c5a0"))
-	label("EXAMINER", Vector3(1.2, 3.4, 1.4), 0.0)
-	# Opaque waist-height bodywork hides nearby tyre contact points; instruments
-	# are ordinary depth-tested surfaces, readable only with physical sight.
-	box("Bonnet", Vector3(4.1, 1.0, 0.9), Vector3(0, 2.1, -2.6), Color("a95232"))
-	box("RearPanel", Vector3(2.0, 0.8, 0.2), Vector3(-0.9, 2.05, 2.35), Color("a95232"))
-	instruments = label("", Vector3(1.2, 2.95, -2.03), 0.0)
-	instruments.font_size = 28
-	instruments.pixel_size = 0.0018
-	for control in [&"front", &"rear"]:
-		var at: Vector3 = AttemptState.CONTROLS[control]
 		var back := -1.0 if control == &"rear" else 1.0
-		pointers[control] = label("", at + Vector3(-0.38, 1.1, -back * 0.65), PI if back < 0 else 0.0)
-		pointers[control].pixel_size = 0.0015
-		var pivot := Node3D.new()
-		body.add_child(pivot)
-		pivot.position = at + Vector3(-0.38, 1.2, -back * 0.65)
-		pivot.rotation.y = PI if back < 0 else 0.0
-		var needle := MeshInstance3D.new()
-		var needle_mesh := BoxMesh.new()
-		needle_mesh.size = Vector3(0.018, 0.16, 0.018)
-		needle.mesh = needle_mesh
-		needle.position.y = 0.08
-		pivot.add_child(needle)
-		needles[control] = pivot
-	engine = AudioStreamPlayer3D.new()
-	engine.stream = tone(true)
-	engine.volume_db = -19.0
-	body.add_child(engine)
-	impact = AudioStreamPlayer3D.new()
-	impact.stream = tone(false)
-	impact.volume_db = -8.0
-	body.add_child(impact)
-	visuals = Node3D.new()
+		box("Seat", Vector3(0.68, 0.44, 0.68), at + Vector3(0, 0.22, 0))
+		box("SeatBack", Vector3(0.66, 0.7, 0.17), at + Vector3(0, 0.76, back * 0.28))
+		box("Console", Vector3(1.02, 0.44, 0.16), at + Vector3(0, 0.78, -back * 0.72))
+	box("ExaminerSeat", Vector3(0.7, 0.44, 0.7), Vector3(1.2, 1.82, 1.4))
+	box("Bonnet", Vector3(4.1, 1.0, 0.9), Vector3(0, 2.1, -2.6))
+	box("RearPanel", Vector3(2.0, 0.8, 0.2), Vector3(-0.9, 2.05, 2.35))
+	visuals = TruckPresentation.new()
+	visuals.name = "Presentation"
 	body.add_child(visuals)
-	var visible_tyres: Array[Node3D] = []
-	for part in body.get_children():
-		if part is CollisionShape3D:
-			for mesh in part.get_children():
-				mesh.reparent(visuals, true)
-				if part in tyres:
-					visible_tyres.append(mesh)
-		elif part is Label3D or part in needles.values():
-			part.reparent(visuals, true)
-	tyres = visible_tyres
+	# Existing learner is temporary examiner body; full distinct rig belongs to 23.
+	var examiner: Node3D = preload("res://assets/slice_0/player/learner.glb").instantiate()
+	visuals.add_child(examiner)
+	examiner.position = Vector3(1.2, 1.2, 1.4)
+	examiner.rotation.y = PI
+	for side in ["Left", "Right"]:
+		examiner.find_child(side + "Hip", true, false).rotation.x = -PI / 2.0
+		examiner.find_child(side + "Knee", true, false).rotation.x = PI / 2.0
+	sound = TruckSound.new()
+	body.add_child(sound)
+	engine = sound.engine
+	impact = sound.impact
 
-func box(title: String, size: Vector3, at: Vector3, colour: Color) -> Node3D:
+func box(title: String, size: Vector3, at: Vector3) -> CollisionShape3D:
 	var part := CollisionShape3D.new()
 	part.name = title
 	var shape := BoxShape3D.new()
@@ -97,28 +76,30 @@ func box(title: String, size: Vector3, at: Vector3, colour: Color) -> Node3D:
 	part.shape = shape
 	body.add_child(part)
 	part.position = at
-	var mesh := MeshInstance3D.new()
-	var cube := BoxMesh.new()
-	cube.size = size
-	mesh.mesh = cube
-	var material := StandardMaterial3D.new()
-	material.albedo_color = colour
-	mesh.material_override = material
-	part.add_child(mesh)
 	return part
 
-func ramp(title: String, size: Vector3, at: Vector3, angle: float) -> void:
-	box(title, size, at, Color("777d7b")).rotation.x = angle
+func stair(title: String, x: float, z0: float, z1: float, y0: float, y1: float, width: float) -> void:
+	var length := Vector2(z1 - z0, y1 - y0).length()
+	var shape := box(title, Vector3(width, 0.10, length), Vector3(x, (y0 + y1) / 2.0, (z0 + z1) / 2.0))
+	shape.rotation.x = -atan2(y1 - y0, z1 - z0)
+	shape.position.y -= 0.05 / absf(cos(shape.rotation.x))
+	for side in [-1.0, 1.0]:
+		var edge: float = x + side * (width / 2.0 - 0.02)
+		rail(Vector3(edge, y0 + 0.85, z0), Vector3(edge, y1 + 0.85, z1), 0.035)
+		for fraction in [0.0, 0.5, 1.0]:
+			var foot := Vector3(edge, lerpf(y0, y1, fraction), lerpf(z0, z1, fraction))
+			rail(foot, foot + Vector3.UP * 0.85, 0.025)
 
-func label(copy: String, at: Vector3, yaw: float) -> Label3D:
-	var sign := Label3D.new()
-	sign.text = copy
-	sign.font_size = 36
-	sign.pixel_size = 0.004
-	body.add_child(sign)
-	sign.position = at
-	sign.rotation.y = yaw
-	return sign
+func rail(from: Vector3, to: Vector3, radius: float) -> void:
+	var part := CollisionShape3D.new()
+	part.name = "AccessRail"
+	var shape := CapsuleShape3D.new()
+	shape.radius = radius
+	shape.height = from.distance_to(to) + radius * 2.0
+	part.shape = shape
+	body.add_child(part)
+	part.position = (from + to) / 2.0
+	part.quaternion = Quaternion(Vector3.UP, (to - from).normalized())
 
 func drive(state: AttemptState, delta: float, present := true) -> void:
 	jolt = Vector3.ZERO
@@ -162,22 +143,19 @@ func drive(state: AttemptState, delta: float, present := true) -> void:
 		state.speed = 0.0
 		motion = Vector3.ZERO
 		angular_motion = 0.0
+	for tyre in tyres:
+		tyre.rotation.y = -state.front_angle if tyre.position.z < 0 else -state.rear_angle
 	_advance_suspension(delta)
 	if not present:
 		return
 	visuals.position = visuals.position.move_toward(Vector3.ZERO, delta * 8.0)
 	visuals.rotation.y = move_toward(visuals.rotation.y, 0.0, delta * 2.0)
-	for tyre in tyres:
-		tyre.rotation.y = -state.front_angle if tyre.position.z < 0 else -state.rear_angle
-	pointers.front.text = "AXLE  %+.0f°" % rad_to_deg(state.front_angle)
-	pointers.rear.text = "AXLE  %+.0f°" % rad_to_deg(state.rear_angle)
-	needles.front.rotation.z = -state.front_angle
-	needles.rear.rotation.z = -state.rear_angle
-	instruments.text = "%d:%02d\n%s   PARK %s" % [int(state.remaining) / 60, int(state.remaining) % 60, "FORWARD" if state.direction == 1 else "REVERSE", "ON" if state.parking_brake else "OFF"]
-	if not engine.playing:
-		engine.play()
-	engine.pitch_scale = 0.8 + absf(state.speed) * 0.16
-	engine.volume_db = -24.0 + absf(state.speed)
+	present_state(state, delta)
+
+## Guests present the confirmed aftermath without authoring its physics.
+func present_state(state: AttemptState, delta: float) -> void:
+	visuals.update(state, vertical_speed, delta)
+	sound.update(state, vertical_speed, delta)
 
 func smooth_correction(previous_visual: Transform3D) -> void:
 	if previous_visual.origin.distance_to(body.global_position) < 1.5:
@@ -216,28 +194,12 @@ func _advance_suspension(delta: float) -> void:
 	motion.y = vertical_speed
 
 func highlight(control: StringName, enabled: bool) -> void:
-	for key in control_meshes:
-		var material: StandardMaterial3D = control_meshes[key].material_override
-		material.emission_enabled = enabled and key == control
-		material.emission = Color("8c7945")
+	visuals.highlight(control, enabled)
 
-## Basic procedural feedback, generated at scene construction, no TTS.
-func tone(loop: bool) -> AudioStreamWAV:
-	var stream := AudioStreamWAV.new()
-	stream.format = AudioStreamWAV.FORMAT_16_BITS
-	stream.mix_rate = 22050
-	var count := 22050 if loop else 6615
-	var bytes := PackedByteArray()
-	bytes.resize(count * 2)
-	for i in count:
-		var t := float(i) / 22050.0
-		var sample := (sin(TAU * 55 * t) * 0.5 + sin(TAU * 110 * t) * 0.25) if loop else sin(TAU * (110 * t + 70 * t * t)) * exp(-t * 18) * 0.8
-		bytes.encode_s16(i * 2, int(sample * 32767))
-	stream.data = bytes
-	if loop:
-		stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
-		stream.loop_end = count
-	return stream
+func reset_presentation() -> void:
+	visuals.reset()
+	sound.reset()
+	impact_cooldown = 0.0
 
 func advance(delta: float) -> void:
 	body.position += motion * delta

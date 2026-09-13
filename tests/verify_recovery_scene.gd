@@ -62,8 +62,12 @@ func verify() -> void:
 	truck.vertical_speed = 0.0
 	place(Vector3(1.1, 0.1, 6.6), false)
 	await step(10)
-	await step(100, {"wish": Vector2(0, -1), "yaw": 0.0})
+	await step(125, {"wish": Vector2(0, -1), "yaw": 0.0})
+	print("REBOARD: ", learner.global_position, " ", learner.movement_mode)
 	check(learner.support == &"truck" and learner.global_position.y > 1.5, "fallen learner can walk back aboard")
+	for target in [Vector3(1.15, 1.6, 2.8), Vector3(-1.5, 1.6, 2.8), Vector3(-1.5, 2.9, 5.9), Vector3(0, 2.9, 5.9), Vector3(0, 4.28, 2.0)]:
+		await walk_to(target)
+	check(learner.support == &"truck" and learner.global_position.y > 4.2, "continuous compact switchback reaches roof without jumping or placement")
 	# A learner caught beneath the deck can no longer reach a control remotely.
 	place(Vector3(0, 0.01, 0), false)
 	await step(2)
@@ -208,3 +212,12 @@ func check(ok: bool, label: String) -> void:
 	if not ok:
 		failures += 1
 		printerr("FAIL: ", label)
+
+func walk_to(target: Vector3) -> void:
+	for i in 240:
+		var at := truck.body.to_local(learner.global_position)
+		var offset := Vector2(target.x - at.x, target.z - at.z)
+		if offset.length() < 0.08:
+			return
+		await step(1, {"wish": offset.normalized(), "yaw": truck.body.global_rotation.y})
+	check(false, "stair waypoint %s reached physically; stopped at %s" % [target, truck.body.to_local(learner.global_position)])

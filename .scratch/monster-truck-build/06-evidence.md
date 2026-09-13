@@ -47,3 +47,7 @@ Standards: no hard documented-standard violations or actionable smells in record
 Human dependency: the user plus two other humans on distinct logged-in Steam accounts/Windows computers must execute and record the prepared trials, adverse connection/interruptions and subjective assessments. The user must explicitly judge driving, walking, boarding and handovers very good without laggy feel; all control-necessity and retain/revise findings remain pending. If observations require changes, the agent implements bounded relevant revisions and repeats comparisons. Only preparation is verified; no human-dependent criterion is checked.
 
 Temporary ownership remains: 07 truck/cab art, 08 learner/recovery animation, 09–12 final route/encounters/scoring, 23 complete examiner audio, 25 authored accident aftermath, 26 final results presentation. These are later-ticket ownership notes, not permission to bypass checkpoint 06 or evidence that its handling is accepted.
+
+## Subsequent sequencing override
+
+On 2026-09-13 the user requested 07–08 before playtest. The ZIP/hash above is historical preparation and predates the modeled truck and animated learners. Ticket 08 owns refreshing the final checkpoint build/manifest after both asset tickets. Human acceptance remains pending in 06; all other downstream expansion remains gated.

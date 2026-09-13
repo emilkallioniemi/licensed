@@ -1,7 +1,7 @@
 # 24: Operate the shared radio
 
 Status: ready-for-agent
-Blocked by: 07
+Blocked by: 06, 07
 Parent: [A complete monster truck vehicle](../../monster-truck/spec.md)
 
 ## What to build

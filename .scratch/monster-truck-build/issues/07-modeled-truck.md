@@ -1,21 +1,21 @@
 # 07: Drive the modeled and animated truck
 
-Status: ready-for-agent
-Blocked by: 06
+Status: done
+Blocked by: 05
 Parent: [A complete monster truck vehicle](../../monster-truck/spec.md)
 
 ## What to build
 
-The playable truck gains decent Blender models, animated controls and motion, without losing its validated driving and sight.
+The playable truck gains decent Blender models, animated controls and motion, preserving the implemented driving and sight while human validation remains pending in 06.
 
 ## Acceptance criteria
 
-- [ ] Produce editable Blender sources/generators and portable Godot exports for exterior, oversized tyres/suspension, both steering axles, cab/three controls, parking brake, examiner seat, roof/access, physical instruments and radio provision.
-- [ ] Integrate materials, pivots, collisions and control/tyre/suspension animation driven by shared state. This is in-game production, not an unattached asset pack.
-- [ ] Preserve physical blind spots, instrument readability, safe boarding/release space and roof access around actual handling. No overhead or universal instrument display.
-- [ ] Generate and integrate engine layers and basic suspension/tyre/cabin/impact feedback that follow driving while leaving voice intelligible.
-- [ ] Verify local Blender/Godot and audio runtime availability; agent owns creation/integration. Keep sources revisable; premium services are not prerequisites.
-- [ ] Demonstrate the existing driving exercise and retry online with modeled truck, verify import/collision/reset behavior and fix distracting clipping. Radio behavior arrives in 24.
+- [x] Produce editable Blender sources/generators and portable Godot exports for exterior, oversized tyres/suspension, both steering axles, cab/three controls, parking brake, examiner seat, roof/access, physical instruments and radio provision.
+- [x] Integrate materials, pivots, collisions and control/tyre/suspension animation driven by shared state. This is in-game production, not an unattached asset pack.
+- [x] Preserve physical blind spots, instrument readability, safe boarding/release space and roof access around actual handling. No overhead or universal instrument display.
+- [x] Generate and integrate engine layers and basic suspension/tyre/cabin/impact feedback that follow driving while leaving voice intelligible.
+- [x] Verify local Blender/Godot and audio runtime availability; agent owns creation/integration. Keep sources revisable; premium services are not prerequisites.
+- [x] Demonstrate the existing driving exercise and retry across networked peers with the modeled truck, verify import/collision/reset behavior and fix distracting clipping. Three-human Steam acceptance remains in 06 after 07–08; radio behavior arrives in 24.
 
 ## Implementation and verification guidance
 
@@ -27,6 +27,8 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 
 ## Comments
 
+- 2026-09-13 user sequencing change: “Let's do seven and eight before playtest.” Build 07–08 on completed 05 before human checkpoint 06. Human control necessity, fairness and Steam feel remain provisional; this authorizes asset production and agent network/visual verification, not a claim of playtest acceptance. Other downstream production remains gated by 06.
+
 - From ticket 04: Replace rough geometry while preserving support and rescue clearance; existing modeled lobby and learner are the presentation quality reference.
 
 - From ticket 03: Replace rough controls and floating physical labels with modeled instrument surfaces, retaining rotating axle pointers, sight restrictions and readable pedals instruments.
@@ -34,3 +36,5 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 - From ticket 02: Replace the rough boxes and long access ramps while preserving continuous ground/cab/roof access, moving release space and the physical boarding regression coverage.
 
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.
+
+- 2026-09-13 implementation verified: editable Blender source/generator and portable batched GLB integrated with modeled controls, physical instruments, compact continuous roof access, matched colliders and six original audio layers. Final ten boundary/scene suites and native three-peer driving/recovery/impact, aftermath/retry, true-eye screenshots/audio capture and ready-up checks pass. Both final review axes report zero findings; source manifest matches the native verification copy. See [07-evidence.md](../07-evidence.md). Inherited standing occupied-learner/hand contact presentation is explicitly documented for 08, which must close that clipping and refresh the checkpoint ZIP. Three-human Steam feel remains pending in 06; no human acceptance is claimed.

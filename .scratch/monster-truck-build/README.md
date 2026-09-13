@@ -15,9 +15,9 @@ These are implementation tickets, distinct from the sixteen resolved wayfinder d
 | [04: Fall, reboard, and rescue physically](issues/04-falls-and-rescue.md) | 03 | Learners can ride the roof, fall harmlessly, reboard, and physically rescue a trapped friend while time continues. |
 | [05: Fail, assess, concede, and retry together](issues/05-failure-and-retry.md) | 04 | An accident or timeout fails the trio after its aftermath; players can unanimously concede, retry or return. |
 | [06: Validate three-player cooperation and online feel](issues/06-cooperation-checkpoint.md) | 05 | A retained playable checkpoint demonstrates whether all three controls are necessary, enjoyable and responsive online. |
-| [07: Drive the modeled and animated truck](issues/07-modeled-truck.md) | 06 | The playable truck gains decent Blender models, animated controls and motion, without losing its validated driving and sight. |
-| [08: Move as expressive, animated learners](issues/08-animated-learners.md) | 06 | Each player moves, boards and drives as an expressive learner visible consistently to friends. |
-| [09: Complete the scrapyard gates and hill start](issues/09-gates-and-hill.md) | 07 | Players begin the modeled scrapyard test by clearing offset gates and completing a hill start under examiner direction. |
+| [07: Drive the modeled and animated truck](issues/07-modeled-truck.md) | 05 | The playable truck gains decent Blender models, animated controls and motion, preserving provisional driving and sight. |
+| [08: Move as expressive, animated learners](issues/08-animated-learners.md) | 05 | Each player moves, boards and drives as an expressive learner visible consistently to friends. |
+| [09: Complete the scrapyard gates and hill start](issues/09-gates-and-hill.md) | 06, 07 | Players begin the modeled scrapyard test by clearing offset gates and completing a hill start under examiner direction. |
 | [10: Cross the ravine bridge](issues/10-ravine-bridge.md) | 09 | Players align both axles and cross a narrow bridge, with recoverable scrapes and catastrophic falls. |
 | [11: Reverse beside the working crusher](issues/11-crusher-reverse.md) | 10 | Players reverse through the crusher-side bend while a modeled crusher works beside the legal route. |
 | [12: Descend, park, and pass the complete route](issues/12-park-and-pass.md) | 11 | Players finish the five-item route with reverse parallel parking and receive a shared passing rating. |
@@ -32,7 +32,7 @@ These are implementation tickets, distinct from the sixteen resolved wayfinder d
 | [21: Verify owned-app Cloud restoration](issues/21-verify-cloud-restoration.md) | 20 | A license is demonstrably restored through the game’s owned Steam application on a clean computer or installation. |
 | [22: Perform five shared emotes](issues/22-shared-emotes.md) | 19 | Players react with five animated gestures visible in their own hands and to friends. |
 | [23: Ride with the physical examiner](issues/23-physical-examiner.md) | 07, 12 | A physical examiner reacts to driving and delivers the complete dry assessment repertoire. |
-| [24: Operate the shared radio](issues/24-shared-radio.md) | 07 | Players physically operate a shared dashboard radio with three generated instrumental styles. |
+| [24: Operate the shared radio](issues/24-shared-radio.md) | 06, 07 | Players physically operate a shared dashboard radio with three generated instrumental styles. |
 | [25: Finish accident damage and aftermath](issues/25-accident-aftermath.md) | 12, 13, 14, 15 | Every agreed serious accident leaves a readable, shared physical aftermath that survives until retry. |
 | [26: Finish results presentation and the return journey](issues/26-finished-results-return.md) | 19, 23, 25 | The complete marked assessment sits over the accident or successful finish and leads cleanly into retry or the waiting room. |
 | [27: Validate the complete presentation online](issues/27-presentation-online-checkpoint.md) | 16, 22, 24, 26 | Three humans experience the finished assets, sound and complete test together, with recorded fixes for presentation and responsiveness. |
@@ -42,7 +42,7 @@ These are implementation tickets, distinct from the sixteen resolved wayfinder d
 
 Ticket 01 is the initial frontier. Work blockers first, with a fresh implementation context per ticket. Independent branches may proceed when their own blockers are done; this index does not authorize spawning agents or separate tasks by itself.
 
-Cooperation checkpoint 06 gates route expansion. Full-test checkpoint 16 gates final presentation validation. Tickets 06, 16 and 27 require three-human evidence; 21 requires authorized owned-app configuration and real account/computer restoration evidence. Prepare all agent-owned work before a human handoff, and park ready-for-human only when the remaining dependency actually prevents completion.
+User sequencing override (2026-09-13): “Let’s do seven and eight before playtest.” Produce 07–08 after 05, then refresh the checkpoint build and perform 06. This authorizes early truck/learner assets, not human acceptance. Cooperation checkpoint 06 continues to gate all other downstream expansion, including route and radio. Full-test checkpoint 16 gates final presentation validation. Tickets 06, 16 and 27 require three-human evidence; 21 requires authorized owned-app configuration and real account/computer restoration evidence. Prepare all agent-owned work before a human handoff, and park ready-for-human only when the remaining dependency actually prevents completion.
 
 ## Coverage guide
 

@@ -134,3 +134,5 @@ Areas: `examiner`, `controls`, `split`, `sight`, `sheet`, `scope`, `ui`, `scorin
 - 2026-09-13 | control | Under delegated networking judgment, absorb brief jitter, neutralize stale held input without pausing the test, retain steering angle and parking-brake state, and use the agreed departure flow when the connection is lost.
 - 2026-09-13: Monster-truck axle instruments use physical rotating pointers beside the controls; rough rear bodywork preserves the boarding opening.
 - 2026-09-13: Rough truck engineering captures are temporary; use the existing modeled lobby and learner as the presentation-quality reference when replacing checkpoint geometry with finished assets.
+
+- 2026-09-13: Build the modeled truck and animated learners (07–08) before the three-human playtest; retain provisional handling/sight, and keep all other expansion gated by checkpoint 06.

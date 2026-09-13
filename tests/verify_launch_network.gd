@@ -131,6 +131,8 @@ func verify_shared_driving() -> void:
 		room.test_area.boarding.interact()
 	await create_timer(0.3).timeout
 	check(state.operators.size() == 3, "three physical controls occupied by different peers")
+	if OS.get_cmdline_user_args().has("--capture-truck"):
+		await capture_occupied_cab()
 	state.front_angle = 0.0
 	state.rear_angle = 0.0
 	var origin: Vector3 = host.test_area.truck.body.global_position
@@ -175,7 +177,7 @@ func verify_shared_driving() -> void:
 	host.test_area.truck.body.global_transform = Transform3D(Basis.IDENTITY, host.test_area.to_global(Vector3(4, 0, -17)))
 	var heard := [false]
 	host.test_area.truck.impact.finished.connect(func(): heard[0] = true)
-	await create_timer(0.7).timeout
+	await create_timer(1.1).timeout
 	check(state.speed == 0.0 and heard[0], "real gate collision stops truck and plays impact feedback")
 
 ## Controlled moving truck fixture, development ENet only; no human feel claim.
@@ -216,9 +218,10 @@ func verify_boarding() -> void:
 	# Separate ground setup exercises the complete roof access and ordinary riding.
 	truck.body.transform = Transform3D.IDENTITY
 	learner.support = &""
-	learner.global_position = truck.body.to_global(Vector3(-1.5, 0.1, 13.0))
-	boarding.test_intention = {"wish": Vector2(0, -1), "yaw": 0.0}
-	await create_timer(4.3).timeout
+	learner.global_position = truck.body.to_global(Vector3(1.15, 0.1, 7.0))
+	# Walk the real compact switchback continuously, including both landings.
+	for waypoint in [Vector3(1.15, 1.6, 2.8), Vector3(-1.5, 1.6, 2.8), Vector3(-1.5, 2.9, 5.9), Vector3(0, 2.9, 5.9), Vector3(0, 4.25, 2.0)]:
+		await walk_to_truck_point(boarding, learner, truck, waypoint)
 	boarding.test_intention = {"wish": Vector2.ZERO, "yaw": 0.0}
 	await create_timer(0.2).timeout
 	print("BOARD roof: ", truck.body.to_local(learner.global_position), " ", learner.movement_mode)
@@ -323,22 +326,51 @@ func verify_contention() -> void:
 	check(local.global_position.distance_to(body.global_position) < 0.25, "complete snapshot recovers after short interruption")
 
 func capture_truck() -> void:
+	# Let the production arrival fade finish before assessing material brightness.
+	await create_timer(1.1).timeout
 	var viewport = rooms[0].get_parent()
 	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	viewport.audio_listener_enable_3d = true
 	var camera := Camera3D.new()
+	camera.fov = 88.0
 	rooms[0].test_area.add_child(camera)
 	var at: Vector3 = rooms[0].test_area.truck.global_position
 	camera.global_position = at + Vector3(11, 10, 18)
 	camera.look_at(at + Vector3(0, 2, 3))
 	camera.current = true
 	await RenderingServer.frame_post_draw
-	viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/03-rough-truck.png")
+	viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/07-game-truck.png")
 	for control in [&"front", &"pedals", &"rear"]:
 		var seat: Vector3 = AttemptState.CONTROLS[control]
-		camera.global_position = at + seat + Vector3(0, 1.3, 0)
-		camera.rotation = Vector3(-0.25, PI if control == &"rear" else 0.0, 0)
+		camera.global_position = at + seat + Vector3(0, Learner.SEATED_EYE_HEIGHT, 0)
+		camera.rotation = Vector3(0, PI if control == &"rear" else 0.0, 0)
 		await RenderingServer.frame_post_draw
-		viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/03-%s-sight.png" % control)
+		viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/07-%s-forward.png" % control)
+		camera.rotation.x = -0.25
+		await RenderingServer.frame_post_draw
+		viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/07-%s-sight.png" % control)
+	# Capture actual rendered engine audio with a listener inside the cab.
+	var bus := AudioServer.bus_count
+	AudioServer.add_bus()
+	AudioServer.set_bus_name(bus, "TruckEvidence")
+	var capture := AudioEffectCapture.new()
+	capture.buffer_length = 1.0
+	AudioServer.add_bus_effect(bus, capture)
+	var sound = rooms[0].test_area.truck.sound
+	for player in sound.get_children():
+		if player is AudioStreamPlayer3D:
+			player.bus = "TruckEvidence"
+	await create_timer(0.5).timeout
+	var frames := capture.get_buffer(capture.get_frames_available())
+	var peak := 0.0
+	for frame in frames:
+		peak = maxf(peak, maxf(absf(frame.x), absf(frame.y)))
+	check(peak > 0.00001 and peak < 0.95, "actual cab audio mixer emits non-silent unclipped vehicle sound")
+	print("AUDIO captured frames=", frames.size(), " peak=", peak)
+	for player in sound.get_children():
+		if player is AudioStreamPlayer3D:
+			player.bus = "Master"
+	AudioServer.remove_bus(bus)
 	camera.queue_free()
 
 ## Delayed application of complete host snapshots models a brief delivery stall.
@@ -419,6 +451,21 @@ func verify_recovery_network() -> void:
 func verify_failure_network() -> void:
 	var host: AttemptState = rooms[0].room_state().attempt
 	var old_id := host.id
+	# Real occupied guest pedal before concession: aftermath must release its
+	# visible pad/load sound and keep remote tyre motion following the host.
+	var guest = rooms[1]
+	var guest_peer: int = guest.multiplayer.get_unique_id()
+	var learner = rooms[0]._learner_of(guest_peer)
+	learner.global_position = rooms[0].test_area.truck.body.to_global(AttemptState.CONTROLS.pedals + Vector3(0, 0.05, 0.5))
+	learner.support = &"truck"
+	learner.support_pose = rooms[0].test_area.truck.body.global_transform
+	await create_timer(0.3).timeout
+	guest.test_area.boarding.interact()
+	await create_timer(0.3).timeout
+	guest.test_area.boarding.test_intention = {"wish": Vector2.ZERO, "yaw": 0.0, "throttle": true}
+	host.parking_brake = false
+	await create_timer(0.5).timeout
+	check(guest.test_area.truck.find_child("ThrottlePedal", true, false).rotation.x < -0.1, "guest throttle is visibly depressed before concession")
 	for room in rooms:
 		room.choose_attempt(&"concede")
 	await create_timer(0.5).timeout
@@ -426,7 +473,13 @@ func verify_failure_network() -> void:
 		check(room.room_state().attempt.phase == &"aftermath", "unanimous RPC concession reaches every peer")
 		check(room.test_area.examiner_subtitle.text == "We will leave it there.", "shared offline examiner response")
 		check(room.test_area.examiner_audio.stream.get_length() > 0.0 and room.test_area.examiner_audio.playing, "failure response plays offline audio")
-	await create_timer(6.1).timeout
+	var remote_roll: Node3D = guest.test_area.truck.find_child("FrontLRoll", true, false)
+	var before_roll := remote_roll.rotation.x
+	await create_timer(0.3).timeout
+	check(not is_equal_approx(remote_roll.rotation.x, before_roll), "guest tyres keep rolling through host-owned physical aftermath")
+	check(is_zero_approx(guest.test_area.truck.find_child("ThrottlePedal", true, false).rotation.x) and guest.test_area.truck.sound.load_layer.volume_db < -30.0, "guest aftermath releases visible throttle and load sound")
+	guest.test_area.boarding.test_intention = {"wish": Vector2.ZERO, "yaw": 0.0}
+	await create_timer(5.8).timeout
 	for room in rooms:
 		check(room.room_state().attempt.phase == &"settled", "every peer reaches results after aftermath")
 	if OS.get_cmdline_user_args().has("--capture-results"):
@@ -447,3 +500,28 @@ func verify_failure_network() -> void:
 		check(state.assessment().is_empty() and state.choices.is_empty() and state.parking_brake, "retry resets failure choices and secures truck")
 		check(room.test_area.truck.body.position.length() < 0.2, "retry resets physical truck")
 	print("FAILURE: shared concession, examiner, aftermath, changed choices and synchronized retry verified")
+
+## Bounded real input path following; failure reports the physical stopped point.
+func walk_to_truck_point(boarding, learner, truck, target: Vector3) -> void:
+	var deadline := Time.get_ticks_msec() + 4000
+	while Time.get_ticks_msec() < deadline:
+		var at: Vector3 = truck.body.to_local(learner.global_position)
+		var offset := Vector2(target.x - at.x, target.z - at.z)
+		if offset.length() < 0.10:
+			return
+		boarding.test_intention = {"wish": offset.normalized(), "yaw": truck.body.global_rotation.y}
+		await physics_frame
+	check(false, "continuous stair walking reaches %s; stopped at %s" % [target, truck.body.to_local(learner.global_position)])
+
+## Inspection-only camera documents inherited learner poses for ticket 08.
+## This camera is never exposed to shipping players or used as gameplay sight.
+func capture_occupied_cab() -> void:
+	var viewport = rooms[0].get_parent()
+	var camera := Camera3D.new()
+	rooms[0].test_area.truck.body.add_child(camera)
+	camera.position = Vector3(2.0, 3.75, 2.15)
+	camera.look_at(rooms[0].test_area.truck.body.to_global(Vector3(-0.4, 2.4, -0.4)))
+	camera.current = true
+	await RenderingServer.frame_post_draw
+	viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/07-occupied-cab-08-baseline.png")
+	camera.queue_free()

@@ -1,0 +1,26 @@
+{
+  "ticket_base": "a2f1caeecdd9fac185dacf6d3c650dfa946cbdd1",
+  "godot": "4.7.2",
+  "blender": "5.2.1 LTS 9e2066aef7ef",
+  "verification_copy": "/private/tmp/licensed-04-macos-verification",
+  "files": {
+    "scripts/attempt_state.gd": "47277ec4c19ef69eff8b43685ea89e26fb495b3ed49153e956c4ded950b51cdf",
+    "scripts/monster_truck.gd": "b18d232575d90a4cc199fc90edb2c6b89d908b823cd677462636f14ee9290547",
+    "scripts/truck_boarding.gd": "dc36b988eaa3728c2e89a95b302b949cdb9478c65e3757443e66f52c454e69e3",
+    "scripts/truck_presentation.gd": "15b91fe65d2b28cd72fcde452b03d472c059b95e41e00496656680cfe73ea9c5",
+    "scripts/truck_sound.gd": "64fda595c31622ac79a643f3adb827fc0eccb96ca4b9192a4e31e1da8990bed6",
+    "tests/verify_launch_network.gd": "663541158395438121ec78f48d3c4b5062f75d5073c3ea7cf40032e8899404a2",
+    "tests/verify_recovery_scene.gd": "67d0c3d88d1313fa3946a0ec480db0e894ae4652820ab8ae73194f7558cdd98d",
+    "tests/verify_truck_presentation.gd": "b41da3d20d0cd4a12d930f5f62da860956bfe9cacb220dd49c15a630a22db654",
+    "assets/monster_truck/source/build_truck.py": "72f2b7436633f648626d8f661e6f0b3ef557e8fb840dfb25f1dcfe6edebdef38",
+    "assets/monster_truck/source/generate_audio.py": "9ff379daac785a3bda4e76325cb7151b9c54bed1a1012b531b71074e78cd216a",
+    "assets/monster_truck/source/truck.blend": "06b2f1d2e14918c209e00ac87b0a6a613090ae5b470b3727dfa7953d802b1309",
+    "assets/monster_truck/truck.glb": "2dd02a65a000e22466332237d6ced15f7fa712cc138fff51a99f95bab18e43b3",
+    "assets/monster_truck/audio/engine_idle.wav": "9c4fc86c79dfb469ec29ebeb4cab47798a1c187c9f434077c9d7515694750115",
+    "assets/monster_truck/audio/impact.wav": "3614b5ee76f907c23ba258253d93b4b115f29f8780ae7ab35bcce51b812a61a1",
+    "assets/monster_truck/audio/suspension.wav": "07471f78e9fb2498fa76116c907c0dfeb095b7c70c904c7388dd876eb73d1da1",
+    "assets/monster_truck/audio/engine_load.wav": "bdd4acf7248473247eb3a6ea83dd92ff59a7df23a0f4fefb01ff4528dc19b0e3",
+    "assets/monster_truck/audio/tyre_scrub.wav": "28e3e7ff5936c737a642cebb13952d25c6655a230a87cda41ea19f172b7c2e56",
+    "assets/monster_truck/audio/cabin_rattle.wav": "29f6c5e83f0169918a4676caa1ec6f02f89952bc67747c4659ffa030f59d334f"
+  }
+}

@@ -221,10 +221,11 @@ func advance_driving(delta: float) -> void:
 	var brake := false
 	for player_id in driving_inputs:
 		driving_ages[player_id] = driving_ages.get(player_id, 0.0) + delta
-		if driving_ages[player_id] > INPUT_FRESHNESS:
+	for control in CONTROLS:
+		var command := effective_driving_input(control)
+		if command.is_empty():
 			continue
-		var command: Dictionary = driving_inputs[player_id]
-		match control_of(player_id):
+		match control:
 			&"front": front_angle = clampf(front_angle + command.steer * 1.8 * delta, -AXLE_LIMIT, AXLE_LIMIT)
 			&"rear": rear_angle = clampf(rear_angle + command.steer * 1.8 * delta, -AXLE_LIMIT, AXLE_LIMIT)
 			&"pedals":
@@ -236,6 +237,15 @@ func advance_driving(delta: float) -> void:
 		speed = move_toward(speed, direction * 8.0, 3.0 * delta)
 	else:
 		speed = move_toward(speed, 0.0, 0.45 * delta)
+
+
+## The currently effective held input, shared by mechanics and presentation.
+## Stale or unoccupied controls are neutral even while their last packet is kept.
+func effective_driving_input(control: StringName) -> Dictionary:
+	var player_id: int = operators.get(control, 0)
+	if phase != &"active" or player_id == 0 or driving_ages.get(player_id, INF) > INPUT_FRESHNESS:
+		return {}
+	return driving_inputs.get(player_id, {}).duplicate()
 
 func driving_snapshot() -> Dictionary:
 	return {"front": front_angle, "rear": rear_angle, "speed": speed, "direction": direction, "parking": parking_brake, "inputs": driving_inputs.duplicate(true), "ages": driving_ages.duplicate(), "sequences": driving_sequences.duplicate(), "toggles": toggle_sequences.duplicate()}

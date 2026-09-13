@@ -27,6 +27,8 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 
 ## Comments
 
+- 2026-09-13 user sequencing change: build modeled truck 07 and animated learners 08 before running this checkpoint. The current checkpoint ZIP predates those assets; refresh it after 08 before human trials. Human evidence is still required, and downstream work beyond 07–08 remains gated by this checkpoint.
+
 ### Orchestration attempt 2 — 2026-09-13
 
 Outcome: blocked

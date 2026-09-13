@@ -1,7 +1,7 @@
 # 08: Move as expressive, animated learners
 
 Status: ready-for-agent
-Blocked by: 06
+Blocked by: 05
 Parent: [A complete monster truck vehicle](../../monster-truck/spec.md)
 
 ## What to build
@@ -27,6 +27,10 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 
 ## Comments
 
+- 2026-09-13 user sequencing change: implement 07 and 08 before the three-human playtest. Preserve current movement/support/control behavior and verify across agent network fixtures; human Steam acceptance remains in 06 afterward. Existing modeled lobby and learner establish the presentation quality reference.
+
 - From ticket 04: Replace ticket 04's temporary compressed learner pose with the agreed animation and rigging.
 
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.
+
+- 2026-09-13: From completed 07: rig seated learners and hands to the modeled seats/wheels/pedals; close occupied-body clipping using the 07 occupied-cab baseline, preserve physical instrument sight, and refresh the Windows checkpoint ZIP after 08. See ../07-evidence.md.

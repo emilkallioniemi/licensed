@@ -1,6 +1,6 @@
 # Checkpoint 06: three-human Steam session
 
-Status: prepared; no human session has occurred. Use exactly three humans including the user, each on a separate Windows x86_64 computer with a different logged-in Steam account. This is the retained rough truck, not the complete driving test. All handling, ejection, rescue and six-second aftermath tuning remains provisional. No player can pass the full vehicle yet: checkpoint success below means completing the comparison exercise, not earning a license.
+Status: prepared; no human session has occurred. Use exactly three humans including the user, each on a separate Windows x86_64 computer with a different logged-in Steam account. The user moved truck/learner production 07–08 before this session. The current archived 06 ZIP predates those modeled assets; 08 must refresh and hash the checkpoint build before the session. This remains the cooperation exercise rather than the complete driving test. All handling, ejection, rescue and six-second aftermath tuning remains provisional. No player can pass the full vehicle yet: checkpoint success below means completing the comparison exercise, not earning a license.
 
 ## Build and capture
 
@@ -16,7 +16,7 @@ The truck points away from arrival toward two pairs of yellow posts. Start every
 
 1. Board on the short rear ramp; each take one control. Release parking brake, move through the first yellow gate, turn toward and clear the offset second gate. Deliberately unwind held axle angles. Count stops, shunts, contacts, ejections and completion time.
 2. Brake to rest, select reverse, reverse through the offset gates in reverse order without going around their outer sides. The offset requires a tight change in direction. Return to the open apron, then reverse into the yellow rectangle between the two brown wrecks. Stop with the whole truck inside and engage parking brake. These are manual exercise observations; no automated completion/scoring is claimed.
-3. All release controls and climb the long rear ramp to the roof; walk to opposite edges and describe what is hidden from each position. Reboard. Have one ride the roof through an ordinary slow turn. A separate faster sharp turn/bump tests detachment: show the same consequence on every screen, walk back and climb aboard after a harmless landing.
+3. All release controls and climb the rear switchback stair to the roof; walk to opposite edges and describe what is hidden from each position. Reboard. Have one ride the roof through an ordinary slow turn. A separate faster sharp turn/bump tests detachment: show the same consequence on every screen, walk back and climb aboard after a harmless landing.
 4. On the open apron, position a hands-free learner under the deck from the side between the tyres while the truck is secured. If entry is blocked by the standing capsule, try moving the truck slowly over a stationary learner between the tyres on a separate attempt; record whether this ordinary setup works. If physically trapped, friends cautiously move it away to restore standing clearance. Record whether setup is achievable through ordinary movement; never teleport to manufacture human evidence. Avoid tyres except in the separate catastrophic compression trial. If rescue is impossible, use Escape and three changeable concession votes, observe aftermath, change a result choice, then unanimously Retry. Also capture one side-bank overturn and one unsupported apron-edge fall as separate attempts.
 
 ## Host/control/comparison matrix
@@ -63,6 +63,6 @@ One bounded change to handling, sight, geometry or networking; new build hash:
 Matched repeat and player reactions after that change:
 Remaining work / owner:
 
-No retain decision or box is prefilled. Retain only with build-linked human evidence; make bounded relevant revisions one at a time, rerun agent checks and repeat matched comparisons. Keep the implementation. No free-movement removal, optional-control workaround or agent proxy can clear this checkpoint. Tickets after 06 remain gated until required evidence and revisions exist.
+No retain decision or box is prefilled. Retain only with build-linked human evidence; make bounded relevant revisions one at a time, rerun agent checks and repeat matched comparisons. Keep the implementation. No free-movement removal, optional-control workaround or agent proxy can clear this checkpoint. Only 07–08 are authorized before this checkpoint under the user’s sequencing override; all other downstream expansion remains gated until required evidence and revisions exist.
 
 Summarize each captured file with `python summarize.py checkpoint-*.jsonl` (the recorder writes no fabricated samples). Host RTT and acknowledgement statistics are null because these concern the guest-to-host path. Unresolved probes at shutdown are counted separately from timeouts. Use per-trial files/recording annotations to separate intentional disconnects from ordinary networking.
