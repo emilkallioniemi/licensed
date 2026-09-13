@@ -1,0 +1,51 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Metal 4.0 - Forward+ - Using Device #0: Apple - Apple M2 Pro (Apple8)
+
+[S_API FAIL] SteamAPI_Init() failed; ipcserver GetSteamPath failed.
+[S_API] SteamAPI_Init(): SteamAPI_IsSteamRunning() did not locate a running instance of Steam.
+[S_API] SteamAPI_Init(): Could not determine Steam client install directory.
+SteamClient: Steam is not running (status 1: Could not determine Steam client install directory.)
+FIXTURE: native ENet room bootstrap; Steam login is not under test
+WaitingRoom: the room waits for 3
+WaitingRoom: spawned Learner_1 palette 01 local=true
+WaitingRoom:  arrived as palette 01 (1 of 3)
+FIXTURE: native ENet room bootstrap; Steam login is not under test
+WaitingRoom: the room waits for 3
+FIXTURE: native ENet room bootstrap; Steam login is not under test
+WaitingRoom: peer 1060437983 connected
+WaitingRoom: spawned Learner_1 palette 01 local=false
+WaitingRoom: spawned Learner_1060437983 palette 02 local=false
+WaitingRoom:  (2) arrived as palette 02 (2 of 3)
+WaitingRoom: the door for peer 1060437983
+WaitingRoom: spawned Learner_1060437983 palette 02 local=true
+WaitingRoom: the room waits for 3
+WaitingRoom: peer 1428366926 connected
+WaitingRoom: spawned Learner_1 palette 01 local=false
+WaitingRoom: spawned Learner_1060437983 palette 02 local=false
+WaitingRoom: spawned Learner_1428366926 palette 03 local=false
+WaitingRoom:  (3) arrived as palette 03 (3 of 3)
+WaitingRoom: the door for peer 1428366926
+WaitingRoom: spawned Learner_1428366926 palette 03 local=false
+WaitingRoom: the door for peer 1428366926
+WaitingRoom: spawned Learner_1428366926 palette 03 local=true
+AUDIO captured frames=23040 peak=0.02141811512411
+BOARD deck: (1.1, 1.600451, 2.051117) supported
+BOARD front: (-0.37529, 1.600987, -0.952606)
+BOARD roof: (-0.000988, 4.280857, 2.079056) supported
+BOARD guest pedals: (0.567141, 1.600987, -0.902527)
+Animated occupied learner contacts checked across three peers
+FAIL: both articulated hands contact the actual wheel on every peer
+FAIL: both articulated hands contact the actual wheel on every peer
+FAIL: both articulated hands contact the actual wheel on every peer
+FAIL: both articulated hands contact the actual wheel on every peer
+FAIL: both articulated hands contact the actual wheel on every peer
+FAIL: both articulated hands contact the actual wheel on every peer
+FAIL: both articulated hands contact the actual wheel on every peer
+FAIL: both articulated hands contact the actual wheel on every peer
+FAIL: both articulated hands contact the actual wheel on every peer
+Animated occupied learner contacts checked across three peers
+DRIVE: real three-peer turn, stopped reverse, and persistent parking verified
+BOARD correction counts: 2, 3
+RECOVERY: delayed snapshots, shared ejection, landing, entrapment and collection verified
+WaitingRoom: peer 1428366926 left; 2 in the room
+NATIVE_EXIT 1 SECONDS 48.51

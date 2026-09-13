@@ -1,0 +1,18 @@
+{
+  "scripts/learner.gd": "23fd3bb044043373d6e74ff13cd2d9165273ac46b81303ab726842fddc8f3a7c",
+  "scripts/learner_pose.gd": "bd4016946a53e99c968c85c6a43e6b0eef0dd88e4c98bf0ec0c1e91b3be07256",
+  "scripts/truck_boarding.gd": "d85a756cc759342275d01551352ba0af0feb74825e8f93716db8856bc549e844",
+  "scripts/monster_truck.gd": "61101fcf847524f8536ec24898e4caa7febcc1ce8420efa415fea57d4acc29df",
+  "scenes/learner.tscn": "3005a146c8a9af6038c593f5ce75744bda905acdd9eb71fcf5ffbbe50a541b18",
+  "tests/verify_launch_network.gd": "07b8894de1d09e69b6ac3b5d47ca5868fba3ba2b7e32c4ffdc20d22e9a994c04",
+  "tests/verify_learner_animation.gd": "598c630c2e0021c3abc7e06e17dd57e3ad7f2f72f24d2dc82e6485aefa01d6dc",
+  "assets/slice_0/player/learner.gd": "8948f46c8415cf807982fc030f8f80096faa79923362739a0fc98074f2466096",
+  "assets/slice_0/player/learner.glb": "c8d4ebcbd7c413bd326a2a7b49c0d0e67e3f26c994142e70f67664dfdbee9c14",
+  "assets/slice_0/player/source/build_player.py": "54824350d05597faefab31f490356bbbb6bfa4dd86cbf7a3692f484447ac8cee",
+  "assets/slice_0/player/source/learner.blend": "677f204d73c5e628b30717229335fc1faa150062a706f0b4b218b8641d5d08d4",
+  "assets/slice_0/player/preview.png": "74fa5e62db168d0123586a2c422c364429efe75000be87b56b301247c64cd68c",
+  "assets/slice_0/player/README.md": "5d63df92a636937d623ca126b942575ffdb000863f1e7d5d10bf41cfa85d7753",
+  "assets/slice_0/player/portrait_1.png": "074687198007b49a0169f081aef6dad4daf0d82c30007317bd484f29eb86a629",
+  "assets/slice_0/player/portrait_2.png": "3dc6e187a6b0f3db1a0466fc3936614e1d99afb5771abd46792e432cf93dbd70",
+  "assets/slice_0/player/portrait_3.png": "ee34c99ac55f89fcb8c395503837bd6461e10591d1638cab063ca685357a940e"
+}

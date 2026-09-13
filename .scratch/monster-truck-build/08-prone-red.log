@@ -1,0 +1,46 @@
+ERROR: Failed to open 'user://logs/godot2026-09-13T12.20.44.log'.
+   at: copy (core/io/dir_access.cpp:429)
+ERROR: Failed to open log file for writing: user://logs/godot.log
+   at: rotate_file (core/io/logger.cpp:169)
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: Condition "ret != noErr" is true. Returning: ""
+   at: get_system_ca_certificates (platform/macos/os_macos.mm:1035)
+[S_API FAIL] SteamAPI_Init() failed; ipcserver init failed .
+[S_API] SteamAPI_Init(): SteamAPI_IsSteamRunning() did not locate a running instance of Steam.
+[S_API] SteamAPI_Init(): Could not determine Steam client install directory.
+SteamClient: Steam is not running (status 1: Could not determine Steam client install directory.)
+Prone rendered bounds: [P: (-3.750474, -0.43185, -0.918775), S: (1.698218, 1.405163, 1.893651)]
+ERROR: articulated prone limbs must not sink through the physical ground
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://tests/verify_learner_animation.gd:10)
+       [1] _run (res://tests/verify_learner_animation.gd:36)
+ERROR: collapsed learner fits recoverable under-deck clearance
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://tests/verify_learner_animation.gd:10)
+       [1] _run (res://tests/verify_learner_animation.gd:37)
+Prone rendered bounds: [P: (-0.750473, -0.43185, -0.918775), S: (1.698218, 1.405163, 1.893651)]
+ERROR: articulated prone limbs must not sink through the physical ground
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://tests/verify_learner_animation.gd:10)
+       [1] _run (res://tests/verify_learner_animation.gd:36)
+ERROR: collapsed learner fits recoverable under-deck clearance
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://tests/verify_learner_animation.gd:10)
+       [1] _run (res://tests/verify_learner_animation.gd:37)
+Prone rendered bounds: [P: (2.249526, -0.43185, -0.918775), S: (1.698218, 1.405163, 1.893651)]
+ERROR: articulated prone limbs must not sink through the physical ground
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://tests/verify_learner_animation.gd:10)
+       [1] _run (res://tests/verify_learner_animation.gd:36)
+ERROR: collapsed learner fits recoverable under-deck clearance
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://tests/verify_learner_animation.gd:10)
+       [1] _run (res://tests/verify_learner_animation.gd:37)
+Learner animation: FAIL

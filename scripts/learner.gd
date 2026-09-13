@@ -1,8 +1,8 @@
 class_name Learner
 extends CharacterBody3D
-## A player's body in the waiting room: first-person walk, look, and collide. Ticket 04 wraps
-## this in a replicated peer; `set_local` is the seam that turns input, the camera, and hiding
-## your own body on or off without a rewrite.
+## A player's physical learner, first-person sight and shared articulated body.
+## Waiting-room movement is peer-owned; active truck movement/support is host-owned.
+## `set_local` selects input/sight and hides only surfaces surrounding the own eye.
 
 ## Waiting-room movement speeds in metres per second.
 const WALK_SPEED := 3.0
@@ -183,8 +183,9 @@ func _apply_local() -> void:
 func _apply_body_visible() -> void:
 	if visual == null or name_tag == null:
 		return
-	# Each player sees only the other learners, including while using a station.
-	visual.visible = _body_visible and not _local
+	# Own hands/legs and friends share one world rig; only name tags stay remote.
+	visual.visible = _body_visible
+	visual.set_first_person(_local)
 	name_tag.visible = _body_visible and not _local
 
 
@@ -260,8 +261,10 @@ func _update_presentation(delta: float, fraction: float) -> void:
 		else:
 			_remote_pose = _remote_pose.interpolate_with(global_transform, 1.0 - exp(-REMOTE_RESPONSE * delta))
 		visual.global_transform = _remote_pose * _visual_offset
-		visual.scale.y = 0.35 if movement_mode in [&"trapped", &"crushed"] else 1.0
+
 		name_tag.global_transform = _remote_pose * _tag_offset
+	_animate_body(delta)
+
 
 
 func _physics_process(delta: float) -> void:
@@ -312,14 +315,21 @@ func set_truck_movement(enabled: bool) -> void:
 	_detach_velocity = Vector3.ZERO
 	_correction = Vector3.ZERO
 	_recovery_pose()
+	visual.reset_pose()
+	pose_phase = 0.0
+	pose_grounded = true
+	pose_ejected = false
+	control_presentation = &""
 	_apply_local()
 
 func walk_intention() -> Dictionary:
 	var wish := Vector2(float(Input.is_physical_key_pressed(KEY_D)) - float(Input.is_physical_key_pressed(KEY_A)), float(Input.is_physical_key_pressed(KEY_S)) - float(Input.is_physical_key_pressed(KEY_W)))
-	return {"wish": wish.limit_length(), "yaw": rotation.y, "jump": Input.is_action_just_pressed("jump"), "sprint": Input.is_action_pressed("sprint")}
+	return {"wish": wish.limit_length(), "yaw": rotation.y, "pitch": _pitch, "jump": Input.is_action_just_pressed("jump"), "sprint": Input.is_action_pressed("sprint")}
 
 func simulate_truck_walk(command: Dictionary, truck_body: AnimatableBody3D, previous: Transform3D, control: StringName, delta: float) -> void:
 	_previous_position = global_position
+	if not _local and command.has("pitch"):
+		_pitch = clampf(command.pitch, -PITCH_LIMIT, PITCH_LIMIT)
 	ejection_time = maxf(0.0, ejection_time - delta)
 	if movement_mode in [&"trapped", &"crushed", &"ravine"]:
 		if command.has("yaw"):
@@ -340,6 +350,9 @@ func simulate_truck_walk(command: Dictionary, truck_body: AnimatableBody3D, prev
 		set_seated(true)
 		if command.has("yaw"):
 			rotation.y = command.yaw
+		pose_grounded = true
+		pose_ejected = false
+		ejection_time = 0.0
 		movement_mode = &"occupied"
 		support = &"truck"
 		velocity = Vector3.ZERO
@@ -392,9 +405,13 @@ func simulate_truck_walk(command: Dictionary, truck_body: AnimatableBody3D, prev
 	else:
 		movement_mode = &"independent"
 	_current_position = global_position
+	pose_grounded = is_on_floor()
+	if pose_grounded and ejection_time == 0.0:
+		pose_ejected = false
+	pose_phase = fmod(pose_phase + Vector2(velocity.x, velocity.z).length() * delta * 2.4, TAU)
 
 func truck_snapshot() -> Dictionary:
-	return {"pose": support_pose.affine_inverse() * global_transform if support == &"truck" else global_transform, "velocity": velocity, "support": support, "mode": movement_mode, "detach": _detach_velocity, "ejection_time": ejection_time}
+	return {"pose": support_pose.affine_inverse() * global_transform if support == &"truck" else global_transform, "velocity": velocity, "support": support, "mode": movement_mode, "detach": _detach_velocity, "ejection_time": ejection_time, "pose_phase": pose_phase, "grounded": pose_grounded, "pitch": _pitch, "pose_ejected": pose_ejected}
 
 func restore_truck_snapshot(data: Dictionary, truck_pose: Transform3D) -> void:
 	support = data.support
@@ -405,6 +422,11 @@ func restore_truck_snapshot(data: Dictionary, truck_pose: Transform3D) -> void:
 	_detach_velocity = data.detach
 	ejection_time = data.get("ejection_time", 0.0)
 	movement_mode = data.mode
+	pose_phase = data.get("pose_phase", 0.0)
+	pose_grounded = data.get("grounded", true)
+	pose_ejected = data.get("pose_ejected", false)
+	if not _local:
+		_pitch = data.get("pitch", 0.0)
 	_previous_position = global_position
 	_current_position = global_position
 	_recovery_pose()
@@ -415,14 +437,14 @@ func apply_recovery(mode: StringName, impulse := Vector3.ZERO) -> void:
 	movement_mode = mode
 	velocity = impulse
 	_detach_velocity = impulse
+	pose_ejected = mode == &"independent" and impulse != Vector3.ZERO
 	if mode == &"independent":
 		ejection_time = 0.4 if impulse != Vector3.ZERO else 0.0
 	_recovery_pose()
 
 func _recovery_pose() -> void:
 	var pinned := movement_mode in [&"trapped", &"crushed"]
-	# Rough recoverable crouch: ticket 08 replaces this with the learner rig.
-	visual.scale.y = 0.35 if pinned else 1.0
+	# Collision clearance belongs to host recovery; the articulated pose never scales.
 	var shape := $CollisionShape3D as CollisionShape3D
 	if not shape.shape.resource_local_to_scene:
 		shape.shape = shape.shape.duplicate()
@@ -432,3 +454,54 @@ func _recovery_pose() -> void:
 
 func smooth_truck_correction(error: Vector3) -> void:
 	_correction = (_correction + error) if error.length() < TELEPORT_DISTANCE else Vector3.ZERO
+
+## Render-only contact references. TruckBoarding supplies confirmed occupancy;
+## no predicted key press can seat this rig before the host grants the control.
+var control_presentation: StringName = &""
+var presentation_frame: Node3D
+var presentation_contacts: Dictionary = {}
+var pose_phase := 0.0
+var pose_grounded := true
+var pose_ejected := false
+var _last_visual_position := Vector3.ZERO
+var _pose_initialized := false
+
+func present_control(control: StringName, frame: Node3D, contacts: Dictionary) -> void:
+	control_presentation = control
+	presentation_frame = frame
+	presentation_contacts = {}
+	for title in contacts:
+		presentation_contacts[title] = frame.to_local(contacts[title])
+
+func _animate_body(delta: float) -> void:
+	if _local:
+		visual.global_transform = global_transform * _visual_offset
+		visual.global_position += _correction
+	if truck_movement and control_presentation != &"" and is_instance_valid(presentation_frame):
+		# Looking rotates the head/camera, never the seated pelvis or bound hands.
+		visual.global_basis = presentation_frame.global_basis * Basis(Vector3.UP, 0.0 if control_presentation == &"rear" else PI)
+		visual.global_position = presentation_frame.to_global(AttemptState.CONTROLS[control_presentation])
+	var speed := Vector2(velocity.x, velocity.z).length()
+	var vertical := velocity.y
+	var grounded := pose_grounded
+	if not truck_movement:
+		var difference := visual.global_position - _last_visual_position
+		if _pose_initialized and delta > 0.0 and difference.length() < TELEPORT_DISTANCE:
+			speed = Vector2(difference.x, difference.z).length() / delta
+			vertical = difference.y / delta
+		else:
+			speed = 0.0
+		pose_phase = fmod(pose_phase + speed * delta * 2.4, TAU)
+		grounded = is_on_floor() if _local else absf(vertical) < 0.1
+	_last_visual_position = visual.global_position
+	_pose_initialized = true
+	var facing_yaw := visual.global_rotation.y - PI
+	var look_yaw := wrapf(global_rotation.y - facing_yaw, -PI, PI)
+	var world_contacts := {}
+	if control_presentation != &"" and is_instance_valid(presentation_frame):
+		for title in presentation_contacts:
+			world_contacts[title] = presentation_frame.to_global(presentation_contacts[title])
+	visual.animate({"mode": movement_mode, "support": support, "seated": _seated,
+		"grounded": grounded, "speed": speed, "vertical": vertical, "phase": pose_phase,
+		"pitch": _pitch, "look_yaw": look_yaw, "ejected": pose_ejected,
+		"contacts": world_contacts}, delta)

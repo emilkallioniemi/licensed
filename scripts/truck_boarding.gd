@@ -233,9 +233,10 @@ func _accept_input(peer_id: int, attempt_id: String, command: Dictionary) -> voi
 		return
 	var wish: Vector2 = command.get("wish", Vector2.ZERO)
 	var yaw: float = command.get("yaw", 0.0)
-	if not wish.is_finite() or not is_finite(yaw):
+	var pitch: float = command.get("pitch", 0.0)
+	if not wish.is_finite() or not is_finite(yaw) or not is_finite(pitch):
 		return
-	inputs[peer_id] = {"sequence": seq, "wish": wish.limit_length(), "yaw": yaw, "jump": command.get("jump", false) == true, "sprint": command.get("sprint", false) == true}
+	inputs[peer_id] = {"sequence": seq, "wish": wish.limit_length(), "yaw": yaw, "pitch": clampf(pitch, -Learner.PITCH_LIMIT, Learner.PITCH_LIMIT), "jump": command.get("jump", false) == true, "sprint": command.get("sprint", false) == true}
 	ages[peer_id] = 0.0
 	room.room_state().attempt.drive(player_id, attempt_id, seq, command.generation, command)
 
@@ -363,3 +364,27 @@ func _present_controls() -> void:
 			copy += "\nPedals below: W throttle / S brake"
 	truck.highlight(control, hint_time > 0.0)
 	get_parent().show_own_role(copy)
+
+
+func _process(_delta: float) -> void:
+	if not active or room == null:
+		return
+	var state: AttemptState = room.room_state().attempt
+	for learner in room._learners():
+		var control := state.control_of(room.player_id_for_peer(learner.get_multiplayer_authority()))
+		var contacts := {}
+		if control in [&"front", &"rear"]:
+			var wheel: Node3D = truck.visuals.wheels["Front" if control == &"front" else "Rear"]
+			# Left/right are the learner's anatomical sides, reversed at rear.
+			var side := -1.0 if control == &"front" else 1.0
+			# Let the rim slide through a small regrip arc instead of following a
+			# spoke below the learner's reachable arm length at full steering lock.
+			var grip_basis := wheel.global_basis * Basis(Vector3.BACK, -wheel.rotation.z + sin(wheel.rotation.z * 2.0) * 0.20)
+			contacts.LeftHand = wheel.global_position + grip_basis * Vector3(-0.285 * side, 0, 0)
+			contacts.RightHand = wheel.global_position + grip_basis * Vector3(0.285 * side, 0, 0)
+		elif control == &"pedals":
+			var throttle: Node3D = truck.visuals.pivots["ThrottlePedal"]
+			var brake: Node3D = truck.visuals.pivots["BrakePedal"]
+			contacts.LeftFoot = throttle.to_global(Vector3(0, 0.23, 0.08))
+			contacts.RightFoot = brake.to_global(Vector3(0, 0.23, 0.08))
+		learner.present_control(control, truck.visuals, contacts)

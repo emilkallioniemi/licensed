@@ -1,0 +1,31 @@
+ERROR: Failed to open 'user://logs/godot2026-09-13T12.27.42.log'.
+   at: copy (core/io/dir_access.cpp:429)
+ERROR: Failed to open log file for writing: user://logs/godot.log
+   at: rotate_file (core/io/logger.cpp:169)
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: Condition "ret != noErr" is true. Returning: ""
+   at: get_system_ca_certificates (platform/macos/os_macos.mm:1035)
+[S_API FAIL] SteamAPI_Init() failed; ipcserver init failed .
+[S_API] SteamAPI_Init(): SteamAPI_IsSteamRunning() did not locate a running instance of Steam.
+[S_API] SteamAPI_Init(): Could not determine Steam client install directory.
+SteamClient: Steam is not running (status 1: Could not determine Steam client install directory.)
+Prone rendered bounds: [P: (-3.568181, -0.025072, -1.168398), S: (1.369406, 0.71286, 2.278067)]
+Prone rendered bounds: [P: (-0.568181, -0.025072, -1.168398), S: (1.369407, 0.71286, 2.278067)]
+Prone rendered bounds: [P: (2.431819, -0.025072, -1.168398), S: (1.369406, 0.71286, 2.278067)]
+ERROR: late complete snapshot retains articulated airborne tumble after impulse timer
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://tests/verify_learner_animation.gd:10)
+       [1] _run (res://tests/verify_learner_animation.gd:56)
+ERROR: late complete snapshot retains articulated airborne tumble after impulse timer
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://tests/verify_learner_animation.gd:10)
+       [1] _run (res://tests/verify_learner_animation.gd:56)
+ERROR: late complete snapshot retains articulated airborne tumble after impulse timer
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://tests/verify_learner_animation.gd:10)
+       [1] _run (res://tests/verify_learner_animation.gd:56)
+Learner animation: FAIL

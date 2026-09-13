@@ -28,3 +28,5 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 ## Comments
 
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.
+
+- From completed 08: Use the shared articulated rig and first-person world-space hands from completed 08; preserve host-confirmed occupancy and visibility while adding the five gestures. See ../08-evidence.md.

@@ -58,7 +58,8 @@ func _ready() -> void:
 	# Existing learner is temporary examiner body; full distinct rig belongs to 23.
 	var examiner: Node3D = preload("res://assets/slice_0/player/learner.glb").instantiate()
 	visuals.add_child(examiner)
-	examiner.position = Vector3(1.2, 1.2, 1.4)
+	examiner.position = Vector3(1.2, 1.6, 1.4)
+	examiner.find_child("BodyPivot", true, false).position.y = 0.59
 	examiner.rotation.y = PI
 	for side in ["Left", "Right"]:
 		examiner.find_child(side + "Hip", true, false).rotation.x = -PI / 2.0

@@ -1,6 +1,6 @@
 # Checkpoint 06: three-human Steam session
 
-Status: prepared; no human session has occurred. Use exactly three humans including the user, each on a separate Windows x86_64 computer with a different logged-in Steam account. The user moved truck/learner production 07–08 before this session. The current archived 06 ZIP predates those modeled assets; 08 must refresh and hash the checkpoint build before the session. This remains the cooperation exercise rather than the complete driving test. All handling, ejection, rescue and six-second aftermath tuning remains provisional. No player can pass the full vehicle yet: checkpoint success below means completing the comparison exercise, not earning a license.
+Status: prepared; no human session has occurred. Use exactly three humans including the user, each on a separate Windows x86_64 computer with a different logged-in Steam account. The user moved truck/learner production 07–08 before this session. Use the refreshed modeled checkpoint in `export/checkpoint-06-modeled/`; the older `export/checkpoint-06/` ZIP is historical. Its adjacent MANIFEST.json and SHA256.txt identify the exact source and binaries. This remains the cooperation exercise rather than the complete driving test. All handling, ejection, rescue and six-second aftermath tuning remains provisional. No player can pass the full vehicle yet: checkpoint success below means completing the comparison exercise, not earning a license.
 
 ## Build and capture
 

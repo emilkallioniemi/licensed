@@ -51,3 +51,10 @@ Temporary ownership remains: 07 truck/cab art, 08 learner/recovery animation, 09
 ## Subsequent sequencing override
 
 On 2026-09-13 the user requested 07–08 before playtest. The ZIP/hash above is historical preparation and predates the modeled truck and animated learners. Ticket 08 owns refreshing the final checkpoint build/manifest after both asset tickets. Human acceptance remains pending in 06; all other downstream expansion remains gated.
+
+
+## Refreshed modeled handoff after 07–08
+
+The old ZIP/hash above is historical. Use `export/checkpoint-06-modeled/licensed-checkpoint-06.zip`, SHA-256 `0e7237433698e990fe6af9076910472e3a1a5243cf55f1a670abf5e3d07b58ee`, with the updated [session procedure](checkpoint-06/session.md). `checkpoint-06/build-manifest.json` now records the final modeled source; the original is preserved in `build-manifest-historical.json`. Refreshed source digest: `f7b81c64c7a1ae92276562930d964d7ecf75d0d0a403f467124b63d63831f2ef`.
+
+[Ticket 08 evidence](08-evidence.md) records the actual body/hand/seat/instrument visual review, eleven headless suites, native peer/ready/retry checks, and independent ZIP CRC/source/binary/PE checks. This export includes the modeled truck and animated learners. Windows launch, three-human cooperation and Steam feel are still untested; 06 remains the human gate, and 09+ remain gated. No publishing or external sharing occurred.

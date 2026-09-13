@@ -53,3 +53,5 @@ User sequencing override (2026-09-13): “Let’s do seven and eight before play
 - Full specification acceptance, including both Cloud and human play evidence: 28.
 
 The complete playable checkpoint includes decent models and generated audio. Later presentation tickets finish the full coverage; they do not defer all assets until after gameplay. Model, rig, audio and integration work remains agent-owned. Broader release operations are outside this effort.
+
+The refreshed local Windows checkpoint after 07–08 is `export/checkpoint-06-modeled/licensed-checkpoint-06.zip`; use its adjacent manifest/hash and the [session procedure](checkpoint-06/session.md). The earlier `export/checkpoint-06/` ZIP is historical. Windows launch and three-human Steam acceptance remain pending in 06.

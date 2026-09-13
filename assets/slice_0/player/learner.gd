@@ -28,8 +28,46 @@ extends Node3D
 		_refresh_colors()
 
 
+var pose: LearnerPose
+
 func _ready() -> void:
 	_refresh_colors()
+	if not Engine.is_editor_hint():
+		pose = LearnerPose.new(self)
+
+
+## Same world-space rig in both views. Hide only the own head/neck which contain
+## the eye; arms, articulated fingers and legs retain ordinary world depth.
+func set_first_person(enabled: bool) -> void:
+	var head := find_child("HeadPivot", true, false) as Node3D
+	if head != null:
+		head.visible = not enabled
+	var neck := find_child("Neck", true, false) as Node3D
+	if neck != null:
+		neck.visible = not enabled
+	# A world-space collar surrounds the neck/eye. Suppress only own torso
+	# surfaces; children at shoulder joints (the actual shared arms) stay drawn.
+	var spine := find_child("Spine", true, false) as Node3D
+	if spine != null:
+		for child in spine.get_children():
+			if child is MeshInstance3D:
+				child.visible = not enabled
+
+
+func animate(data: Dictionary, delta: float) -> void:
+	if pose != null:
+		pose.update(data, delta)
+
+
+func reset_pose() -> void:
+	if pose != null:
+		pose.reset()
+
+
+## Matching art is ready for the physical license (ticket 19); no card gameplay.
+static func portrait(slot: int) -> Texture2D:
+	return load("res://assets/slice_0/player/portrait_%d.png" % clampi(slot, 1, 3))
+
 
 
 func _refresh_colors() -> void:

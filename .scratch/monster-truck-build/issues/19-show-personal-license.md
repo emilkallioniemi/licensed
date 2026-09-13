@@ -28,3 +28,5 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 ## Comments
 
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.
+
+- From completed 08: Use the matching palette portraits and articulated wrist/digit rig from assets/slice_0/player; physical license gameplay remains this ticket. See ../08-evidence.md.

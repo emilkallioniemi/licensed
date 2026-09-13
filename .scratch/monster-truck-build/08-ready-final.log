@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Metal 4.0 - Forward+ - Using Device #0: Apple - Apple M2 Pro (Apple8)
+
+[S_API FAIL] SteamAPI_Init() failed; ipcserver GetSteamPath failed.
+[S_API] SteamAPI_Init(): SteamAPI_IsSteamRunning() did not locate a running instance of Steam.
+[S_API] SteamAPI_Init(): Could not determine Steam client install directory.
+SteamClient: Steam is not running (status 1: Could not determine Steam client install directory.)
+READY_UP_PROBE: seating three players
+WaitingRoom: peer 3 left; 2 in the room
+WaitingRoom: the host vanished
+Transport: ENet hosting a fresh room
+WaitingRoom: the room waits for 3
+WaitingRoom: spawned Learner_1 palette 01 local=true
+WaitingRoom:  arrived as palette 01 (1 of 3)
+PASS: three-player ready-up, announcement, cancellation, restart and test-area transition
+
+NATIVE_EXIT 0 SECONDS 11.22

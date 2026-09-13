@@ -34,3 +34,5 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.
 
 - From completed 07: replace the temporary reused learner examiner body/pose in the modeled examiner seat; see ../07-evidence.md.
+
+- From completed 08: The revised learner rig includes a temporary seated examiner pose; replace it with the distinct examiner body/performance here. See ../08-evidence.md.

@@ -1,0 +1,11 @@
+# Learner production
+
+Run `Blender --background --python source/build_player.py`. The generator saves `source/learner.blend`, exports `learner.glb`, then renders the three matching portraits and studio preview. The studio camera/lights/copies never enter the exported rig. `Palettes` supplies the same three arrival-slot clothing colours at runtime; the portrait colours are sRGB converted to linear for Blender rendering.
+
+The portable rig is a rigid segmented humanoid hierarchy with named transform joints, not a deforming skin. Blender uses Z-up/-Y-forward; the exported Godot model uses Y-up/+Z-forward, feet at the origin, metres at scale one. `BodyPivot` translates the pelvis; `Spine` owns the jacket, head and shoulders. Each arm has shoulder/elbow/wrist plus independent proximal/distal joints for Index, Middle, Ring, Little and Thumb. Each leg has hip/knee/ankle. Later people may reuse the hierarchy with their own meshes; preserve the rest-joint translations or update contact reach accordingly.
+
+`LearnerPose` drives articulated idle, walk, jump/fall/land, board/climb, take/seated/leave, and authored loose-limb collapse/recovery. The player scene supplies host-confirmed support/occupancy and replicated motion observations. The pose driver never moves a collision body, grants a control or decides rescue. Physical ragdoll simulation and completed emotes are not claimed by this asset. Future gestures can articulate every digit; future physical licenses can use `portrait(slot)` on the visual.
+
+Occupied pelvis height is 0.59m over the deck, placing the trouser underside on the modeled cushion. Steering knees spread behind the wheel plane, while pedal knees bend outward below the console. Two-bone reach follows actual wheel-rim and pedal-pad targets in the truck's current rendered support frame. The hands use bounded regrip arcs rather than attempting an unreachable full orbit with the wheel spokes. First-person shows the same world arms/hands/legs with normal depth; its own face, neck and direct torso surfaces are excluded around the eye. The retained camera remains 1.75m standing, 1.2m seated, and 88-degree FOV.
+
+The examiner currently uses this model in a static seated pose until ticket 23 produces his distinct body and props. License presentation is ticket 19; full gestures are ticket 22.

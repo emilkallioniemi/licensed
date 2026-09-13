@@ -1,0 +1,11 @@
+verify_room_state: exit=0 application_errors=False
+verify_attempt_state: exit=0 application_errors=False
+verify_driving: exit=0 application_errors=False
+verify_recovery: exit=0 application_errors=False
+verify_steam_client: exit=0 application_errors=False
+verify_motion: exit=0 application_errors=False
+verify_reception_input: exit=0 application_errors=False
+verify_failure: exit=0 application_errors=False
+verify_truck_presentation: exit=0 application_errors=False
+verify_recovery_scene: exit=0 application_errors=False
+verify_learner_animation: exit=0 application_errors=False

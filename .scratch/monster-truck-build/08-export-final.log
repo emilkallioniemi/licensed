@@ -1,0 +1,329 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Project initialization (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Scanning file structure...[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Loading global class names...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verifying GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Creating autoload scripts...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Initializing plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Starting file scan...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | Started Registering global classes... (43 steps)[39m[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[   2% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[   4% ] [90m[1mupdate_scripts_classes[22m | ArrivalTheatre[39m[0m
+[   6% ] [90m[1mupdate_scripts_classes[22m | AttemptState[39m[0m
+[   9% ] [90m[1mupdate_scripts_classes[22m | BookingBoard[39m[0m
+[  11% ] [90m[1mupdate_scripts_classes[22m | ChairStations[39m[0m
+[  13% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  15% ] [90m[1mupdate_scripts_classes[22m | EscapeOverlay[39m[0m
+[  18% ] [90m[1mupdate_scripts_classes[22m | FadeOverlay[39m[0m
+[  20% ] [90m[1mupdate_scripts_classes[22m | Learner[39m[0m
+[  22% ] [90m[1mupdate_scripts_classes[22m | LearnerPose[39m[0m
+[  25% ] [90m[1mupdate_scripts_classes[22m | MonsterTruck[39m[0m
+[  27% ] [90m[1mupdate_scripts_classes[22m | NoticeBoard[39m[0m
+[  29% ] [90m[1mupdate_scripts_classes[22m | Palettes[39m[0m
+[  31% ] [90m[1mupdate_scripts_classes[22m | ReceptionDesk[39m[0m
+[  34% ] [90m[1mupdate_scripts_classes[22m | RoomState[39m[0m
+[  36% ] [90m[1mupdate_scripts_classes[22m | Station[39m[0m
+[  38% ] [90m[1mupdate_scripts_classes[22m | StationScreen[39m[0m
+[  40% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  43% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  45% ] [90m[1mupdate_scripts_classes[22m | TestArea[39m[0m
+[  47% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  50% ] [90m[1mupdate_scripts_classes[22m | TruckBoarding[39m[0m
+[  52% ] [90m[1mupdate_scripts_classes[22m | TruckPresentation[39m[0m
+[  54% ] [90m[1mupdate_scripts_classes[22m | TruckRecovery[39m[0m
+[  56% ] [90m[1mupdate_scripts_classes[22m | TruckSound[39m[0m
+[  59% ] [90m[1mupdate_scripts_classes[22m | Voice[39m[0m
+[  61% ] [90m[1mupdate_scripts_classes[22m | WaitingRoom[39m[0m
+[  63% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  65% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  68% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  70% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  72% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  75% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  77% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  79% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  81% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  84% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  86% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  88% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  90% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  93% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  95% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[92m[ DONE ][39m [1mupdate_scripts_classes[22m
+[0m
+[   0% ] [90m[1m_update_scan_actions[22m | Started Scanning actions... (25 steps)[39m[0m
+[   0% ] [90m[1m_update_scan_actions[22m | cabin_rattle.wav[39m[0m
+[   3% ] [90m[1m_update_scan_actions[22m | engine_idle.wav[39m[0m
+[   7% ] [90m[1m_update_scan_actions[22m | engine_load.wav[39m[0m
+[  11% ] [90m[1m_update_scan_actions[22m | impact.wav[39m[0m
+[  15% ] [90m[1m_update_scan_actions[22m | suspension.wav[39m[0m
+[  19% ] [90m[1m_update_scan_actions[22m | tyre_scrub.wav[39m[0m
+[  23% ] [90m[1m_update_scan_actions[22m | preview_cabin.png[39m[0m
+[  26% ] [90m[1m_update_scan_actions[22m | preview_front.png[39m[0m
+[  30% ] [90m[1m_update_scan_actions[22m | preview_rear.png[39m[0m
+[  34% ] [90m[1m_update_scan_actions[22m | temporary_failure.wav[39m[0m
+[  38% ] [90m[1m_update_scan_actions[22m | temporary_request.wav[39m[0m
+[  42% ] [90m[1m_update_scan_actions[22m | truck.glb[39m[0m
+[  46% ] [90m[1m_update_scan_actions[22m | please_take_a_number.wav[39m[0m
+[  50% ] [90m[1m_update_scan_actions[22m | learner.glb[39m[0m
+[  53% ] [90m[1m_update_scan_actions[22m | portrait_1.png[39m[0m
+[  57% ] [90m[1m_update_scan_actions[22m | portrait_2.png[39m[0m
+[  61% ] [90m[1m_update_scan_actions[22m | portrait_3.png[39m[0m
+[  65% ] [90m[1m_update_scan_actions[22m | preview.png[39m[0m
+[  69% ] [90m[1m_update_scan_actions[22m | door.wav[39m[0m
+[  73% ] [90m[1m_update_scan_actions[22m | examiner_monster_truck.wav[39m[0m
+[  76% ] [90m[1m_update_scan_actions[22m | preview_booking.png[39m[0m
+[  80% ] [90m[1m_update_scan_actions[22m | preview_entrance.png[39m[0m
+[  84% ] [90m[1m_update_scan_actions[22m | preview_overview.png[39m[0m
+[  88% ] [90m[1m_update_scan_actions[22m | waiting_room.glb[39m[0m
+[  92% ] [90m[1m_update_scan_actions[22m | icon.svg[39m[0m
+[92m[ DONE ][39m [1m_update_scan_actions[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (25 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   3% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   7% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  11% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  15% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  19% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  23% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  26% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  30% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  34% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  38% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  42% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  46% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  50% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  53% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  57% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  61% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  65% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  69% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  73% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  76% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  80% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  84% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  88% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  92% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing pre-reimport operations...[39m[0m
+[   0% ] [90m[1mpreload_reimporting_scene[22m | Started Preparing scenes for reload (1 steps)[39m[0m
+[   0% ] [90m[1mpreload_reimporting_scene[22m | Analyzing scene [empty][39m[0m
+[  50% ] [90m[1mpreload_reimporting_scene[22m | Preparation done.[39m[0m
+[92m[ DONE ][39m [1mpreload_reimporting_scene[22m
+[0m
+[   0% ] [90m[1mreimport[22m | icon.svg[39m[0m
+[   3% ] [90m[1mreimport[22m | preview_overview.png[39m[0m
+[   7% ] [90m[1mreimport[22m | preview_entrance.png[39m[0m
+[  11% ] [90m[1mreimport[22m | preview_booking.png[39m[0m
+[  15% ] [90m[1mreimport[22m | preview_cabin.png[39m[0m
+[  19% ] [90m[1mreimport[22m | preview_front.png[39m[0m
+[  23% ] [90m[1mreimport[22m | preview_rear.png[39m[0m
+[  26% ] [90m[1mreimport[22m | preview.png[39m[0m
+[  30% ] [90m[1mreimport[22m | portrait_3.png[39m[0m
+[  34% ] [90m[1mreimport[22m | portrait_2.png[39m[0m
+[  38% ] [90m[1mreimport[22m | portrait_1.png[39m[0m
+[  42% ] [90m[1mreimport[22m | icon.svg[39m[0m
+[  46% ] [90m[1mreimport[22m | preview_overview.png[39m[0m
+[  50% ] [90m[1mreimport[22m | preview_entrance.png[39m[0m
+[  53% ] [90m[1mreimport[22m | preview_booking.png[39m[0m
+[  57% ] [90m[1mreimport[22m | preview_cabin.png[39m[0m
+[  61% ] [90m[1mreimport[22m | preview_front.png[39m[0m
+[  65% ] [90m[1mreimport[22m | preview_rear.png[39m[0m
+[  69% ] [90m[1mreimport[22m | preview.png[39m[0m
+[  73% ] [90m[1mreimport[22m | portrait_3.png[39m[0m
+[  76% ] [90m[1mreimport[22m | portrait_2.png[39m[0m
+[  80% ] [90m[1mreimport[22m | portrait_1.png[39m[0m
+[  84% ] [90m[1mreimport[22m | learner.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  88% ] [90m[1mreimport[22m | truck.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  92% ] [90m[1mreimport[22m | waiting_room.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  96% ] [90m[1mreimport[22m | Finalizing Asset Import...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (25 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing post-reimport operations...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1msavepack[22m | Started Packing (102 steps)[39m[0m
+[   1% ] [90m[1msavepack[22m | Storing File: res://addons/godotsteam/godotsteam.gdextension[39m[0m
+[   2% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/cabin_rattle.wav-da90a306209bec97cff79e0fb6d53dd5.sample[39m[0m
+[   2% ] [90m[1msavepack[22m | Storing File: res://assets/monster_truck/audio/cabin_rattle.wav.import[39m[0m
+[   3% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/engine_idle.wav-3e101cdecbb37b6d8a24f4f68096630c.sample[39m[0m
+[   3% ] [90m[1msavepack[22m | Storing File: res://assets/monster_truck/audio/engine_idle.wav.import[39m[0m
+[   4% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/engine_load.wav-166629ec01fae427b2b59cdd57ec0069.sample[39m[0m
+[   4% ] [90m[1msavepack[22m | Storing File: res://assets/monster_truck/audio/engine_load.wav.import[39m[0m
+[   6% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/impact.wav-7e31f367498d8d60e0cab336ebbce58f.sample[39m[0m
+[   6% ] [90m[1msavepack[22m | Storing File: res://assets/monster_truck/audio/impact.wav.import[39m[0m
+[   7% ] [90m[1msavepack[22m | Storing File: res://assets/monster_truck/audio/manifest.json[39m[0m
+[   8% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/suspension.wav-bf0d450f9ea76794b9fe5ef54827732a.sample[39m[0m
+[   8% ] [90m[1msavepack[22m | Storing File: res://assets/monster_truck/audio/suspension.wav.import[39m[0m
+[   9% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/tyre_scrub.wav-671931b298b4ac5d5c3776db46dead77.sample[39m[0m
+[   9% ] [90m[1msavepack[22m | Storing File: res://assets/monster_truck/audio/tyre_scrub.wav.import[39m[0m
+[  11% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/preview_cabin.png-e005fc62e081a228b39d90b07871fe82.ctex[39m[0m
+[  11% ] [90m[1msavepack[22m | Storing File: res://assets/monster_truck/preview_cabin.png.import[39m[0m
+[  12% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/preview_front.png-bdd4ea77a7d1351c0d7c4cff834bf3bd.ctex[39m[0m
+[  12% ] [90m[1msavepack[22m | Storing File: res://assets/monster_truck/preview_front.png.import[39m[0m
+[  13% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/preview_rear.png-e500377311c4b308ab1ed17bb94e8af5.ctex[39m[0m
+[  13% ] [90m[1msavepack[22m | Storing File: res://assets/monster_truck/preview_rear.png.import[39m[0m
+[  14% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/temporary_failure.wav-18cae4aa2358543d4a006eab20351d20.sample[39m[0m
+[  14% ] [90m[1msavepack[22m | Storing File: res://assets/monster_truck/temporary_failure.wav.import[39m[0m
+[  16% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/temporary_request.wav-eab4240716524869d52edac307c28e77.sample[39m[0m
+[  16% ] [90m[1msavepack[22m | Storing File: res://assets/monster_truck/temporary_request.wav.import[39m[0m
+[  17% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/truck.glb-8ac5eddff4e1f53610bb34137b73774e.scn[39m[0m
+[  17% ] [90m[1msavepack[22m | Storing File: res://assets/monster_truck/truck.glb.import[39m[0m
+[  18% ] [90m[1msavepack[22m | Storing File: res://assets/slice_0/music/composition.json[39m[0m
+[  19% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/please_take_a_number.wav-70384b229bf51faec21af2db69eca23d.sample[39m[0m
+[  19% ] [90m[1msavepack[22m | Storing File: res://assets/slice_0/music/please_take_a_number.wav.import[39m[0m
+[  21% ] [90m[1msavepack[22m | Storing File: res://assets/slice_0/player/learner.gdc[39m[0m
+[  22% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/learner.glb-5c57c41fd905213f2b97a7ce9751119f.scn[39m[0m
+[  22% ] [90m[1msavepack[22m | Storing File: res://assets/slice_0/player/learner.glb.import[39m[0m
+[  23% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-f47c495b108bf78fd75bb081699a3114-learner.scn[39m[0m
+[  25% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/portrait_1.png-ac607d2ac58c5394ff3c5729ac4cf2ff.ctex[39m[0m
+[  25% ] [90m[1msavepack[22m | Storing File: res://assets/slice_0/player/portrait_1.png.import[39m[0m
+[  26% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/portrait_2.png-5f45abe60b91441104d2f4bc82bca7c9.ctex[39m[0m
+[  26% ] [90m[1msavepack[22m | Storing File: res://assets/slice_0/player/portrait_2.png.import[39m[0m
+[  27% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/portrait_3.png-7a3005b1b83fa599493d686bca7349ae.ctex[39m[0m
+[  27% ] [90m[1msavepack[22m | Storing File: res://assets/slice_0/player/portrait_3.png.import[39m[0m
+[  28% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/preview.png-d821a29b9a2d37ba81b9d62b1e6345b8.ctex[39m[0m
+[  28% ] [90m[1msavepack[22m | Storing File: res://assets/slice_0/player/preview.png.import[39m[0m
+[  30% ] [90m[1msavepack[22m | Storing File: res://assets/slice_0/verify_assets.gdc[39m[0m
+[  31% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/door.wav-0c84b2d0c08fec0aead002e73b5c8402.sample[39m[0m
+[  31% ] [90m[1msavepack[22m | Storing File: res://assets/waiting_room/door.wav.import[39m[0m
+[  32% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/examiner_monster_truck.wav-2c0820d911f4dd12397b514ae5a9f314.sample[39m[0m
+[  32% ] [90m[1msavepack[22m | Storing File: res://assets/waiting_room/examiner_monster_truck.wav.import[39m[0m
+[  33% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-bfc3c2fb3417b4c49d7c730012dbf761-preview.scn[39m[0m
+[  34% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/preview_booking.png-640026f61c5643d87156be8a47416236.ctex[39m[0m
+[  34% ] [90m[1msavepack[22m | Storing File: res://assets/waiting_room/preview_booking.png.import[39m[0m
+[  35% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/preview_entrance.png-7cef42af2276de1007ee010b439d4734.ctex[39m[0m
+[  35% ] [90m[1msavepack[22m | Storing File: res://assets/waiting_room/preview_entrance.png.import[39m[0m
+[  36% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/preview_overview.png-d68b7ff706aafb7e70dbcf1dbad80a87.ctex[39m[0m
+[  36% ] [90m[1msavepack[22m | Storing File: res://assets/waiting_room/preview_overview.png.import[39m[0m
+[  37% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/waiting_room.glb-c9e3037b0c57b4ec5cd3f16fb8b450c2.scn[39m[0m
+[  37% ] [90m[1msavepack[22m | Storing File: res://assets/waiting_room/waiting_room.glb.import[39m[0m
+[  39% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-9c6c88f9f27f8cc6c9b39cbd69bc74cb-waiting_room.scn[39m[0m
+[  40% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-2fee0b67b89cd70b8661b758bbd89e95-learner.scn[39m[0m
+[  41% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-1f5eaf79bddd65d07afc503331989b28-steam_not_running.scn[39m[0m
+[  43% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-cdf9e008892aeaed414566e213654a25-waiting_room.scn[39m[0m
+[  44% ] [90m[1msavepack[22m | Storing File: res://scripts/arrival_theatre.gdc[39m[0m
+[  45% ] [90m[1msavepack[22m | Storing File: res://scripts/attempt_state.gdc[39m[0m
+[  46% ] [90m[1msavepack[22m | Storing File: res://scripts/booking_board.gdc[39m[0m
+[  48% ] [90m[1msavepack[22m | Storing File: res://scripts/chair_stations.gdc[39m[0m
+[  49% ] [90m[1msavepack[22m | Storing File: res://scripts/checkpoint_diagnostics.gdc[39m[0m
+[  50% ] [90m[1msavepack[22m | Storing File: res://scripts/escape_overlay.gdc[39m[0m
+[  51% ] [90m[1msavepack[22m | Storing File: res://scripts/fade_overlay.gdc[39m[0m
+[  53% ] [90m[1msavepack[22m | Storing File: res://scripts/learner.gdc[39m[0m
+[  54% ] [90m[1msavepack[22m | Storing File: res://scripts/learner_pose.gdc[39m[0m
+[  55% ] [90m[1msavepack[22m | Storing File: res://scripts/monster_truck.gdc[39m[0m
+[  56% ] [90m[1msavepack[22m | Storing File: res://scripts/notice_board.gdc[39m[0m
+[  58% ] [90m[1msavepack[22m | Storing File: res://scripts/palettes.gdc[39m[0m
+[  59% ] [90m[1msavepack[22m | Storing File: res://scripts/reception_desk.gdc[39m[0m
+[  60% ] [90m[1msavepack[22m | Storing File: res://scripts/room_state.gdc[39m[0m
+[  62% ] [90m[1msavepack[22m | Storing File: res://scripts/station.gdc[39m[0m
+[  63% ] [90m[1msavepack[22m | Storing File: res://scripts/station_screen.gdc[39m[0m
+[  64% ] [90m[1msavepack[22m | Storing File: res://scripts/steam_client.gdc[39m[0m
+[  65% ] [90m[1msavepack[22m | Storing File: res://scripts/steam_not_running.gdc[39m[0m
+[  66% ] [90m[1msavepack[22m | Storing File: res://scripts/test_area.gdc[39m[0m
+[  67% ] [90m[1msavepack[22m | Storing File: res://scripts/transport.gdc[39m[0m
+[  68% ] [90m[1msavepack[22m | Storing File: res://scripts/truck_boarding.gdc[39m[0m
+[  69% ] [90m[1msavepack[22m | Storing File: res://scripts/truck_presentation.gdc[39m[0m
+[  71% ] [90m[1msavepack[22m | Storing File: res://scripts/truck_recovery.gdc[39m[0m
+[  72% ] [90m[1msavepack[22m | Storing File: res://scripts/truck_sound.gdc[39m[0m
+[  73% ] [90m[1msavepack[22m | Storing File: res://scripts/voice.gdc[39m[0m
+[  74% ] [90m[1msavepack[22m | Storing File: res://scripts/waiting_room.gdc[39m[0m
+[  76% ] [90m[1msavepack[22m | Storing File: res://tests/network_room_harness.gdc[39m[0m
+[  77% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-ab889954227b183996d161ff076d247e-network_room_harness.scn[39m[0m
+[  78% ] [90m[1msavepack[22m | Storing File: res://tests/reception_input_harness.gdc[39m[0m
+[  80% ] [90m[1msavepack[22m | Storing File: res://tests/verify_attempt_state.gdc[39m[0m
+[  81% ] [90m[1msavepack[22m | Storing File: res://tests/verify_driving.gdc[39m[0m
+[  82% ] [90m[1msavepack[22m | Storing File: res://tests/verify_failure.gdc[39m[0m
+[  83% ] [90m[1msavepack[22m | Storing File: res://tests/verify_launch_network.gdc[39m[0m
+[  85% ] [90m[1msavepack[22m | Storing File: res://tests/verify_learner_animation.gdc[39m[0m
+[  86% ] [90m[1msavepack[22m | Storing File: res://tests/verify_motion.gdc[39m[0m
+[  87% ] [90m[1msavepack[22m | Storing File: res://tests/verify_ready_up.gdc[39m[0m
+[  88% ] [90m[1msavepack[22m | Storing File: res://tests/verify_reception_input.gdc[39m[0m
+[  90% ] [90m[1msavepack[22m | Storing File: res://tests/verify_recovery.gdc[39m[0m
+[  91% ] [90m[1msavepack[22m | Storing File: res://tests/verify_recovery_scene.gdc[39m[0m
+[  92% ] [90m[1msavepack[22m | Storing File: res://tests/verify_room_state.gdc[39m[0m
+[  93% ] [90m[1msavepack[22m | Storing File: res://tests/verify_steam_client.gdc[39m[0m
+[  95% ] [90m[1msavepack[22m | Storing File: res://tests/verify_truck_presentation.gdc[39m[0m
+[  96% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex[39m[0m
+[  96% ] [90m[1msavepack[22m | Storing File: res://icon.svg.import[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://skills-lock.json[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://assets/slice_0/player/learner.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://assets/slice_0/player/learner.tscn.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://assets/slice_0/verify_assets.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://assets/waiting_room/preview.tscn.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://assets/waiting_room/waiting_room.tscn.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scenes/learner.tscn.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scenes/steam_not_running.tscn.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scenes/waiting_room.tscn.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/arrival_theatre.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/attempt_state.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/booking_board.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/chair_stations.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/checkpoint_diagnostics.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/escape_overlay.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/fade_overlay.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/learner.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/learner_pose.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/monster_truck.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/notice_board.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/palettes.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/reception_desk.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/room_state.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/station.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/station_screen.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/steam_client.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/steam_not_running.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/test_area.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/transport.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/truck_boarding.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/truck_presentation.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/truck_recovery.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/truck_sound.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/voice.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/waiting_room.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://tests/network_room_harness.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://tests/network_room_harness.tscn.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://tests/reception_input_harness.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://tests/verify_attempt_state.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://tests/verify_driving.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://tests/verify_failure.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://tests/verify_launch_network.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://tests/verify_learner_animation.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://tests/verify_motion.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://tests/verify_ready_up.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://tests/verify_reception_input.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://tests/verify_recovery.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://tests/verify_recovery_scene.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://tests/verify_room_state.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://tests/verify_steam_client.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://tests/verify_truck_presentation.gd.remap[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://.godot/global_script_class_cache.cfg[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://icon.svg[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://.godot/extension_list.cfg[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://.godot/uid_cache.bin[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://project.binary[39m[0m
+[92m[ DONE ][39m [1msavepack[22m
+[0m

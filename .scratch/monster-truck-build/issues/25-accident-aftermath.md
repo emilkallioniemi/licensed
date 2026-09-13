@@ -30,3 +30,5 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 - From ticket 05: Replace temporary rolled truck/compressed learner presentation with authored wrecks, debris and ragdolls; physical aftermath must not mutate the settled result.
 
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.
+
+- From completed 08: Recoverable loose-limb collapse/get-up is authored presentation tied to host body recovery; retain it while extending catastrophic destruction/aftermath. See ../08-evidence.md.
