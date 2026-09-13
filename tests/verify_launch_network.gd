@@ -64,6 +64,8 @@ func verify() -> void:
 		await verify_boarding()
 	if OS.get_cmdline_user_args().has("--recovery"):
 		await verify_recovery_network()
+	if OS.get_cmdline_user_args().has("--failure"):
+		await verify_failure_network()
 	# Lose one guest after arrival; survivors must observe departing, then reset.
 	rooms[2].multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 	peers[2].close()
@@ -409,3 +411,35 @@ func verify_recovery_network() -> void:
 		check(room.room_state().attempt.accident_states.get(player_id) == &"rescued", "all peers see physical truck rescue without teleport")
 	check(local.global_position.distance_to(body.global_position) < 0.3, "rescued guest correction agrees with host")
 	print("RECOVERY: delayed snapshots, shared ejection, landing, entrapment and collection verified")
+
+func verify_failure_network() -> void:
+	var host: AttemptState = rooms[0].room_state().attempt
+	var old_id := host.id
+	for room in rooms:
+		room.choose_attempt(&"concede")
+	await create_timer(0.5).timeout
+	for room in rooms:
+		check(room.room_state().attempt.phase == &"aftermath", "unanimous RPC concession reaches every peer")
+		check(room.test_area.examiner_subtitle.text == "We will leave it there.", "shared offline examiner response")
+		check(room.test_area.examiner_audio.stream.get_length() > 0.0 and room.test_area.examiner_audio.playing, "failure response plays offline audio")
+	await create_timer(6.1).timeout
+	for room in rooms:
+		check(room.room_state().attempt.phase == &"settled", "every peer reaches results after aftermath")
+	if OS.get_cmdline_user_args().has("--capture-results"):
+		rooms[0].get_viewport().render_target_update_mode = SubViewport.UPDATE_ALWAYS
+		await process_frame
+		await RenderingServer.frame_post_draw
+		rooms[0].get_viewport().get_texture().get_image().save_png("/private/tmp/licensed-05-results.png")
+	rooms[0].choose_attempt(&"retry")
+	rooms[1].choose_attempt(&"waiting_room")
+	rooms[2].choose_attempt(&"retry")
+	await create_timer(0.3).timeout
+	check(host.id == old_id, "mixed shared choices keep aftermath")
+	rooms[1].choose_attempt(&"retry")
+	await create_timer(1.8).timeout
+	for room in rooms:
+		var state: AttemptState = room.room_state().attempt
+		check(state.id != old_id and state.phase == &"active", "retry synchronizes new arrival without chairs")
+		check(state.assessment().is_empty() and state.choices.is_empty() and state.parking_brake, "retry resets failure choices and secures truck")
+		check(room.test_area.truck.body.position.length() < 0.2, "retry resets physical truck")
+	print("FAILURE: shared concession, examiner, aftermath, changed choices and synchronized retry verified")

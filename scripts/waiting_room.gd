@@ -243,12 +243,44 @@ func quit_to_desktop() -> void:
 	_quit_cleanly()
 
 
-## Host only, test area only. Clears the room state and walks everyone back through
-## the entrance with the arrival theatre.
-func request_return_from_test_area() -> void:
-	if not _in_test_area or _returning or not multiplayer.is_server():
+## All group transitions are decided by the current trio at the attempt boundary.
+var _choice_sequence := 0
+var _loading_attempt := ""
+
+func choose_attempt(choice: StringName) -> void:
+	_choice_sequence += 1
+	if multiplayer.is_server():
+		_accept_choice(multiplayer.get_unique_id(), _room.attempt.id, _choice_sequence, choice)
+	else:
+		_attempt_choice.rpc_id(1, _room.attempt.id, _choice_sequence, choice)
+
+@rpc("any_peer", "call_remote", "reliable")
+func _attempt_choice(attempt_id: String, sequence: int, choice: StringName) -> void:
+	if multiplayer.is_server():
+		_accept_choice(multiplayer.get_remote_sender_id(), attempt_id, sequence, choice)
+
+func _accept_choice(peer_id: int, attempt_id: String, sequence: int, choice: StringName) -> void:
+	if _room.attempt.choose(player_id_for_peer(peer_id), attempt_id, sequence, choice):
+		_replicate()
+		if _room.attempt.phase == &"loading":
+			_prepare_retry()
+
+func _prepare_retry() -> void:
+	var attempt_id: String = _room.attempt.id
+	if _loading_attempt == attempt_id:
 		return
-	_apply_return_from_test_area()
+	_loading_attempt = attempt_id
+	test_area.boarding.stop()
+	if escape_overlay != null:
+		escape_overlay.close()
+	fade.to_black(TRANSITION)
+	await get_tree().create_timer(TRANSITION).timeout
+	if _room.attempt.id != attempt_id or _room.attempt.phase != &"loading":
+		return
+	if multiplayer.is_server():
+		_accept_scene_ready(multiplayer.get_unique_id(), attempt_id, test_area.is_prepared())
+	else:
+		_scene_ready.rpc_id(1, attempt_id, test_area.is_prepared())
 
 
 func _local_learner() -> Learner:
@@ -560,6 +592,7 @@ func _receive_state(data: Dictionary) -> void:
 	var had_booking := _room.has_booking()
 	var was_counting := _room.is_counting_down()
 	var had_launched := _room.has_attempt()
+	var previous_attempt: String = _room.attempt.id
 	_room.restore(data)
 	# restore() is silent; a state diff raises the host's events so later views (booking
 	# sound, examiner line) can connect to `_room` on every machine.
@@ -573,6 +606,8 @@ func _receive_state(data: Dictionary) -> void:
 		_room.countdown_cancelled.emit()
 	if not had_launched and _room.has_attempt():
 		_room.launched.emit(_room.booking(), _room.launched_roles())
+	if had_launched and previous_attempt != _room.attempt.id and _room.attempt.phase == &"loading":
+		_prepare_retry()
 	if _room.attempt.phase == &"departing":
 		_play_return()
 	elif _room.attempt.phase == &"active":

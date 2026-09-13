@@ -114,12 +114,28 @@ func verify() -> void:
 	for event in attempt.accidents:
 		impact_ejected = impact_ejected or (event.sequence > before_impact and event.kind == &"ejected" and event.player == 1)
 	check(impact_ejected and attempt.control_of(1) == &"" and attempt.speed == 0.0, "actual hull impact ejects operator and stops truck")
+	# A timeout still permits an occupied learner to be thrown in the aftermath.
+	truck.body.transform = Transform3D(Basis.IDENTITY, Vector3(20, 0, 0))
+	truck.vertical_speed = 0.0
+	place(truck.body.to_global(AttemptState.CONTROLS.front), true)
+	attempt.observe_learner(1, AttemptState.CONTROLS.front)
+	attempt.request_control(1, attempt.id, 11, &"front")
+	await step(1)
+	attempt.speed = 8.0
+	attempt.tick(360.0)
+	var settled := attempt.assessment()
+	await step(55)
+	check(attempt.control_of(1) == &"" and not learner.is_seated(), "post-timeout hull impact still physically ejects operator")
+	check(attempt.assessment() == settled, "aftermath impact cannot change timeout assessment")
+	attempt.begin(&"monster_truck", [1, 2, 3])
+	for player in [1, 2, 3]: attempt.scene_ready(player, attempt.id)
 	# Side tyres compress to the ground, distinct from the survivable deck gap.
 	attempt.speed = 0.0
 	attempt.parking_brake = true
 	place(truck.body.to_global(Vector3(2.75, 0.01, 1.8)), false)
 	await step(1)
 	check(learner.movement_mode == &"crushed" and attempt.accidents.back().severity == &"serious", "actual tyre compression produces catastrophic observation")
+	check(attempt.phase == &"aftermath" and attempt.assessment().reason == &"crushed", "physical crushing guarantees failure before results")
 	# Fresh attempt, truck boxed by immovable wrecks: no hidden recovery action.
 	attempt.begin(&"monster_truck", [1, 2, 3])
 	for player in [1, 2, 3]:
@@ -137,6 +153,26 @@ func verify() -> void:
 		attempt.drive(2, attempt.id, i + 1, 1, {"throttle": true})
 		await step(1)
 	check(learner.movement_mode == &"trapped" and truck.body.position.length() < 0.4, "boxed truck demonstrates impossible physical rescue")
+	for id in [1, 2, 3]: attempt.choose(id, attempt.id, 1, &"concede")
+	check(attempt.phase == &"aftermath", "impossible rescue can be conceded together")
+	await step(361)
+	check(attempt.phase == &"settled", "physical aftermath reaches shared results")
+	for id in [1, 2, 3]: attempt.choose(id, attempt.id, 2, &"retry")
+	for id in [1, 2, 3]: attempt.scene_ready(id, attempt.id)
+	truck.body.transform = Transform3D(Basis.IDENTITY, Vector3(35, 0, 20))
+	truck.vertical_speed = 0.0
+	place(Vector3(40, 0.1, 20), false)
+	floor_box(Vector3(3, 1.4, 10), Vector3(37.75, 0.7, 20), 9)
+	await step(80)
+	check(absf(truck.body.rotation.z) > 1.2 and attempt.assessment().get("reason") == &"overturn", "physical side bank overturns truck and settles failure")
+	for id in [1, 2, 3]: attempt.choose(id, attempt.id, 3, &"retry")
+	attempt.begin(&"monster_truck", [1, 2, 3])
+	for id in [1, 2, 3]: attempt.scene_ready(id, attempt.id)
+	truck.body.transform = Transform3D(Basis.IDENTITY, Vector3(60, 0, 0))
+	truck.vertical_speed = 0.0
+	place(Vector3(60, 4.28, 0), true)
+	await step(180)
+	check(truck.body.global_position.y < -12 and attempt.assessment().get("reason") == &"ravine", "unsupported ravine drop continues physically and guarantees failure")
 	print("Recovery scene failures: ", failures)
 	world.queue_free()
 	await process_frame

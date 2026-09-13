@@ -1,6 +1,6 @@
 # 05: Fail, assess, concede, and retry together
 
-Status: ready-for-agent
+Status: done
 Blocked by: 04
 Parent: [A complete monster truck vehicle](../../monster-truck/spec.md)
 
@@ -10,12 +10,12 @@ An accident or timeout fails the trio after its aftermath; players can unanimous
 
 ## Acceptance criteria
 
-- [ ] Use the host-owned attempt boundary for timer, serious-fault observations, immutable once-only settlement and group choices. Initial rough setups demonstrate overturn, ravine fall and catastrophic crushing; later route tickets integrate their real triggers.
-- [ ] Serious faults or timer zero guarantee failure; allow the interesting physical aftermath and an offline dry examiner response before results, without continuing the remaining test. Recovery cannot revoke failure.
-- [ ] Replace host-only immediate return with Escape-overlay concession requiring three current agreements while active, with time running. Settled outcomes cannot be overridden.
-- [ ] Show rough shared results with changeable Retry/Waiting room choices; three matching choices transition. Retry creates fresh state beside a secured truck, starts on synchronized arrival and bypasses booking/chairs.
-- [ ] Invalidate choices on membership/attempt changes; reject stale/duplicate commands. Guest departure returns survivors; host loss sends guests to their own rooms with no migration. Unfinished attempts are abandoned.
-- [ ] Test time, concession/departure races, once-only scored events and clean reset through public attempt behavior plus scene aftermath. Record temporary presentation for 23/25/26; passing and persistence arrive in 12/17.
+- [x] Use the host-owned attempt boundary for timer, serious-fault observations, immutable once-only settlement and group choices. Initial rough setups demonstrate overturn, ravine fall and catastrophic crushing; later route tickets integrate their real triggers.
+- [x] Serious faults or timer zero guarantee failure; allow the interesting physical aftermath and an offline dry examiner response before results, without continuing the remaining test. Recovery cannot revoke failure.
+- [x] Replace host-only immediate return with Escape-overlay concession requiring three current agreements while active, with time running. Settled outcomes cannot be overridden.
+- [x] Show rough shared results with changeable Retry/Waiting room choices; three matching choices transition. Retry creates fresh state beside a secured truck, starts on synchronized arrival and bypasses booking/chairs.
+- [x] Invalidate choices on membership/attempt changes; reject stale/duplicate commands. Guest departure returns survivors; host loss sends guests to their own rooms with no migration. Unfinished attempts are abandoned.
+- [x] Test time, concession/departure races, once-only scored events and clean reset through public attempt behavior plus scene aftermath. Record temporary presentation for 23/25/26; passing and persistence arrive in 12/17.
 
 ## Implementation and verification guidance
 
@@ -32,3 +32,5 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 - From ticket 01: Replace the temporary host Back action and bare settled-at-zero behavior with immutable assessment, concession, aftermath and unanimous retry/return.
 
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.
+
+- 2026-09-13: Implemented host-owned immutable failure/aftermath, active unanimous Escape concession, changed shared retry/return choices and synchronized clean retries. Agent criteria verified: public-boundary suite, actual collision aftermath (crush/ravine/bank overturn and post-timeout ejection), full regressions, native windowed transition fixture, and three-peer ENet concession/audio/results/retry RPC fixture all pass. Read [05-evidence.md](../05-evidence.md) for build-linked logs, visual capture, review corrections, initial failed audio render and exact environment limitations. Human Steam cooperation remains 06; passing/records 12/17; temporary speech/aftermath/results replacement 23/25/26. Status intentionally remains claimed pending orchestrator acceptance and its single commit.

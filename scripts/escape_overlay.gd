@@ -1,11 +1,11 @@
 class_name EscapeOverlay
 extends CanvasLayer
-## A small panel over the world: mic mode, mute, quit, and Back for the host in
+## A small panel over the world: mic mode, mute, quit, and unanimous concession in
 ## the test area. Not a menu, not a pause; the room and voice run on behind it
 ## (spec section 9).
 
 const QUIT_COPY := "Quit to desktop"
-const BACK_COPY := "Back to the waiting room"
+const BACK_COPY := "Concede test"
 const OPEN_MIC_COPY := "Open mic"
 const PUSH_TO_TALK_COPY := "Push to talk"
 const MUTE_COPY := "Mute microphone"
@@ -151,7 +151,11 @@ func _show(shown: bool) -> void:
 func _refresh_actions() -> void:
 	if _back == null or _waiting == null:
 		return
-	_back.visible = _waiting.is_in_test_area() and multiplayer.is_server()
+	_back.visible = _waiting.is_in_test_area() and _waiting.room_state().attempt.phase == &"active"
+	var choices: Dictionary = _waiting.room_state().attempt.choices
+	var own: int = _waiting.player_id_for_peer(multiplayer.get_unique_id())
+	_back.text = "Withdraw agreement" if choices.get(own, &"") == &"concede" else BACK_COPY
+	_back.text += " (%d/3)" % choices.values().count(&"concede")
 
 
 func _refresh_voice() -> void:
@@ -189,8 +193,9 @@ func _on_quit() -> void:
 func _on_back() -> void:
 	if _waiting == null:
 		return
-	close()
-	_waiting.request_return_from_test_area()
+	var own: int = _waiting.player_id_for_peer(multiplayer.get_unique_id())
+	_waiting.choose_attempt(&"continue" if _waiting.room_state().attempt.choices.get(own, &"") == &"concede" else &"concede")
+	_refresh_actions()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -206,3 +211,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	open()
 	get_viewport().set_input_as_handled()
+
+func _process(_delta: float) -> void:
+	if _open:
+		_refresh_actions()

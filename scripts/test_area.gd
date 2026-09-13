@@ -17,6 +17,11 @@ var _own_role: Label
 var examiner_audio: AudioStreamPlayer
 var examiner_subtitle: Label
 var subtitle_time := 0.0
+var _announced_result := ""
+var _results: PanelContainer
+var _assessment: Label
+var _retry: Button
+var _return: Button
 
 
 func _ready() -> void:
@@ -98,6 +103,25 @@ func _build() -> void:
 	examiner_subtitle.position = Vector2(16, 550)
 	examiner_subtitle.add_theme_font_size_override("font_size", 22)
 	own_role_layer.add_child(examiner_subtitle)
+	_results = PanelContainer.new()
+	_results.position = Vector2(24, 170)
+	_results.custom_minimum_size = Vector2(320, 200)
+	own_role_layer.add_child(_results)
+	var column := VBoxContainer.new()
+	_results.add_child(column)
+	_assessment = Label.new()
+	column.add_child(_assessment)
+	_retry = Button.new()
+	_retry.text = "Retry"
+	_retry.pressed.connect(func(): (get_parent() as WaitingRoom).choose_attempt(&"retry"))
+	column.add_child(_retry)
+	_return = Button.new()
+	_return.text = "Waiting room"
+	_return.pressed.connect(func(): (get_parent() as WaitingRoom).choose_attempt(&"waiting_room"))
+	column.add_child(_return)
+	_results.hide()
+	# Temporary side-bank overturn sample; route tickets replace this geometry.
+	_add_box("ApronBump", Vector3(3, 1.4, 10), Vector3(-25, 0.7, -12), Color("777d7b"), true)
 	# Temporary uneven-ground checkpoint sample; route ticket 12 owns replacement.
 	_add_box("ApronBump", Vector3(7, 0.9, 1.5), Vector3(-14, 0.45, -8), Color("777d7b"), true)
 	# Cooperation course only. Tickets 09–12 replace this apron with the fixed route.
@@ -111,6 +135,9 @@ func _build() -> void:
 		_add_box("ParkingLine", Vector3(8, 0.02, 0.12), Vector3(16, 0.02, z), Color("e4b752"), false)
 
 func announce_arrival() -> void:
+	_announced_result = ""
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	examiner_audio.stream = load("res://assets/monster_truck/temporary_request.wav")
 	examiner_audio.play()
 	examiner_subtitle.text = "I would like to see a turn, a reverse, and a parked vehicle."
 	subtitle_time = 7.0
@@ -118,6 +145,23 @@ func announce_arrival() -> void:
 func _process(delta: float) -> void:
 	subtitle_time = maxf(0.0, subtitle_time - delta)
 	examiner_subtitle.visible = visible and subtitle_time > 0.0
+	var waiting := get_parent() as WaitingRoom
+	if waiting == null or waiting.room_state() == null:
+		return
+	var state: AttemptState = waiting.room_state().attempt
+	var result := state.assessment()
+	_results.visible = visible and state.phase == &"settled"
+	if not result.is_empty() and visible and _announced_result != state.id:
+		_announced_result = state.id
+		examiner_audio.stream = load("res://assets/monster_truck/temporary_failure.wav")
+		examiner_audio.play()
+		examiner_subtitle.text = "We will leave it there."
+		subtitle_time = 5.0
+	if _results.visible:
+		_assessment.text = "DRIVING TEST — FAILED\n%s\nMinor faults: %d" % [str(result.reason).capitalize(), result.minor_faults]
+		_retry.text = "Retry (%d/3)" % state.choices.values().count(&"retry")
+		_return.text = "Waiting room (%d/3)" % state.choices.values().count(&"waiting_room")
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
 func _add_box(box_name: String, size: Vector3, at: Vector3, color: Color, collide: bool) -> void:

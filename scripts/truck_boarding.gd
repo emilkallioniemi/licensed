@@ -49,6 +49,7 @@ func start(owner_room: WaitingRoom) -> void:
 	truck.motion = Vector3.ZERO
 	truck.angular_motion = 0.0
 	truck.vertical_speed = 0.0
+	truck.visuals.transform = Transform3D.IDENTITY
 	for learner in room._learners():
 		learner.set_truck_movement(true)
 
@@ -136,11 +137,19 @@ func _accept_interaction(peer_id: int, attempt_id: String, seq: int, control: St
 	_send_snapshot(true)
 
 func _physics_process(_delta: float) -> void:
-	if not active or room.room_state().attempt.phase != &"active":
+	if not active or room.room_state().attempt.phase not in [&"active", &"aftermath", &"settled"]:
 		return
 	if not queued_snapshot.is_empty():
 		_apply_snapshot(queued_snapshot)
 		queued_snapshot = {}
+	if room.room_state().attempt.phase != &"active":
+		if multiplayer.is_server():
+			var previous := truck.body.global_transform
+			advance_truck()
+			for learner in room._learners():
+				_simulate(learner, {}, previous)
+			_send_snapshot(false)
+		return
 	var local := room._learner_of(multiplayer.get_unique_id())
 	if local == null:
 		return

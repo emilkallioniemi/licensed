@@ -27,4 +27,6 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 
 ## Comments
 
+- From ticket 05: Add personal records and retained-best data to the shared results, preserving immutable settlement.
+
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.

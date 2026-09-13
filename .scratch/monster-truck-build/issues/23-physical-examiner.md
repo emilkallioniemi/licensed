@@ -27,6 +27,8 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 
 ## Comments
 
+- From ticket 05: Replace the single temporary offline failure line/voice with complete categories and alternatives; validate nonempty generated audio and actual playback.
+
 - From ticket 03: Replace assets/monster_truck/temporary_request.wav with complete offline examiner coverage, repeats, reactions and mix; the retained PowerShell source demonstrates the current speech path.
 
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.

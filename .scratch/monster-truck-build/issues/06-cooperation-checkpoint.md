@@ -27,6 +27,8 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 
 ## Comments
 
+- From ticket 05: Evaluate shared failure, six-second provisional aftermath, concession and desire to retry with three humans over Steam; agent three-peer and display checks pass (05-evidence.md).
+
 - From ticket 04: Evaluate provisional recovery tuning, ejection fairness and responsiveness with three humans over Steam. Native ENet checks pass; they do not establish Steam feel.
 
 - From tickets 02–03: Agent fixtures verify physical boarding, roof riding, moving releases and actual shared driving. Exactly three humans must still judge control necessity, cooperation and Steam feel; see 02-evidence.md and 03-evidence.md.

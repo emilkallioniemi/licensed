@@ -1,0 +1,43 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[S_API FAIL] SteamAPI_Init() failed; ipcserver GetSteamPath failed.
+[S_API] SteamAPI_Init(): SteamAPI_IsSteamRunning() did not locate a running instance of Steam.
+[S_API] SteamAPI_Init(): Could not determine Steam client install directory.
+SteamClient: Steam is not running (status 1: Could not determine Steam client install directory.)
+FIXTURE: native ENet room bootstrap; Steam login is not under test
+WaitingRoom: the room waits for 3
+WaitingRoom: spawned Learner_1 palette 01 local=true
+WaitingRoom:  arrived as palette 01 (1 of 3)
+FIXTURE: native ENet room bootstrap; Steam login is not under test
+WaitingRoom: the room waits for 3
+FIXTURE: native ENet room bootstrap; Steam login is not under test
+WaitingRoom: peer 1523729904 connected
+WaitingRoom: spawned Learner_1 palette 01 local=false
+WaitingRoom: spawned Learner_1523729904 palette 02 local=false
+WaitingRoom:  (2) arrived as palette 02 (2 of 3)
+WaitingRoom: the door for peer 1523729904
+WaitingRoom: spawned Learner_1523729904 palette 02 local=true
+WaitingRoom: the room waits for 3
+WaitingRoom: peer 1375041462 connected
+WaitingRoom: spawned Learner_1 palette 01 local=false
+WaitingRoom: spawned Learner_1523729904 palette 02 local=false
+WaitingRoom: spawned Learner_1375041462 palette 03 local=false
+WaitingRoom:  (3) arrived as palette 03 (3 of 3)
+WaitingRoom: the door for peer 1375041462
+WaitingRoom: spawned Learner_1375041462 palette 03 local=false
+WaitingRoom: the door for peer 1375041462
+WaitingRoom: spawned Learner_1375041462 palette 03 local=true
+BOARD deck: (1.1, 1.600612, 2.051208) supported
+BOARD front: (-0.375213, 1.600987, -0.902588)
+BOARD roof: (-1.5, 4.251115, 1.881592) supported
+BOARD guest pedals: (0.524773, 1.600987, -0.902542)
+DRIVE: real three-peer turn, stopped reverse, and persistent parking verified
+BOARD correction counts: 2, 3
+RECOVERY: delayed snapshots, shared ejection, landing, entrapment and collection verified
+WaitingRoom: peer 1375041462 left; 2 in the room
+PASS: three development peers launch by RPC, share arrival/timer and return on guest loss
+PASS: physical boarding, roof riding/detachment, guest look, moving release, contention and interruption recovery
+WARNING: 3 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

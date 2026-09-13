@@ -189,6 +189,7 @@ func _advance_suspension(delta: float) -> void:
 	# Terrain is layer 8, separate from hull-blocking structures (4). Four tyre
 	# probes preserve real vertical support while the arcade cab stays upright.
 	var heights: Array[float] = []
+	var side_heights: Dictionary = {}
 	for x in [-2.75, 2.75]:
 		for z in [-1.8, 1.8]:
 			var at := body.to_global(Vector3(x, 0, z))
@@ -196,6 +197,13 @@ func _advance_suspension(delta: float) -> void:
 			var hit := get_world_3d().direct_space_state.intersect_ray(ray)
 			if not hit.is_empty():
 				heights.append(hit.position.y)
+				side_heights[x] = hit.position.y
+	# A rough side bank makes overturn observable before the full route arrives.
+	# Once on its side the truck remains a wreck; no player righting action.
+	if absf(body.rotation.z) > 0.25:
+		body.rotation.z = move_toward(body.rotation.z, signf(body.rotation.z) * PI / 2.0, delta * 1.4)
+	elif side_heights.size() == 2 and absf(side_heights[-2.75] - side_heights[2.75]) > 1.2:
+		body.rotation.z = signf(side_heights[2.75] - side_heights[-2.75]) * 0.26
 	var before := vertical_speed
 	if heights.is_empty():
 		vertical_speed -= 9.8 * delta

@@ -63,7 +63,11 @@ func _verify() -> void:
 	_check(room.attempt.phase == &"active", "arrival commits the explicit active phase")
 	await create_timer(0.2).timeout
 	_check(room.attempt.remaining < 360.0, "the host timer runs without occupied controls")
-	waiting.request_return_from_test_area()
+	for id in [1001, 1002, 1003]:
+		room.attempt.choose(id, room.attempt.id, 1, &"concede")
+	room.attempt.tick(6.0)
+	for id in [1001, 1002, 1003]:
+		room.attempt.choose(id, room.attempt.id, 2, &"waiting_room")
 	_check(room.attempt.phase == &"departing", "return is an explicit replicated transition")
 	await create_timer(1.5).timeout
 	_check(waiting.kit.visible and not waiting.test_area.visible, "return restores the waiting room")

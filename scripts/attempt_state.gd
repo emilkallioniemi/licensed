@@ -5,6 +5,13 @@ extends RefCounted
 
 const DURATION := 360.0
 const LOAD_TIMEOUT := 30.0
+const AFTERMATH_DURATION := 6.0
+const SERIOUS_ACCIDENTS := [&"crushed", &"ravine", &"overturn"]
+var _result: Dictionary = {}
+var _aftermath_elapsed := 0.0
+var _serious_reason: StringName = &""
+var choices: Dictionary = {}
+var _choice_sequences: Dictionary = {}
 const CONTROLS := {&"front": Vector3(-1.2, 1.6, -1.3), &"pedals": Vector3(1.2, 1.6, -1.3), &"rear": Vector3(-1.2, 1.6, 1.3)}
 const CONTROL_REACH := 1.15
 var operators: Dictionary = {}
@@ -58,6 +65,11 @@ func begin(booked_vehicle: StringName, participants: Array[int]) -> void:
 	accidents.clear()
 	accident_states.clear()
 	accident_sequence = 0
+	_serious_reason = &""
+	choices.clear()
+	_choice_sequences.clear()
+	_result.clear()
+	_aftermath_elapsed = 0.0
 	remaining = DURATION
 	_loading_elapsed = 0.0
 	phase = &"loading"
@@ -77,25 +89,38 @@ func tick(delta: float) -> void:
 		_loading_elapsed += maxf(0.0, delta)
 		if _loading_elapsed >= LOAD_TIMEOUT:
 			depart()
+	elif phase == &"aftermath":
+		_aftermath_elapsed += maxf(0.0, delta)
+		if _aftermath_elapsed >= AFTERMATH_DURATION:
+			phase = &"settled"
 	elif phase == &"active":
 		remaining = maxf(0.0, remaining - maxf(0.0, delta))
-		# Ticket 05 adds immutable scoring and the timeout assessment.
+		if _serious_reason != &"":
+			_settle_failure(_serious_reason)
+			return
 		if remaining == 0.0:
-			phase = &"settled"
+			_settle_failure(&"timeout")
 
 
 func depart() -> void:
 	if phase != &"waiting":
+		choices.clear()
 		phase = &"departing"
 
 
 func snapshot() -> Dictionary:
 	return {"id": id, "phase": phase, "vehicle": vehicle, "remaining": remaining,
 		"participants": _participants.duplicate(), "ready": _ready.duplicate(),
+		"serious_reason": _serious_reason, "result": assessment(), "aftermath_elapsed": _aftermath_elapsed, "choices": choices.duplicate(), "choice_sequences": _choice_sequences.duplicate(),
 		"loading_elapsed": _loading_elapsed, "operators": operators.duplicate(), "generations": generations.duplicate(), "driving": driving_snapshot(), "recovery": recovery_snapshot()}
 
 
 func restore(data: Dictionary) -> void:
+	_serious_reason = data.get("serious_reason", &"")
+	_result = data.get("result", {}).duplicate(true)
+	_aftermath_elapsed = data.get("aftermath_elapsed", 0.0)
+	choices = data.get("choices", {}).duplicate()
+	_choice_sequences = data.get("choice_sequences", {}).duplicate()
 	id = data["id"]
 	phase = data["phase"]
 	vehicle = data["vehicle"]
@@ -190,6 +215,8 @@ func _valid_operator(player_id: int, attempt_id: String, generation: int) -> boo
 	return phase == &"active" and attempt_id == id and control_of(player_id) != &"" and generations.get(player_id, 0) == generation
 
 func advance_driving(delta: float) -> void:
+	if phase != &"active":
+		driving_inputs.clear()
 	var throttle := false
 	var brake := false
 	for player_id in driving_inputs:
@@ -226,18 +253,20 @@ func restore_driving(data: Dictionary) -> void:
 
 ## Called only by host world simulation, never by an accident RPC from a guest.
 func observe_accident(player_id: int, attempt_id: String, kind: StringName, at: Vector3, impulse := Vector3.ZERO) -> bool:
-	if attempt_id != id or phase != &"active" or not _participants.has(player_id):
+	if attempt_id != id or phase not in [&"active", &"aftermath", &"settled"] or not _participants.has(player_id):
 		return false
-	if kind not in [&"ejected", &"landed", &"trapped", &"rescued", &"crushed", &"ravine"] or not at.is_finite() or not impulse.is_finite():
+	if kind not in [&"ejected", &"landed", &"trapped", &"rescued", &"crushed", &"ravine", &"overturn"] or not at.is_finite() or not impulse.is_finite():
 		return false
 	var prior: StringName = accident_states.get(player_id, &"")
-	if prior == kind or prior in [&"crushed", &"ravine"]:
+	if prior == kind or prior in SERIOUS_ACCIDENTS:
 		return false
 	accident_states[player_id] = kind
 	if kind in [&"ejected", &"trapped", &"crushed", &"ravine"]:
 		_drop_operator(player_id)
+	if kind in SERIOUS_ACCIDENTS and _serious_reason == &"":
+		_serious_reason = kind
 	accident_sequence += 1
-	accidents.append({"sequence": accident_sequence, "player": player_id, "kind": kind, "position": at, "impulse": impulse, "severity": &"serious" if kind in [&"crushed", &"ravine"] else &"none"})
+	accidents.append({"sequence": accident_sequence, "player": player_id, "kind": kind, "position": at, "impulse": impulse, "severity": &"serious" if kind in SERIOUS_ACCIDENTS else &"none"})
 	# Current conditions retain catastrophes even after the recent event window.
 	if accidents.size() > 32:
 		accidents.pop_front()
@@ -257,3 +286,42 @@ func _drop_operator(player_id: int) -> void:
 		operators.erase(control)
 		neutralize_driving(player_id)
 		generations[player_id] = generations.get(player_id, 0) + 1
+
+func assessment() -> Dictionary:
+	return _result.duplicate(true)
+
+func _settle_failure(reason: StringName) -> void:
+	if phase != &"active" or not _result.is_empty():
+		return
+	_result = {"attempt": id, "outcome": &"failed", "reason": reason, "participants": _participants.duplicate(), "minor_faults": 0}
+	choices.clear()
+	phase = &"aftermath"
+	driving_inputs.clear()
+
+## Reliable intentions are scoped to the current trio and unique attempt.
+func choose(player_id: int, attempt_id: String, sequence: int, choice: StringName) -> bool:
+	if attempt_id != id or not _participants.has(player_id) or _participants.size() != 3:
+		return false
+	if phase == &"active":
+		if choice not in [&"concede", &"continue"]:
+			return false
+	elif phase == &"settled":
+		if choice not in [&"retry", &"waiting_room"]:
+			return false
+	else:
+		return false
+	if sequence <= _choice_sequences.get(player_id, 0):
+		return false
+	_choice_sequences[player_id] = sequence
+	choices[player_id] = choice
+	for participant in _participants:
+		if choices.get(participant, &"") != choice:
+			return true
+	match choice:
+		&"concede":
+			# Observed catastrophe wins a concession arriving in this step.
+			tick(0.0)
+			_settle_failure(&"concession")
+		&"retry": begin(vehicle, _participants.duplicate())
+		&"waiting_room": depart()
+	return true
