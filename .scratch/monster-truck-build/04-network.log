@@ -1,0 +1,62 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[S_API FAIL] SteamAPI_Init() failed; ipcserver GetSteamPath failed.
+[S_API] SteamAPI_Init(): SteamAPI_IsSteamRunning() did not locate a running instance of Steam.
+[S_API] SteamAPI_Init(): Could not determine Steam client install directory.
+SteamClient: Steam is not running (status 1: Could not determine Steam client install directory.)
+WaitingRoom: the room waits for 3
+ERROR: Custom spawn requires the 'spawn_function' property to be a valid callable.
+   at: spawn (modules/multiplayer/multiplayer_spawner.cpp:325)
+   GDScript backtrace (most recent call first):
+       [0] _accept_player (res://scripts/waiting_room.gd:143)
+       [1] _on_transport_ready (res://scripts/waiting_room.gd:94)
+       [2] verify (res://tests/verify_launch_network.gd:36)
+WaitingRoom:  arrived as palette 01 (1 of 3)
+WaitingRoom: the room waits for 3
+WaitingRoom: peer 1365719570 connected
+ERROR: Custom spawn requires the 'spawn_function' property to be a valid callable.
+   at: spawn (modules/multiplayer/multiplayer_spawner.cpp:325)
+   GDScript backtrace (most recent call first):
+       [0] _accept_player (res://scripts/waiting_room.gd:143)
+       [1] _report_identity (res://scripts/waiting_room.gd:131)
+WaitingRoom:  (2) arrived as palette 02 (2 of 3)
+WaitingRoom: the room waits for 3
+WaitingRoom: peer 848649632 connected
+ERROR: Custom spawn requires the 'spawn_function' property to be a valid callable.
+   at: spawn (modules/multiplayer/multiplayer_spawner.cpp:325)
+   GDScript backtrace (most recent call first):
+       [0] _accept_player (res://scripts/waiting_room.gd:143)
+       [1] _report_identity (res://scripts/waiting_room.gd:131)
+WaitingRoom:  (3) arrived as palette 03 (3 of 3)
+ERROR: WaitingRoom: no learner for peer 1365719570
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _wait_for_learner (res://scripts/waiting_room.gd:753)
+ERROR: WaitingRoom: no learner for peer 1365719570
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _wait_for_learner (res://scripts/waiting_room.gd:753)
+ERROR: WaitingRoom: no learner for peer 848649632
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _wait_for_learner (res://scripts/waiting_room.gd:753)
+ERROR: WaitingRoom: no learner for peer 848649632
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _wait_for_learner (res://scripts/waiting_room.gd:753)
+ERROR: WaitingRoom: no learner for peer 848649632
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _wait_for_learner (res://scripts/waiting_room.gd:753)
+SCRIPT ERROR: Invalid assignment of property or key 'global_position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: verify_boarding (res://tests/verify_launch_network.gd:174)
+          GDScript backtrace (most recent call first):
+              [0] verify_boarding (res://tests/verify_launch_network.gd:174)
+              [1] verify (res://tests/verify_launch_network.gd:56)
+SCRIPT ERROR: Invalid call. Nonexistent function 'apply_recovery' in base 'Nil'.
+          at: verify_recovery_network (res://tests/verify_launch_network.gd:351)
+          GDScript backtrace (most recent call first):
+              [0] verify_recovery_network (res://tests/verify_launch_network.gd:351)
+WaitingRoom: peer 848649632 left; 2 in the room
+PASS: three development peers launch by RPC, share arrival/timer and return on guest loss
+PASS: physical boarding, roof riding/detachment, guest look, moving release, contention and interruption recovery

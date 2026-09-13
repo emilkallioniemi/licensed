@@ -1,0 +1,38 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: Condition "ret != noErr" is true. Returning: ""
+   at: get_system_ca_certificates (platform/macos/os_macos.mm:1035)
+[S_API FAIL] SteamAPI_Init() failed; ipcserver init failed .
+[S_API] SteamAPI_Init(): SteamAPI_IsSteamRunning() did not locate a running instance of Steam.
+[S_API] SteamAPI_Init(): Could not determine Steam client install directory.
+SteamClient: Steam is not running (status 1: Could not determine Steam client install directory.)
+READY_UP_PROBE: seating three players
+
+================================================================
+handle_crash: Program crashed with signal 11
+Engine version: Godot Engine v4.7.2.stable.official (ed1daf0bf001b61586d9930840f2f1394092c079)
+Dumping the backtrace. Please include this when reporting the bug on: https://github.com/godotengine/godot/issues
+Load address: 100bf0000
+
+[1] 18b533744 (libsystem_platform.dylib+3744) - _sigtramp + 56
+[2] 1018fada8 (main+d0ada8) - main + 6021812
+[3] 1018fada8 (main+d0ada8) - main + 6021812
+[4] 101862074 (main+c72074) - main + 5395840
+[5] 101861e08 (main+c71e08) - main + 5395220
+[6] 101864518 (main+c74518) - main + 5405220
+[7] 1071e718c (main+65f718c) - GL_ShadingRateQCOM + 22734760
+[8] 10569feb4 (main+4aafeb4) - ZSTD_decompressStream_simpleArgs + 3538512
+[9] 1056a35d8 (main+4ab35d8) - ZSTD_decompressStream_simpleArgs + 3552628
+[10] 105984ac4 (main+4d94ac4) - ZSTD_decompressStream_simpleArgs + 6572640
+[11] 103aaced0 (main+2ebced0) - SDL_GetPerformanceFrequency + 17810996
+[12] 103aad41c (main+2ebd41c) - SDL_GetPerformanceFrequency + 17812352
+[13] 101361ea4 (main+771ea4) - main + 152496
+[14] 1012da498 (main+6ea498) - mvk::SPIRVToMSLConverter::convert(mvk::SPIRVToMSLConversionConfiguration&, mvk::SPIRVToMSLConversionResult&, bool, bool, bool)
+[15] 10133cea4 (main+74cea4) - main (in Godot) + 944
+[16] 18b16be00 (dyld+1fe00) - start + 6992
+-- END OF C++ BACKTRACE --
+================================================================
+GDScript backtrace (most recent call first):
+    [0] _verify (res://tests/verify_ready_up.gd:52)
+-- END OF GDSCRIPT BACKTRACE --
+================================================================

@@ -1,0 +1,97 @@
+ERROR: No GDExtension library found for current OS and architecture (macos.arm64) in configuration file: res://addons/godotsteam/godotsteam.gdextension
+   at: parse_gdextension_file (core/extension/gdextension_library_loader.cpp:369)
+ERROR: GDExtension dynamic library not found: 'res://addons/godotsteam/godotsteam.gdextension'.
+   at: open_library (core/extension/gdextension.cpp:810)
+ERROR: Error loading extension: 'res://addons/godotsteam/godotsteam.gdextension'.
+   at: load_extensions (core/extension/gdextension_manager.cpp:333)
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/steam_client.gd:19)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/steam_client.gd:39)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/steam_client.gd:40)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/steam_client.gd:45)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/steam_client.gd:46)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/steam_client.gd:47)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/steam_client.gd:48)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/steam_client.gd:49)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/steam_client.gd:49)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/steam_client.gd:56)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/steam_client.gd:67)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/steam_client.gd:67)
+ERROR: Failed to load script "res://scripts/steam_client.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+ERROR: Failed to instantiate an autoload, script 'res://scripts/steam_client.gd' does not inherit from 'Node'.
+   at: start (main/main.cpp:4539)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:64)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:65)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:120)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:139)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:172)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:177)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:177)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:184)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:189)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:190)
+SCRIPT ERROR: Parse Error: Identifier "SteamMultiplayerPeer" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:191)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "peer" variable because the value doesn't have a set type.
+          at: GDScript::reload (res://scripts/transport.gd:191)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "err" variable because the value doesn't have a set type.
+          at: GDScript::reload (res://scripts/transport.gd:192)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:210)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:213)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:214)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:215)
+SCRIPT ERROR: Parse Error: Identifier "SteamMultiplayerPeer" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:236)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "peer" variable because the value doesn't have a set type.
+          at: GDScript::reload (res://scripts/transport.gd:236)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "err" variable because the value doesn't have a set type.
+          at: GDScript::reload (res://scripts/transport.gd:237)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:240)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:255)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:310)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:312)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:314)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:316)
+SCRIPT ERROR: Parse Error: Identifier "Steam" not declared in the current scope.
+          at: GDScript::reload (res://scripts/transport.gd:324)
+ERROR: Failed to load script "res://scripts/transport.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+ERROR: Failed to instantiate an autoload, script 'res://scripts/transport.gd' does not inherit from 'Node'.
+   at: start (main/main.cpp:4539)
+ERROR: Condition "ret != noErr" is true. Returning: ""
+   at: get_system_ca_certificates (platform/macos/os_macos.mm:1035)
+Recovery failures: 0

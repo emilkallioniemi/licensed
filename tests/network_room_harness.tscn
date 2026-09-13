@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/waiting_room.tscn" id="1_room"]
+[ext_resource type="Script" path="res://tests/network_room_harness.gd" id="2_bootstrap"]
+
+[node name="WaitingRoom" instance=ExtResource("1_room")]
+script = ExtResource("2_bootstrap")

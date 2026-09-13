@@ -24,6 +24,7 @@ var pending_actions: Array[Dictionary] = []
 var driving_armed := false
 var hint_time := 0.0
 var release_pending := false
+var recovery := TruckRecovery.new()
 
 func start(owner_room: WaitingRoom) -> void:
 	room = owner_room
@@ -47,6 +48,7 @@ func start(owner_room: WaitingRoom) -> void:
 	truck.body.transform = Transform3D.IDENTITY
 	truck.motion = Vector3.ZERO
 	truck.angular_motion = 0.0
+	truck.vertical_speed = 0.0
 	for learner in room._learners():
 		learner.set_truck_movement(true)
 
@@ -194,8 +196,7 @@ func _physics_process(_delta: float) -> void:
 
 func _simulate(learner: Learner, command: Dictionary, previous: Transform3D) -> void:
 	var player_id: int = room.player_id_for_peer(learner.get_multiplayer_authority())
-	var control := room.room_state().attempt.control_of(player_id)
-	learner.simulate_truck_walk(command, truck.body, previous, control, STEP)
+	recovery.simulate(learner, command, truck, previous, room.room_state().attempt, player_id, STEP, multiplayer.is_server())
 
 @rpc("any_peer", "call_remote", "unreliable", 2)
 func _walk(attempt_id: String, command: Dictionary) -> void:
@@ -242,7 +243,7 @@ func _send_snapshot(reliable: bool) -> void:
 		var peer_id := learner.get_multiplayer_authority()
 		learners[peer_id] = learner.truck_snapshot()
 		learners[peer_id]["ack"] = acknowledged.get(peer_id, 0)
-	var data := {"attempt": room.room_state().attempt.id, "sequence": snapshot_sequence, "truck": truck.body.global_transform, "motion": truck.motion, "angular": truck.angular_motion, "learners": learners, "operators": room.room_state().attempt.operators.duplicate(), "generations": room.room_state().attempt.generations.duplicate()}
+	var data := {"attempt": room.room_state().attempt.id, "sequence": snapshot_sequence, "truck": truck.body.global_transform, "motion": truck.motion, "angular": truck.angular_motion, "vertical": truck.vertical_speed, "recovery": room.room_state().attempt.recovery_snapshot(), "learners": learners, "operators": room.room_state().attempt.operators.duplicate(), "generations": room.room_state().attempt.generations.duplicate()}
 	data["driving"] = room.room_state().attempt.driving_snapshot()
 	data["remaining"] = room.room_state().attempt.remaining
 	if reliable:
@@ -285,6 +286,7 @@ func _apply_snapshot(data: Dictionary) -> void:
 	room.room_state().attempt.operators = data.operators.duplicate()
 	room.room_state().attempt.generations = data.generations.duplicate()
 	room.room_state().attempt.restore_driving(data.driving)
+	room.room_state().attempt.restore_recovery(data.recovery)
 	room.room_state().attempt.remaining = data.remaining
 	var action_ack: int = data.driving.toggles.get(player_id, 0)
 	while not pending_actions.is_empty() and pending_actions[0].sequence <= action_ack:
@@ -294,6 +296,7 @@ func _apply_snapshot(data: Dictionary) -> void:
 	truck.body.global_transform = data.truck
 	truck.motion = data.motion
 	truck.angular_motion = data.angular
+	truck.vertical_speed = data.vertical
 	var confirmed_control := room.room_state().attempt.control_of(player_id)
 	_local_control = confirmed_control
 	if confirmed_control != &"" and prior_control != confirmed_control:

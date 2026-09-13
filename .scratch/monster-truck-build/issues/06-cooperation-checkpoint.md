@@ -27,6 +27,8 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 
 ## Comments
 
+- From ticket 04: Evaluate provisional recovery tuning, ejection fairness and responsiveness with three humans over Steam. Native ENet checks pass; they do not establish Steam feel.
+
 - From tickets 02–03: Agent fixtures verify physical boarding, roof riding, moving releases and actual shared driving. Exactly three humans must still judge control necessity, cooperation and Steam feel; see 02-evidence.md and 03-evidence.md.
 
 - From ticket 01: Three-peer development ENet launch and display transition checks pass; these do not establish three-human Steam cooperation or feel acceptance.

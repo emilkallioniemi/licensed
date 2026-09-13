@@ -246,7 +246,7 @@ func _update_presentation(delta: float, fraction: float) -> void:
 		if not global_position.is_equal_approx(_current_position):
 			_previous_position = global_position
 			_current_position = global_position
-		var eye_height := SEATED_EYE_HEIGHT if _seated else EYE_HEIGHT
+		var eye_height := 0.6 if movement_mode in [&"trapped", &"crushed"] else (SEATED_EYE_HEIGHT if _seated else EYE_HEIGHT)
 		_eye_height = lerpf(_eye_height, eye_height, 1.0 - exp(-16.0 * delta)) if truck_movement else eye_height
 		camera.global_transform = Transform3D(
 			global_basis * Basis(Vector3.RIGHT, _pitch),
@@ -260,6 +260,7 @@ func _update_presentation(delta: float, fraction: float) -> void:
 		else:
 			_remote_pose = _remote_pose.interpolate_with(global_transform, 1.0 - exp(-REMOTE_RESPONSE * delta))
 		visual.global_transform = _remote_pose * _visual_offset
+		visual.scale.y = 0.35 if movement_mode in [&"trapped", &"crushed"] else 1.0
 		name_tag.global_transform = _remote_pose * _tag_offset
 
 
@@ -292,6 +293,7 @@ var movement_mode: StringName = &"independent"
 var _saved_replication: SceneReplicationConfig
 var _correction := Vector3.ZERO
 var _detach_velocity := Vector3.ZERO
+var ejection_time := 0.0
 
 func set_truck_movement(enabled: bool) -> void:
 	truck_movement = enabled
@@ -306,8 +308,10 @@ func set_truck_movement(enabled: bool) -> void:
 		platform_floor_layers = 4294967295
 	support = &""
 	movement_mode = &"independent"
+	ejection_time = 0.0
 	_detach_velocity = Vector3.ZERO
 	_correction = Vector3.ZERO
+	_recovery_pose()
 	_apply_local()
 
 func walk_intention() -> Dictionary:
@@ -316,6 +320,12 @@ func walk_intention() -> Dictionary:
 
 func simulate_truck_walk(command: Dictionary, truck_body: AnimatableBody3D, previous: Transform3D, control: StringName, delta: float) -> void:
 	_previous_position = global_position
+	ejection_time = maxf(0.0, ejection_time - delta)
+	if movement_mode in [&"trapped", &"crushed", &"ravine"]:
+		if command.has("yaw"):
+			rotation.y = command.yaw
+		_current_position = global_position
+		return
 	var carry := Vector3.ZERO
 	if support == &"truck":
 		var relative := previous.affine_inverse() * global_position
@@ -346,7 +356,7 @@ func simulate_truck_walk(command: Dictionary, truck_body: AnimatableBody3D, prev
 		velocity.y = JUMP_VELOCITY + carry.y
 		_detach_velocity = carry
 		support = &""
-	elif not is_on_floor():
+	elif not is_on_floor() or ejection_time > 0.0:
 		velocity.y -= 9.8 * delta
 	else:
 		velocity.y = 0
@@ -364,13 +374,13 @@ func simulate_truck_walk(command: Dictionary, truck_body: AnimatableBody3D, prev
 				floor_normal = contact.get_normal()
 	# A resting body need not produce a new slide contact every step. Confirm the
 	# actual surface under its feet rather than dropping support on idle frames.
-	if not jumped and velocity.y <= 0.0:
+	if not jumped and velocity.y <= 0.0 and ejection_time == 0.0:
 		var query := PhysicsRayQueryParameters3D.create(global_position + Vector3.UP * 0.08, global_position - Vector3.UP * 0.22, 1, [get_rid()])
 		var floor_hit := get_world_3d().direct_space_state.intersect_ray(query)
 		if not floor_hit.is_empty() and floor_hit.collider == truck_body and floor_hit.normal.y > 0.5:
 			on_truck = true
 			floor_normal = floor_hit.normal
-	if on_truck and not jumped:
+	if on_truck and not jumped and ejection_time == 0.0:
 		support = &"truck"
 		support_pose = truck_body.global_transform
 		movement_mode = &"climbing" if floor_normal.y < 0.98 else &"supported"
@@ -384,18 +394,41 @@ func simulate_truck_walk(command: Dictionary, truck_body: AnimatableBody3D, prev
 	_current_position = global_position
 
 func truck_snapshot() -> Dictionary:
-	return {"pose": support_pose.affine_inverse() * global_transform if support == &"truck" else global_transform, "velocity": velocity, "support": support, "mode": movement_mode, "detach": _detach_velocity}
+	return {"pose": support_pose.affine_inverse() * global_transform if support == &"truck" else global_transform, "velocity": velocity, "support": support, "mode": movement_mode, "detach": _detach_velocity, "ejection_time": ejection_time}
 
 func restore_truck_snapshot(data: Dictionary, truck_pose: Transform3D) -> void:
 	support = data.support
 	support_pose = truck_pose
 	global_transform = support_pose * data.pose if support == &"truck" else data.pose
+	set_seated(data.mode == &"occupied")
 	velocity = data.velocity
 	_detach_velocity = data.detach
+	ejection_time = data.get("ejection_time", 0.0)
 	movement_mode = data.mode
-	set_seated(movement_mode == &"occupied")
 	_previous_position = global_position
 	_current_position = global_position
+	_recovery_pose()
+
+func apply_recovery(mode: StringName, impulse := Vector3.ZERO) -> void:
+	set_seated(false)
+	support = &""
+	movement_mode = mode
+	velocity = impulse
+	_detach_velocity = impulse
+	if mode == &"independent":
+		ejection_time = 0.4 if impulse != Vector3.ZERO else 0.0
+	_recovery_pose()
+
+func _recovery_pose() -> void:
+	var pinned := movement_mode in [&"trapped", &"crushed"]
+	# Rough recoverable crouch: ticket 08 replaces this with the learner rig.
+	visual.scale.y = 0.35 if pinned else 1.0
+	var shape := $CollisionShape3D as CollisionShape3D
+	if not shape.shape.resource_local_to_scene:
+		shape.shape = shape.shape.duplicate()
+		shape.shape.resource_local_to_scene = true
+	shape.shape.height = 0.7 if pinned else 2.0
+	shape.position.y = 0.35 if pinned else 1.0
 
 func smooth_truck_correction(error: Vector3) -> void:
 	_correction = (_correction + error) if error.length() < TELEPORT_DISTANCE else Vector3.ZERO

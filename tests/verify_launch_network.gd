@@ -28,6 +28,9 @@ func verify() -> void:
 		peers.append(peer)
 		api.multiplayer_peer = peer
 		var room = load("res://scenes/waiting_room.tscn").instantiate()
+		if not root.get_node("SteamClient").is_running():
+			room.set_script(load("res://tests/network_room_harness.gd"))
+			print("FIXTURE: native ENet room bootstrap; Steam login is not under test")
 		room.name = "WaitingRoom"
 		branch.add_child(room)
 		rooms.append(room)
@@ -50,10 +53,17 @@ func verify() -> void:
 		check(room.test_area.visible and not room.kit.visible, "every peer presents arrival")
 		check(room.room_state().attempt.remaining < 360.0, "every peer receives the running timer")
 		check(room.room_state().attempt.id == host.attempt.id, "every peer shares the same attempt identity")
+	for room in rooms:
+		if room._learner_of(room.multiplayer.get_unique_id()) == null:
+			check(false, "network fixture requires real spawned learners")
+			quit(1)
+			return
 	if OS.get_cmdline_user_args().has("--capture-truck"):
 		await capture_truck()
 	if OS.get_cmdline_user_args().has("--boarding"):
 		await verify_boarding()
+	if OS.get_cmdline_user_args().has("--recovery"):
+		await verify_recovery_network()
 	# Lose one guest after arrival; survivors must observe departing, then reset.
 	rooms[2].multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 	peers[2].close()
@@ -324,3 +334,78 @@ func capture_truck() -> void:
 		await RenderingServer.frame_post_draw
 		viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/03-%s-sight.png" % control)
 	camera.queue_free()
+
+## Delayed application of complete host snapshots models a brief delivery stall.
+## Setup placement is a fixture; ejection and rescue use production collisions.
+func verify_recovery_network() -> void:
+	var host = rooms[0]
+	var guest = rooms[1]
+	var state: AttemptState = host.room_state().attempt
+	var truck: MonsterTruck = host.test_area.truck
+	for room in rooms:
+		room.test_area.boarding.test_intention = {"wish": Vector2.ZERO, "yaw": 0.0}
+		if state.control_of(room.player_id_for_peer(room.multiplayer.get_unique_id())) != &"":
+			room.test_area.boarding.interact()
+	await create_timer(0.2).timeout
+	state.speed = 0.0
+	state.parking_brake = true
+	state.front_angle = 0.0
+	state.rear_angle = 0.0
+	truck.body.transform = Transform3D.IDENTITY
+	truck.vertical_speed = 0.0
+	var peer_id: int = guest.multiplayer.get_unique_id()
+	var player_id: int = guest.player_id_for_peer(peer_id)
+	var body: Learner = host._learner_of(peer_id)
+	body.apply_recovery(&"independent")
+	body.global_position = truck.body.to_global(Vector3(0, 4.3, 0))
+	body.support = &"truck"
+	body.support_pose = truck.body.global_transform
+	await create_timer(0.25).timeout
+	var local: Learner = guest._learner_of(peer_id)
+	check(local.support == &"truck", "guest shares roof support before delivery stall")
+	guest.test_area.boarding.set_physics_process(false)
+	state.parking_brake = false
+	state.speed = 8.0
+	state.front_angle = 0.6
+	state.rear_angle = -0.6
+	await create_timer(0.25).timeout
+	check(body.support == &"" and state.accident_states.get(player_id) == &"ejected", "host resolves ejection during delayed snapshots")
+	state.speed = 0.0
+	state.parking_brake = true
+	guest.test_area.boarding.set_physics_process(true)
+	await create_timer(0.3).timeout
+	check(local.support == &"" and local.global_position.distance_to(body.global_position) < 0.6, "delayed correction preserves detached shared trajectory")
+	for room in rooms:
+		check(room.room_state().attempt.accident_states.get(player_id) == &"ejected", "all peers recover host accident observation")
+	await create_timer(2.0).timeout
+	check(state.accident_states.get(player_id) == &"landed", "shared harmless landing completes fall")
+	# Pin the former operator under the deck, then collect them by actual driving.
+	truck.body.transform = Transform3D.IDENTITY
+	truck.vertical_speed = 0.0
+	body.apply_recovery(&"independent")
+	body.global_position = truck.body.to_global(Vector3(0, 0.02, 0))
+	await create_timer(0.25).timeout
+	check(body.movement_mode == &"trapped" and local.movement_mode == &"trapped", "host and guest agree on physical deck entrapment")
+	check(local.global_position.distance_to(body.global_position) < 0.2, "trapped learner stays in shared world frame")
+	var collector: Learner = host._learner_of(1)
+	collector.apply_recovery(&"independent")
+	collector.global_position = truck.body.to_global(AttemptState.CONTROLS.pedals + Vector3(0, 0.05, 0.5))
+	collector.support = &"truck"
+	collector.support_pose = truck.body.global_transform
+	await create_timer(0.2).timeout
+	host.test_area.boarding.interact()
+	await create_timer(0.2).timeout
+	var collector_id: int = host.player_id_for_peer(1)
+	check(state.control_of(collector_id) == &"pedals", "friend physically takes pedals for rescue")
+	state.driving_action(collector_id, state.id, 100, state.generations[collector_id], &"direction")
+	state.driving_action(collector_id, state.id, 101, state.generations[collector_id], &"parking")
+	state.front_angle = 0.0
+	state.rear_angle = 0.0
+	host.test_area.boarding.test_intention = {"wish": Vector2.ZERO, "yaw": 0.0, "throttle": true}
+	await create_timer(2.1).timeout
+	host.test_area.boarding.test_intention = {"wish": Vector2.ZERO, "yaw": 0.0, "brake": true}
+	await create_timer(0.5).timeout
+	for room in rooms:
+		check(room.room_state().attempt.accident_states.get(player_id) == &"rescued", "all peers see physical truck rescue without teleport")
+	check(local.global_position.distance_to(body.global_position) < 0.3, "rescued guest correction agrees with host")
+	print("RECOVERY: delayed snapshots, shared ejection, landing, entrapment and collection verified")

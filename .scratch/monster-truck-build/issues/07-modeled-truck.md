@@ -27,6 +27,8 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 
 ## Comments
 
+- From ticket 04: Replace rough geometry while preserving support and rescue clearance; existing modeled lobby and learner are the presentation quality reference.
+
 - From ticket 03: Replace rough controls and floating physical labels with modeled instrument surfaces, retaining rotating axle pointers, sight restrictions and readable pedals instruments.
 
 - From ticket 02: Replace the rough boxes and long access ramps while preserving continuous ground/cab/roof access, moving release space and the physical boarding regression coverage.

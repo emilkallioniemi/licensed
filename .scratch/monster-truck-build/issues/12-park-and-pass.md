@@ -27,6 +27,8 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 
 ## Comments
 
+- From ticket 04: Replace temporary apron/bump and integrate grade response, rollback and uneven descent with ticket 04 support.
+
 - From ticket 03: Deliberate parking with persistent brake is verified; full footprint/tyre-contact manoeuvre scoring and the specified descent/bay remain this route's work.
 
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.

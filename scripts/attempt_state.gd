@@ -30,6 +30,11 @@ var driving_inputs: Dictionary = {}
 var driving_sequences: Dictionary = {}
 var driving_ages: Dictionary = {}
 var toggle_sequences: Dictionary = {}
+## Physical observations only; ticket 05 consumes these at its scoring boundary.
+## Stable event numbers plus current conditions survive missed snapshots.
+var accidents: Array = []
+var accident_states: Dictionary = {}
+var accident_sequence := 0
 
 
 func begin(booked_vehicle: StringName, participants: Array[int]) -> void:
@@ -50,6 +55,9 @@ func begin(booked_vehicle: StringName, participants: Array[int]) -> void:
 	driving_sequences.clear()
 	driving_ages.clear()
 	toggle_sequences.clear()
+	accidents.clear()
+	accident_states.clear()
+	accident_sequence = 0
 	remaining = DURATION
 	_loading_elapsed = 0.0
 	phase = &"loading"
@@ -84,7 +92,7 @@ func depart() -> void:
 func snapshot() -> Dictionary:
 	return {"id": id, "phase": phase, "vehicle": vehicle, "remaining": remaining,
 		"participants": _participants.duplicate(), "ready": _ready.duplicate(),
-		"loading_elapsed": _loading_elapsed, "operators": operators.duplicate(), "generations": generations.duplicate(), "driving": driving_snapshot()}
+		"loading_elapsed": _loading_elapsed, "operators": operators.duplicate(), "generations": generations.duplicate(), "driving": driving_snapshot(), "recovery": recovery_snapshot()}
 
 
 func restore(data: Dictionary) -> void:
@@ -99,6 +107,7 @@ func restore(data: Dictionary) -> void:
 	generations = data.get("generations", {}).duplicate()
 	if data.has("driving"):
 		restore_driving(data.driving)
+	restore_recovery(data.get("recovery", {}))
 
 
 ## Only the authoritative physical world supplies positions, in truck space.
@@ -117,10 +126,15 @@ func control_of(player_id: int) -> StringName:
 func request_control(player_id: int, attempt_id: String, sequence: int, control: StringName) -> bool:
 	if not _accept_interaction(player_id, attempt_id, sequence):
 		return false
+	if accident_states.get(player_id, &"") in [&"trapped", &"crushed", &"ravine"]:
+		return false
 	if not CONTROLS.has(control) or operators.has(control) or control_of(player_id) != &"":
 		return false
 	if not _learner_positions.has(player_id) or _learner_positions[player_id].distance_to(CONTROLS[control]) > CONTROL_REACH:
 		return false
+	# Confirmed seating ends an airborne condition; another jolt is a new fall.
+	if accident_states.get(player_id, &"") == &"ejected":
+		accident_states.erase(player_id)
 	operators[control] = player_id
 	generations[player_id] = generations.get(player_id, 0) + 1
 	return true
@@ -132,9 +146,7 @@ func release_control(player_id: int, attempt_id: String, sequence: int) -> bool:
 	var control := control_of(player_id)
 	if control == &"":
 		return false
-	operators.erase(control)
-	driving_inputs.erase(player_id)
-	generations[player_id] = generations.get(player_id, 0) + 1
+	_drop_operator(player_id)
 	return true
 
 
@@ -211,3 +223,37 @@ func restore_driving(data: Dictionary) -> void:
 	driving_ages = data.ages.duplicate()
 	driving_sequences = data.sequences.duplicate()
 	toggle_sequences = data.toggles.duplicate()
+
+## Called only by host world simulation, never by an accident RPC from a guest.
+func observe_accident(player_id: int, attempt_id: String, kind: StringName, at: Vector3, impulse := Vector3.ZERO) -> bool:
+	if attempt_id != id or phase != &"active" or not _participants.has(player_id):
+		return false
+	if kind not in [&"ejected", &"landed", &"trapped", &"rescued", &"crushed", &"ravine"] or not at.is_finite() or not impulse.is_finite():
+		return false
+	var prior: StringName = accident_states.get(player_id, &"")
+	if prior == kind or prior in [&"crushed", &"ravine"]:
+		return false
+	accident_states[player_id] = kind
+	if kind in [&"ejected", &"trapped", &"crushed", &"ravine"]:
+		_drop_operator(player_id)
+	accident_sequence += 1
+	accidents.append({"sequence": accident_sequence, "player": player_id, "kind": kind, "position": at, "impulse": impulse, "severity": &"serious" if kind in [&"crushed", &"ravine"] else &"none"})
+	# Current conditions retain catastrophes even after the recent event window.
+	if accidents.size() > 32:
+		accidents.pop_front()
+	return true
+
+func recovery_snapshot() -> Dictionary:
+	return {"sequence": accident_sequence, "states": accident_states.duplicate(), "events": accidents.duplicate(true)}
+
+func restore_recovery(data: Dictionary) -> void:
+	accident_sequence = data.get("sequence", 0)
+	accident_states = data.get("states", {}).duplicate()
+	accidents = data.get("events", []).duplicate(true)
+
+func _drop_operator(player_id: int) -> void:
+	var control := control_of(player_id)
+	if control != &"":
+		operators.erase(control)
+		neutralize_driving(player_id)
+		generations[player_id] = generations.get(player_id, 0) + 1

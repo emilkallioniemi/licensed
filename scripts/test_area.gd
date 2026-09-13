@@ -98,6 +98,8 @@ func _build() -> void:
 	examiner_subtitle.position = Vector2(16, 550)
 	examiner_subtitle.add_theme_font_size_override("font_size", 22)
 	own_role_layer.add_child(examiner_subtitle)
+	# Temporary uneven-ground checkpoint sample; route ticket 12 owns replacement.
+	_add_box("ApronBump", Vector3(7, 0.9, 1.5), Vector3(-14, 0.45, -8), Color("777d7b"), true)
 	# Cooperation course only. Tickets 09–12 replace this apron with the fixed route.
 	for at in [Vector3(-4, 0.6, -21), Vector3(4, 0.6, -21), Vector3(4, 0.6, -30), Vector3(12, 0.6, -30)]:
 		_add_box("Gate", Vector3(0.5, 1.2, 0.5), at, Color("e4b752"), true)
@@ -133,6 +135,8 @@ func _add_box(box_name: String, size: Vector3, at: Vector3, color: Color, collid
 	if not collide:
 		return
 	var body := StaticBody3D.new()
+	if box_name in ["Asphalt", "ApronBump"]:
+		body.collision_layer = 9
 	if box_name in ["Gate", "ParkingWreck"]:
 		body.collision_layer = 5
 	body.name = "%sCollision" % box_name

@@ -27,6 +27,8 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 
 ## Comments
 
+- From ticket 04: Integrate terrain support (mask 8) and hull-blocking structures (mask 4); replace temporary apron geometry with the route.
+
 - From ticket 03: Replace temporary offset gates/apron with the specified route; implement grade/rollback response and tyre-contact observations before hill-start completion. Current flat driving does not score manoeuvres.
 
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.

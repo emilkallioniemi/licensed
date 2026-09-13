@@ -13,6 +13,9 @@ var impact: AudioStreamPlayer3D
 var impact_cooldown := 0.0
 var visuals: Node3D
 var control_meshes: Dictionary = {}
+var vertical_speed := 0.0
+var jolt := Vector3.ZERO
+var impact_speed := 0.0
 
 func _ready() -> void:
 	body = AnimatableBody3D.new()
@@ -118,11 +121,17 @@ func label(copy: String, at: Vector3, yaw: float) -> Label3D:
 	return sign
 
 func drive(state: AttemptState, delta: float, present := true) -> void:
+	jolt = Vector3.ZERO
+	impact_speed = 0.0
 	var front := tan(state.front_angle)
 	var rear := tan(state.rear_angle)
 	angular_motion = -state.speed * (front - rear) / 3.6
 	var sideways := (front + rear) * 0.5
 	motion = body.global_basis * Vector3(sideways, 0, -1).normalized() * state.speed
+	# Forgiving ordinary turns; a fast tight turn throws an unsecured rider
+	# outward. These arcade thresholds remain candidates for checkpoint 06.
+	if absf(state.speed * angular_motion) > 8.0:
+		jolt = body.global_basis.x * signf(angular_motion * state.speed) * 5.0 + Vector3.UP * 3.5
 	var from := body.global_transform
 	# Only environment structures use layer 4. Learners and deck contact must
 	# not stop the truck. Sweep a whole-cab hull, including rotation corners.
@@ -144,12 +153,16 @@ func drive(state: AttemptState, delta: float, present := true) -> void:
 	if present:
 		impact_cooldown = maxf(0.0, impact_cooldown - delta)
 	if fraction < 1.0:
+		impact_speed = absf(state.speed)
+		if impact_speed > 4.0:
+			jolt = motion + Vector3.UP * 4.0
 		if present and absf(state.speed) > 0.5 and impact_cooldown == 0.0:
 			impact.play()
 			impact_cooldown = 0.5
 		state.speed = 0.0
 		motion = Vector3.ZERO
 		angular_motion = 0.0
+	_advance_suspension(delta)
 	if not present:
 		return
 	visuals.position = visuals.position.move_toward(Vector3.ZERO, delta * 8.0)
@@ -171,6 +184,28 @@ func smooth_correction(previous_visual: Transform3D) -> void:
 		visuals.global_transform = previous_visual
 	else:
 		visuals.transform = Transform3D.IDENTITY
+
+func _advance_suspension(delta: float) -> void:
+	# Terrain is layer 8, separate from hull-blocking structures (4). Four tyre
+	# probes preserve real vertical support while the arcade cab stays upright.
+	var heights: Array[float] = []
+	for x in [-2.75, 2.75]:
+		for z in [-1.8, 1.8]:
+			var at := body.to_global(Vector3(x, 0, z))
+			var ray := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 1.5, at - Vector3.UP * 3.0, 8)
+			var hit := get_world_3d().direct_space_state.intersect_ray(ray)
+			if not hit.is_empty():
+				heights.append(hit.position.y)
+	var before := vertical_speed
+	if heights.is_empty():
+		vertical_speed -= 9.8 * delta
+	else:
+		var height: float = heights.max()
+		vertical_speed += ((height - body.global_position.y) * 65.0 - vertical_speed * 8.0) * delta
+		if before > 3.0 and vertical_speed < before:
+			jolt = motion * 0.3 + Vector3.UP * 5.5
+	body.global_position.y += vertical_speed * delta
+	motion.y = vertical_speed
 
 func highlight(control: StringName, enabled: bool) -> void:
 	for key in control_meshes:

@@ -1,5 +1,6 @@
 extends SceneTree
-## Run: Godot --path . --script res://tests/verify_ready_up.gd --quit-after 600
+## Run: Godot --path . --script res://tests/verify_ready_up.gd
+## Use an external timeout; a frame cutoff can exit before awaited assertions.
 ## Use a Windows display: headless mode cannot catch native Windows TTS crashes.
 
 var _failures := 0
@@ -15,7 +16,8 @@ func _check(condition: bool, message: String) -> void:
 
 
 func _verify() -> void:
-	var waiting = load("res://scenes/waiting_room.tscn").instantiate()
+	var room_scene := "res://scenes/waiting_room.tscn" if root.get_node("SteamClient").is_running() else "res://tests/network_room_harness.tscn"
+	var waiting = load(room_scene).instantiate()
 	root.add_child(waiting)
 	current_scene = waiting
 	if OS.get_cmdline_user_args().has("--capture-booking"):

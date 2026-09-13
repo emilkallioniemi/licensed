@@ -1,0 +1,22 @@
+ERROR: Could not create directory: '/Users/emka/Library/Application Support/Godot/app_userdata/licensed'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+ERROR: Error attempting to create data dir: /Users/emka/Library/Application Support/Godot/app_userdata/licensed.
+   at: ensure_user_data_dir (core/os/os.cpp:442)
+ERROR: Could not create directory: 'user://logs'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+ERROR: Failed to open log file for writing: user://logs/godot.log
+   at: rotate_file (core/io/logger.cpp:169)
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+SCRIPT ERROR: Parse Error: Identifier "AttemptState" not declared in the current scope.
+          at: GDScript::reload (res://tests/verify_recovery.gd:5)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "attempt" variable because the value doesn't have a set type.
+          at: GDScript::reload (res://tests/verify_recovery.gd:5)
+SCRIPT ERROR: Parse Error: Identifier "AttemptState" not declared in the current scope.
+          at: GDScript::reload (res://tests/verify_recovery.gd:13)
+SCRIPT ERROR: Parse Error: Identifier "AttemptState" not declared in the current scope.
+          at: GDScript::reload (res://tests/verify_recovery.gd:31)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "guest" variable because the value doesn't have a set type.
+          at: GDScript::reload (res://tests/verify_recovery.gd:31)
+ERROR: Failed to load script "res://tests/verify_recovery.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)

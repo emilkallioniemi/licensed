@@ -27,6 +27,8 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 
 ## Comments
 
+- From ticket 04: Preserve physical compression/rescue distinction and terrain support when integrating real crusher geometry.
+
 - From ticket 03: Reverse driving works, but this route ticket owns its actual geometry and scored manoeuvre observations; the temporary driving apron does not establish route completion.
 
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.

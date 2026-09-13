@@ -1,6 +1,6 @@
 # 04: Fall, reboard, and rescue physically
 
-Status: ready-for-agent
+Status: done
 Blocked by: 03
 Parent: [A complete monster truck vehicle](../../monster-truck/spec.md)
 
@@ -10,12 +10,12 @@ Learners can ride the roof, fall harmlessly, reboard, and physically rescue a tr
 
 ## Acceptance criteria
 
-- [ ] Provide secure ordinary footing; sharp turns, big bumps, impacts and stepping over edges can eject learners. Tune arcade behavior rather than realistic simulation.
-- [ ] Harmless falls cause no fault. Learners walk back and climb aboard; friends can stop/reverse for collection, with the timer continuing.
-- [ ] Distinguish entrapment from catastrophic crushing. Moving the truck can free a trapped learner; no teleport/get-unstuck or truck-righting control.
-- [ ] Host resolves support loss, impacts and rescue against shared truck/hazard state. Guests predict ordinary movement without issuing authoritative accident verdicts.
-- [ ] Expose meaningful accident observations to the attempt boundary for 05, preserving support motion and coherent corrections on all peers.
-- [ ] Demonstrate roof travel, recoverable ejection/collection, trapped-operator rescue and an impossible-rescue setup. Verify scene behavior and detachment under delayed snapshots; human enjoyment is evaluated in 06.
+- [x] Provide secure ordinary footing; sharp turns, big bumps, impacts and stepping over edges can eject learners. Tune arcade behavior rather than realistic simulation.
+- [x] Harmless falls cause no fault. Learners walk back and climb aboard; friends can stop/reverse for collection, with the timer continuing.
+- [x] Distinguish entrapment from catastrophic crushing. Moving the truck can free a trapped learner; no teleport/get-unstuck or truck-righting control.
+- [x] Host resolves support loss, impacts and rescue against shared truck/hazard state. Guests predict ordinary movement without issuing authoritative accident verdicts.
+- [x] Expose meaningful accident observations to the attempt boundary for 05, preserving support motion and coherent corrections on all peers.
+- [x] Demonstrate roof travel, recoverable ejection/collection, trapped-operator rescue and an impossible-rescue setup. Verify scene behavior and detachment under delayed snapshots; human enjoyment is evaluated in 06.
 
 ## Implementation and verification guidance
 
@@ -32,3 +32,5 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 - From ticket 02: Build violent ejection, entrapment and rescue on the tested support-relative movement and inherited detachment velocity. The isolated-world three-peer boarding fixture covers ordinary roof riding.
 
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.
+
+- 2026-09-13: Implemented against ticket/review base `56d53c5aa53b6f47adf30d0fdb27a13530058bec`; all work remains uncommitted and Status remains claimed for the orchestrator. See [04 evidence](../04-evidence.md) for native runtime isolation, the actual TDD/environment limitations, physical ejection/reboarding/entrapment/rescue/compression/impossible-rescue checks, final delayed-snapshot three-peer ENet and windowed ready-up passes, full-suite results, and resolved two-axis review. Network fixture exits 0 with all behavioral checks and no script errors, retaining a three-ObjectDB/one-resource shutdown diagnostic; this is not Steam-bootstrap or human-feel acceptance. 05 owns scoring/aftermath/concession, 06 owns three-human Steam acceptance, and 08 replaces the temporary compressed learner pose.
