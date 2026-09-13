@@ -1,15 +1,16 @@
-; GodotSteam GDExtension 4.22.1 (Steamworks SDK 1.65), from the Codeberg release
-; v4.22.1-gde, godotsteam-4.22.1-gdextension-plugin-4.4.zip. Trimmed to Windows
-; x86_64: the waiting-room spec puts every other platform out of scope, so the
-; other platforms' binaries and the editor updater plug-in are not vendored.
+; GodotSteam 4.22.1, Steamworks SDK 1.65. Windows x86_64 and macOS universal.
+; See .scratch/monster-truck-build/release/README.md for provenance.
 
 [configuration]
 entry_symbol = "godotsteam_init"
 compatibility_minimum = "4.4"
 
 [libraries]
+macos.debug = "res://addons/godotsteam/osx/libgodotsteam.macos.template_debug.universal.dylib"
+macos.release = "res://addons/godotsteam/osx/libgodotsteam.macos.template_release.universal.dylib"
 windows.debug.x86_64 = "res://addons/godotsteam/win64/libgodotsteam.windows.template_debug.x86_64.dll"
 windows.release.x86_64 = "res://addons/godotsteam/win64/libgodotsteam.windows.template_release.x86_64.dll"
 
 [dependencies]
+macos.universal = { "res://addons/godotsteam/osx/libsteam_api.dylib": "Contents/Frameworks" }
 windows.x86_64 = { "res://addons/godotsteam/win64/steam_api64.dll": "" }
