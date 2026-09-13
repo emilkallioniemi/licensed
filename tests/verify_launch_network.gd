@@ -1,4 +1,7 @@
 extends SceneTree
+
+var capture_view_settings: Array[Dictionary] = []
+var evidence_prefix := "08a" if OS.get_cmdline_user_args().has("--capture-scrapyard") else "08"
 ## Three local development peers exercise the real launch RPCs and snapshots.
 ## This is protocol evidence, never three-human Steam play or feel evidence.
 var failures := 0
@@ -64,6 +67,8 @@ func verify() -> void:
 			check(room.test_area.boarding.has_node("CheckpointDiagnostics"), "opt-in capture is attached to each real peer")
 	if OS.get_cmdline_user_args().has("--capture-truck"):
 		await capture_truck()
+	if OS.get_cmdline_user_args().has("--capture-scrapyard"):
+		await verify_scrapyard_exterior()
 	if OS.get_cmdline_user_args().has("--boarding"):
 		await verify_boarding()
 	if OS.get_cmdline_user_args().has("--recovery"):
@@ -368,11 +373,15 @@ func verify_contention() -> void:
 	check(local.global_position.distance_to(body.global_position) < 0.25, "complete snapshot recovers after short interruption")
 
 func capture_truck() -> void:
+	configure_scenery_capture(true)
 	# Let the production arrival fade finish before assessing material brightness.
 	await create_timer(1.1).timeout
 	var viewport = rooms[0].get_parent()
 	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	viewport.audio_listener_enable_3d = true
+	if OS.get_cmdline_user_args().has("--capture-scrapyard"):
+		await RenderingServer.frame_post_draw
+		viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/08a-arrival.png")
 	var camera := Camera3D.new()
 	camera.fov = 88.0
 	rooms[0].test_area.add_child(camera)
@@ -381,16 +390,33 @@ func capture_truck() -> void:
 	camera.look_at(at + Vector3(0, 2, 3))
 	camera.current = true
 	await RenderingServer.frame_post_draw
-	viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/08-game-truck.png")
+	viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/" + evidence_prefix + "-game-truck.png")
+	if OS.get_cmdline_user_args().has("--capture-scrapyard"):
+		for view in [Vector3(-6, 1.75, 2), Vector3(0, 6.4, -9), Vector3(24, 19, 15)]:
+			camera.global_position = rooms[0].test_area.to_global(view)
+			camera.look_at(rooms[0].test_area.to_global(Vector3(0, 2, -12) if view.z > 0 else Vector3(0, 3, 20)))
+			await RenderingServer.frame_post_draw
+			var label := "ground" if view.y < 2 else ("roof" if view.y < 7 else "yard")
+			viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/08a-%s.png" % label)
+		var frame_ms: Array[float] = []
+		var previous := Time.get_ticks_usec()
+		for sample in 120:
+			await process_frame
+			var now := Time.get_ticks_usec()
+			frame_ms.append((now - previous) / 1000.0)
+			previous = now
+		frame_ms.sort()
+		print("SCRAPYARD three-world 1280x720 MSAA4 frame intervals ms p50=", frame_ms[60], " p95=", frame_ms[114], " max=", frame_ms[119])
+		print("SCRAPYARD RENDER draws=", viewport.get_render_info(Viewport.RENDER_INFO_TYPE_VISIBLE, Viewport.RENDER_INFO_DRAW_CALLS_IN_FRAME), " primitives=", viewport.get_render_info(Viewport.RENDER_INFO_TYPE_VISIBLE, Viewport.RENDER_INFO_PRIMITIVES_IN_FRAME))
 	for control in [&"front", &"pedals", &"rear"]:
 		var seat: Vector3 = AttemptState.CONTROLS[control]
 		camera.global_position = at + seat + Vector3(0, Learner.SEATED_EYE_HEIGHT, 0)
 		camera.rotation = Vector3(0, PI if control == &"rear" else 0.0, 0)
 		await RenderingServer.frame_post_draw
-		viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/08-%s-forward.png" % control)
+		viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/" + evidence_prefix + "-%s-forward.png" % control)
 		camera.rotation.x = -0.25
 		await RenderingServer.frame_post_draw
-		viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/08-%s-sight.png" % control)
+		viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/" + evidence_prefix + "-%s-sight.png" % control)
 	# Capture actual rendered engine audio with a listener inside the cab.
 	var bus := AudioServer.bus_count
 	AudioServer.add_bus()
@@ -414,6 +440,7 @@ func capture_truck() -> void:
 			player.bus = "Master"
 	AudioServer.remove_bus(bus)
 	camera.queue_free()
+	configure_scenery_capture(false)
 
 ## Delayed application of complete host snapshots models a brief delivery stall.
 ## Setup placement is a fixture; ejection and rescue use production collisions.
@@ -573,6 +600,7 @@ func walk_to_truck_point(boarding, learner, truck, target: Vector3) -> void:
 ## Inspection-only camera documents actual occupied learner/control contact.
 ## This camera is never exposed to shipping players or used as gameplay sight.
 func capture_occupied_cab() -> void:
+	configure_scenery_capture(true)
 	var viewport = rooms[0].get_parent()
 	var camera := Camera3D.new()
 	rooms[0].test_area.truck.body.add_child(camera)
@@ -582,7 +610,7 @@ func capture_occupied_cab() -> void:
 	var local = rooms[0]._learner_of(rooms[0].multiplayer.get_unique_id())
 	local.visual.set_first_person(false)
 	await RenderingServer.frame_post_draw
-	viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/08-occupied-cab.png")
+	viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/" + evidence_prefix + "-occupied-cab.png")
 	local.visual.set_first_person(true)
 	camera.queue_free()
 	for i in 3:
@@ -591,13 +619,14 @@ func capture_occupied_cab() -> void:
 		own_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 		own.camera.current = true
 		await RenderingServer.frame_post_draw
-		own_viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/08-occupied-%s-eye.png" % ["front", "pedals", "rear"][i])
+		own_viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/" + evidence_prefix + "-occupied-%s-eye.png" % ["front", "pedals", "rear"][i])
 		var saved_pitch: float = own._pitch
 		own._pitch = -0.4
 		await process_frame
 		await RenderingServer.frame_post_draw
-		own_viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/08-occupied-%s-hands.png" % ["front", "pedals", "rear"][i])
+		own_viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/" + evidence_prefix + "-occupied-%s-hands.png" % ["front", "pedals", "rear"][i])
 		own._pitch = saved_pitch
+	configure_scenery_capture(false)
 
 
 
@@ -612,7 +641,10 @@ func verify_occupied_learners() -> void:
 			var knee: Node3D = learner.visual.find_child("LeftKnee", true, false)
 			check(absf(truck.visuals.to_local(pelvis.global_position).y - 2.19) < 0.045, "seated pelvis rests on modeled cushion across peers")
 			check(absf(knee.global_position.y - hip.global_position.y) < 0.2, "seated thighs bend forward rather than compressing standing body")
-			check(learner.visual.scale.is_equal_approx(Vector3.ONE), "learner preserves limb proportions")
+			# Repeated world/local rotations produce ~12 ppm decomposition roundoff.
+			# Reject visible body scaling with an explicit 0.1% per-axis tolerance.
+			var scale_error: Vector3 = (learner.visual.scale - Vector3.ONE).abs()
+			check(scale_error.x < 0.001 and scale_error.y < 0.001 and scale_error.z < 0.001, "learner preserves limb proportions: local=%s global=%s parent=%s" % [learner.visual.scale, learner.visual.global_basis.get_scale(), learner.global_basis.get_scale()])
 			if control in [&"front", &"rear"]:
 				var wheel: Node3D = truck.visuals.wheels["Front" if control == &"front" else "Rear"]
 				for side in ["Left", "Right"]:
@@ -645,6 +677,66 @@ func capture_learner_stage(room: Node, peer_id: int, stage: String) -> void:
 	camera.current = true
 	learner.visual.set_first_person(false)
 	await RenderingServer.frame_post_draw
-	viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/08-learner-%s.png" % stage)
+	viewport.get_texture().get_image().save_png("res://.scratch/monster-truck-build/" + evidence_prefix + "-learner-%s.png" % stage)
 	learner.visual.set_first_person(learner.is_local())
 	camera.queue_free()
+
+
+## A capsule representing a learner who vaulted the fence must land on solid
+## exterior ground and stop at salvage, without moving the network learners.
+func verify_scrapyard_exterior() -> void:
+	var failures_before := failures
+	for room in rooms:
+		var area: Node3D = room.test_area
+		var space := area.get_world_3d().direct_space_state
+		var ground := PhysicsRayQueryParameters3D.create(area.to_global(Vector3(46, 3, -9)), area.to_global(Vector3(46, -1, -9)), 1)
+		check(not space.intersect_ray(ground).is_empty(), "each peer has exterior ground after a fence vault")
+		var salvage := PhysicsRayQueryParameters3D.create(area.to_global(Vector3(46, 0.7, -9)), area.to_global(Vector3(39, 0.7, -9)), 4)
+		check(not space.intersect_ray(salvage).is_empty(), "each peer has solid exterior salvage for truck contact")
+	var area: Node3D = rooms[0].test_area
+	var walker := CharacterBody3D.new()
+	walker.collision_layer = 0
+	walker.collision_mask = 1
+	var shape := CollisionShape3D.new()
+	var capsule := CapsuleShape3D.new()
+	capsule.radius = 0.3
+	capsule.height = 1.7
+	shape.shape = capsule
+	shape.position.y = 0.85
+	walker.add_child(shape)
+	area.add_child(walker)
+	walker.position = Vector3(46, 3, -9)
+	for i in 90:
+		await physics_frame
+		walker.velocity.y -= 18.0 / 60.0
+		walker.move_and_slide()
+	check(walker.is_on_floor() and walker.position.y > -0.2, "fence-vault capsule lands on exterior ground")
+	var start := walker.position
+	var contacted := false
+	for i in 120:
+		await physics_frame
+		walker.velocity = Vector3(-2, -0.3, 0)
+		walker.move_and_slide()
+		contacted = contacted or walker.is_on_wall()
+	check(contacted and start.x - walker.position.x < 3.5, "walking capsule stops against exterior salvage instead of passing through")
+	walker.queue_free()
+	if failures == failures_before:
+		print("SCRAPYARD exterior ground, truck contact and capsule landing/walking PASS")
+
+
+func configure_scenery_capture(enabled: bool) -> void:
+	if not OS.get_cmdline_user_args().has("--capture-scrapyard"):
+		return
+	if enabled:
+		capture_view_settings.clear()
+	for i in rooms.size():
+		var viewport: SubViewport = rooms[i].get_parent()
+		if enabled:
+			capture_view_settings.append({"size": viewport.size, "msaa": viewport.msaa_3d, "update": viewport.render_target_update_mode})
+			viewport.size = Vector2i(1280, 720)
+			viewport.msaa_3d = Viewport.MSAA_4X
+			viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+		else:
+			viewport.size = capture_view_settings[i].size
+			viewport.msaa_3d = capture_view_settings[i].msaa
+			viewport.render_target_update_mode = capture_view_settings[i].update

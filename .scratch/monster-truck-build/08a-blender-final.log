@@ -1,0 +1,54 @@
+/Users/emka/Projects/licensed/assets/scrapyard/source/build_scrapyard.py:13: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m=bpy.data.materials.new(name); m.diffuse_color=(*rgb,1); m.use_nodes=True
+INFO Draco is available, use library at /Volumes/Blender/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Volumes/Blender/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+12:59:18 | INFO: Starting glTF 2.0 export
+12:59:18 | INFO: Extracting primitive: Cube.001
+12:59:18 | INFO: Primitives created: 6
+12:59:18 | INFO: Finished glTF 2.0 export in 0.040815114974975586 s
+
+12:59:18 | INFO: Starting glTF 2.0 export
+12:59:18 | INFO: Extracting primitive: Cube.026
+12:59:18 | INFO: Primitives created: 7
+12:59:18 | INFO: Finished glTF 2.0 export in 0.015267133712768555 s
+
+12:59:19 | INFO: Starting glTF 2.0 export
+12:59:19 | INFO: Extracting primitive: Cube.101
+12:59:19 | INFO: Primitives created: 4
+12:59:19 | INFO: Finished glTF 2.0 export in 0.011188983917236328 s
+
+12:59:19 | INFO: Starting glTF 2.0 export
+12:59:19 | INFO: Extracting primitive: Cube.188
+12:59:19 | INFO: Primitives created: 4
+12:59:19 | INFO: Finished glTF 2.0 export in 0.008487939834594727 s
+
+12:59:19 | INFO: Starting glTF 2.0 export
+12:59:19 | INFO: Extracting primitive: Cube.216
+12:59:19 | INFO: Primitives created: 4
+12:59:19 | INFO: Finished glTF 2.0 export in 0.006593942642211914 s
+
+12:59:19 | INFO: Starting glTF 2.0 export
+12:59:19 | INFO: Extracting primitive: Cube.243
+12:59:19 | INFO: Primitives created: 7
+12:59:19 | INFO: Finished glTF 2.0 export in 0.01474618911743164 s
+
+12:59:19 | INFO: Starting glTF 2.0 export
+12:59:19 | INFO: Extracting primitive: Cylinder.035
+12:59:19 | INFO: Primitives created: 3
+12:59:19 | INFO: Finished glTF 2.0 export in 0.0058858394622802734 s
+
+12:59:19 | INFO: Starting glTF 2.0 export
+12:59:19 | INFO: Extracting primitive: Cube.358
+12:59:19 | INFO: Primitives created: 6
+12:59:19 | INFO: Finished glTF 2.0 export in 0.007428169250488281 s
+
+12:59:19 | INFO: Starting glTF 2.0 export
+12:59:19 | INFO: Extracting primitive: Cube.365
+12:59:19 | INFO: Primitives created: 2
+12:59:19 | INFO: Finished glTF 2.0 export in 0.004455089569091797 s
+
+Info: Saved as "scrapyard.blend"
+SCRAPYARD EXPORT PASS
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 01:35:57)
+
+Blender quit

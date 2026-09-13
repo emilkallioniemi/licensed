@@ -32,3 +32,5 @@ This is retained implementation toward the complete vehicle. Any temporary harne
 - From ticket 03: Replace temporary offset gates/apron with the specified route; implement grade/rollback response and tyre-contact observations before hill-start completion. Current flat driving does not score manoeuvres.
 
 - 2026-09-13: Published after the user authorized the proposed 28-ticket breakdown. Dependencies refer only to implementation tickets in this directory, not the sixteen resolved wayfinder decisions.
+
+- From completed08a: reuse assets/scrapyard modular Blender/GLB kit. Current exercise is dressed but no ordered manoeuvre/scoring or hill-start logic was added. Preserve clear driving/recovery margins and deliberate exterior collision; see ../08a-evidence.md.

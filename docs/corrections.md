@@ -136,3 +136,4 @@ Areas: `examiner`, `controls`, `split`, `sight`, `sheet`, `scope`, `ui`, `scorin
 - 2026-09-13: Rough truck engineering captures are temporary; use the existing modeled lobby and learner as the presentation-quality reference when replacing checkpoint geometry with finished assets.
 
 - 2026-09-13: Build the modeled truck and animated learners (07–08) before the three-human playtest; retain provisional handling/sight, and keep all other expansion gated by checkpoint 06.
+- 2026-09-13: Before the Windows/macOS playtest package, surround the retained cooperation exercise with a modeled, fully static scrapyard; preserve its driving/boarding/rescue space and collision footprints, without advancing route gameplay or hazards.

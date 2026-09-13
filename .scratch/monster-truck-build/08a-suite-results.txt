@@ -1,0 +1,11 @@
+verify_room_state: exit=0 application_errors=False final_pass=True elapsed=0.18s
+verify_attempt_state: exit=0 application_errors=False final_pass=True elapsed=0.16s
+verify_driving: exit=0 application_errors=False final_pass=True elapsed=0.17s
+verify_recovery: exit=0 application_errors=False final_pass=True elapsed=0.17s
+verify_steam_client: exit=0 application_errors=False final_pass=True elapsed=0.17s
+verify_motion: exit=0 application_errors=False final_pass=True elapsed=0.47s
+verify_reception_input: exit=0 application_errors=False final_pass=True elapsed=0.37s
+verify_failure: exit=0 application_errors=False final_pass=True elapsed=0.17s
+verify_truck_presentation: exit=0 application_errors=False final_pass=True elapsed=0.26s
+verify_recovery_scene: exit=0 application_errors=False final_pass=True elapsed=29.90s
+verify_learner_animation: exit=0 application_errors=False final_pass=True elapsed=3.27s

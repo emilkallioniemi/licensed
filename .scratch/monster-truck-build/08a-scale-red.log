@@ -1,0 +1,57 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Metal 4.0 - Forward+ - Using Device #0: Apple - Apple M2 Pro (Apple8)
+
+[S_API FAIL] SteamAPI_Init() failed; ipcserver GetSteamPath failed.
+[S_API] SteamAPI_Init(): SteamAPI_IsSteamRunning() did not locate a running instance of Steam.
+[S_API] SteamAPI_Init(): Could not determine Steam client install directory.
+SteamClient: Steam is not running (status 1: Could not determine Steam client install directory.)
+FIXTURE: native ENet room bootstrap; Steam login is not under test
+WaitingRoom: the room waits for 3
+WaitingRoom: spawned Learner_1 palette 01 local=true
+WaitingRoom:  arrived as palette 01 (1 of 3)
+FIXTURE: native ENet room bootstrap; Steam login is not under test
+WaitingRoom: the room waits for 3
+FIXTURE: native ENet room bootstrap; Steam login is not under test
+WaitingRoom: peer 837038779 connected
+WaitingRoom: spawned Learner_1 palette 01 local=false
+WaitingRoom: spawned Learner_837038779 palette 02 local=false
+WaitingRoom:  (2) arrived as palette 02 (2 of 3)
+WaitingRoom: the door for peer 837038779
+WaitingRoom: spawned Learner_837038779 palette 02 local=true
+WaitingRoom: the room waits for 3
+WaitingRoom: peer 962893773 connected
+WaitingRoom: spawned Learner_1 palette 01 local=false
+WaitingRoom: spawned Learner_837038779 palette 02 local=false
+WaitingRoom: spawned Learner_962893773 palette 03 local=false
+WaitingRoom:  (3) arrived as palette 03 (3 of 3)
+WaitingRoom: the door for peer 962893773
+WaitingRoom: spawned Learner_962893773 palette 03 local=false
+WaitingRoom: the door for peer 962893773
+WaitingRoom: spawned Learner_962893773 palette 03 local=true
+SCRAPYARD three-world 1280x720 MSAA4 frame intervals ms p50=7.346 p95=10.288 max=10.588
+SCRAPYARD RENDER draws=449 primitives=550382
+AUDIO captured frames=22016 peak=0.0224569439888
+SCRAPYARD exterior ground, truck contact and capsule landing/walking PASS
+BOARD deck: (0.899503, 1.600302, 2.061691) supported
+BOARD front: (-0.562298, 1.600987, -0.903534)
+BOARD roof: (-0.001918, 4.281065, 2.077576) supported
+BOARD guest pedals: (0.568904, 1.601, -0.90097)
+FAIL: learner preserves limb proportions: local=(1.000011, 1.0, 1.000011) global=(1.00001, 1.0, 1.00001) parent=(0.999999, 1.0, 0.999999)
+FAIL: learner preserves limb proportions: local=(1.00001, 1.0, 1.00001) global=(1.00001, 1.0, 1.00001) parent=(1.0, 1.0, 1.0)
+FAIL: learner preserves limb proportions: local=(1.000011, 1.0, 1.000011) global=(1.000011, 1.0, 1.000011) parent=(1.0, 1.0, 1.0)
+FAIL: learner preserves limb proportions: local=(1.000011, 1.0, 1.000011) global=(1.000011, 1.0, 1.000011) parent=(0.999999, 1.0, 0.999999)
+FAIL: learner preserves limb proportions: local=(1.000011, 1.0, 1.000011) global=(1.000011, 1.0, 1.000011) parent=(1.0, 1.0, 1.0)
+Animated occupied learner contacts checked across three peers
+FAIL: learner preserves limb proportions: local=(1.000011, 1.0, 1.000011) global=(1.000011, 1.0, 1.000011) parent=(1.0, 1.0, 1.0)
+FAIL: learner preserves limb proportions: local=(1.000012, 1.0, 1.000012) global=(1.000011, 1.0, 1.000011) parent=(0.999999, 1.0, 0.999999)
+FAIL: learner preserves limb proportions: local=(1.000011, 1.0, 1.000011) global=(1.000011, 1.0, 1.000011) parent=(1.0, 1.0, 1.0)
+FAIL: learner preserves limb proportions: local=(1.000011, 1.0, 1.000011) global=(1.000011, 1.0, 1.000011) parent=(1.0, 1.0, 1.0)
+FAIL: learner preserves limb proportions: local=(1.000012, 1.0, 1.000012) global=(1.000011, 1.0, 1.000011) parent=(0.999999, 1.0, 0.999999)
+FAIL: learner preserves limb proportions: local=(1.000011, 1.0, 1.000011) global=(1.000011, 1.0, 1.000011) parent=(1.0, 1.0, 1.0)
+Animated occupied learner contacts checked across three peers
+DRIVE: real three-peer turn, stopped reverse, and persistent parking verified
+BOARD correction counts: 2, 3
+RECOVERY: delayed snapshots, shared ejection, landing, entrapment and collection verified
+WaitingRoom: peer 962893773 left; 2 in the room
+
+NATIVE_EXIT 1 SECONDS 59.21

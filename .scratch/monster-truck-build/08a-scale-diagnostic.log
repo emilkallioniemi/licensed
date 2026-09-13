@@ -1,0 +1,65 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Metal 4.0 - Forward+ - Using Device #0: Apple - Apple M2 Pro (Apple8)
+
+[S_API FAIL] SteamAPI_Init() failed; ipcserver GetSteamPath failed.
+[S_API] SteamAPI_Init(): SteamAPI_IsSteamRunning() did not locate a running instance of Steam.
+[S_API] SteamAPI_Init(): Could not determine Steam client install directory.
+SteamClient: Steam is not running (status 1: Could not determine Steam client install directory.)
+FIXTURE: native ENet room bootstrap; Steam login is not under test
+WaitingRoom: the room waits for 3
+WaitingRoom: spawned Learner_1 palette 01 local=true
+WaitingRoom:  arrived as palette 01 (1 of 3)
+FIXTURE: native ENet room bootstrap; Steam login is not under test
+WaitingRoom: the room waits for 3
+FIXTURE: native ENet room bootstrap; Steam login is not under test
+WaitingRoom: peer 1410873657 connected
+WaitingRoom: spawned Learner_1 palette 01 local=false
+WaitingRoom: spawned Learner_1410873657 palette 02 local=false
+WaitingRoom:  (2) arrived as palette 02 (2 of 3)
+WaitingRoom: the door for peer 1410873657
+WaitingRoom: spawned Learner_1410873657 palette 02 local=true
+WaitingRoom: the room waits for 3
+WaitingRoom: peer 2143779271 connected
+WaitingRoom: spawned Learner_1 palette 01 local=false
+WaitingRoom: spawned Learner_1410873657 palette 02 local=false
+WaitingRoom: spawned Learner_2143779271 palette 03 local=false
+WaitingRoom:  (3) arrived as palette 03 (3 of 3)
+WaitingRoom: the door for peer 2143779271
+WaitingRoom: spawned Learner_2143779271 palette 03 local=false
+WaitingRoom: the door for peer 2143779271
+WaitingRoom: spawned Learner_2143779271 palette 03 local=true
+SCRAPYARD three-world 1280x720 MSAA4 frame intervals ms p50=6.906 p95=10.812 max=11.164
+SCRAPYARD RENDER draws=449 primitives=550382
+AUDIO captured frames=22016 peak=0.0224569439888
+SCRAPYARD exterior ground, truck contact and capsule landing/walking PASS
+BOARD deck: (1.1, 1.600451, 2.051117) supported
+BOARD front: (-0.42529, 1.600987, -0.902603)
+BOARD roof: (-0.000988, 4.280857, 2.079056) supported
+BOARD guest pedals: (0.567141, 1.600987, -0.902527)
+[DEBUG-08a-scale] local=(1.0, 1.0, 1.0) global=(1.0, 1.0, 1.0) parent=(1.0, 1.0, 1.0) truck=(1.0, 1.0, 1.0)
+[DEBUG-08a-scale] local=(1.0, 1.0, 1.0) global=(1.0, 1.0, 1.0) parent=(1.0, 1.0, 1.0) truck=(1.0, 1.0, 1.0)
+[DEBUG-08a-scale] local=(1.0, 1.0, 1.0) global=(1.0, 1.0, 1.0) parent=(1.0, 1.0, 1.0) truck=(1.0, 1.0, 1.0)
+[DEBUG-08a-scale] local=(1.000001, 1.0, 1.000001) global=(1.000001, 1.0, 1.000001) parent=(1.0, 1.0, 1.0) truck=(1.000001, 1.0, 1.000001)
+[DEBUG-08a-scale] local=(1.000001, 1.0, 1.000001) global=(1.000001, 1.0, 1.000001) parent=(1.0, 1.0, 1.0) truck=(1.000001, 1.0, 1.000001)
+[DEBUG-08a-scale] local=(1.000001, 1.0, 1.000001) global=(1.000001, 1.0, 1.000001) parent=(1.0, 1.0, 1.0) truck=(1.000001, 1.0, 1.000001)
+[DEBUG-08a-scale] local=(1.000001, 1.0, 1.000001) global=(1.000001, 1.0, 1.000001) parent=(1.0, 1.0, 1.0) truck=(1.000001, 1.0, 1.000001)
+[DEBUG-08a-scale] local=(1.000002, 1.0, 1.000002) global=(1.000001, 1.0, 1.000001) parent=(1.0, 1.0, 1.0) truck=(1.000001, 1.0, 1.000001)
+[DEBUG-08a-scale] local=(1.000001, 1.0, 1.000001) global=(1.000001, 1.0, 1.000001) parent=(1.0, 1.0, 1.0) truck=(1.000001, 1.0, 1.000001)
+Animated occupied learner contacts checked across three peers
+[DEBUG-08a-scale] local=(1.0, 1.0, 1.0) global=(1.0, 1.0, 1.0) parent=(1.0, 1.0, 1.0) truck=(1.0, 1.0, 1.0)
+[DEBUG-08a-scale] local=(1.0, 1.0, 1.0) global=(1.0, 1.0, 1.0) parent=(1.0, 1.0, 1.0) truck=(1.0, 1.0, 1.0)
+[DEBUG-08a-scale] local=(1.0, 1.0, 1.0) global=(1.0, 1.0, 1.0) parent=(1.0, 1.0, 1.0) truck=(1.0, 1.0, 1.0)
+[DEBUG-08a-scale] local=(1.000002, 1.0, 1.000002) global=(1.000002, 1.0, 1.000002) parent=(1.0, 1.0, 1.0) truck=(1.000002, 1.0, 1.000002)
+[DEBUG-08a-scale] local=(1.000002, 1.0, 1.000002) global=(1.000002, 1.0, 1.000002) parent=(1.0, 1.0, 1.0) truck=(1.000002, 1.0, 1.000002)
+[DEBUG-08a-scale] local=(1.000002, 1.0, 1.000002) global=(1.000002, 1.0, 1.000002) parent=(1.0, 1.0, 1.0) truck=(1.000002, 1.0, 1.000002)
+[DEBUG-08a-scale] local=(1.000002, 1.0, 1.000002) global=(1.000002, 1.0, 1.000002) parent=(1.0, 1.0, 1.0) truck=(1.000002, 1.0, 1.000002)
+[DEBUG-08a-scale] local=(1.000002, 1.0, 1.000002) global=(1.000002, 1.0, 1.000002) parent=(1.0, 1.0, 1.0) truck=(1.000002, 1.0, 1.000002)
+[DEBUG-08a-scale] local=(1.000002, 1.0, 1.000002) global=(1.000002, 1.0, 1.000002) parent=(1.0, 1.0, 1.0) truck=(1.000002, 1.0, 1.000002)
+Animated occupied learner contacts checked across three peers
+DRIVE: real three-peer turn, stopped reverse, and persistent parking verified
+BOARD correction counts: 2, 3
+RECOVERY: delayed snapshots, shared ejection, landing, entrapment and collection verified
+WaitingRoom: peer 2143779271 left; 2 in the room
+PASS: three development peers launch by RPC, share arrival/timer and return on guest loss
+PASS: physical boarding, roof riding/detachment, guest look, moving release, contention and interruption recovery
+NATIVE_EXIT 0 SECONDS 56.1

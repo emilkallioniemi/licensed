@@ -1,0 +1,140 @@
+{
+  "base": "ff83f5d57e8352c66c2be5bd8b4abf1472038c20",
+  "files": [
+    {
+      "path": "scripts/test_area.gd",
+      "sha256": "24c68e1e00321fe76a07395b2d253018a7c06f89a99ba8c0b2840ec696d9b575",
+      "native_equal": true
+    },
+    {
+      "path": "scripts/scrapyard.gd",
+      "sha256": "6b31d75db8943b2237df5a67eeb1b938981515f8fe779604ca698c442ce5e608",
+      "native_equal": true
+    },
+    {
+      "path": "scripts/scrapyard.gd.uid",
+      "sha256": "68ec98b6ee0c75d857929f30dc093322e3d79d33390c215e8fb9147b00d0815a",
+      "native_equal": true
+    },
+    {
+      "path": "tests/verify_launch_network.gd",
+      "sha256": "ee9de2c83ffd6bb2356691e09af12b36a720af79d0730a32f823ba33306b916e",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/container.glb",
+      "sha256": "689f88056eb040a5a9ea5e8adcb9819cf796f3dbca0073d28969363bdaf2e1df",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/container.glb.import",
+      "sha256": "471e18fc3cfb2f4fd3bcbe48a51aad916429736469cd258fe06d79b7fb91aa52",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/fence.glb",
+      "sha256": "430c869533ffd7a1c6bff7578b6ac315a41a4ef85f5951831d6b90d1b2ea91ed",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/fence.glb.import",
+      "sha256": "75fe4a4e22804e9da879efd5eb23d3a5e5dd9f39555bb0150fe30f816ba9b757",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/gate_post.glb",
+      "sha256": "2244411b8a1e29c55eb95ec5e26f4a81c3e2cf711c3aad5f46e77a50d9c4c0d8",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/gate_post.glb.import",
+      "sha256": "aa8b7170fb19227de9848e719f660fd4672ff643ef51e8cf290ac3554e845c0e",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/ground.gdshader",
+      "sha256": "2eb14cf6d21c94fc9cc034589cc0674ed3eebc0843fc9126f6679cb4e26867aa",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/ground.gdshader.uid",
+      "sha256": "4d13efb0f2f88f3fd9fdb219647ad63e58df7e7409165fb65dd7b0e774e21f22",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/industrial_skyline.glb",
+      "sha256": "f7bb0fd30f752c53d753d5ab4be7872116cffaaf1aa269d470f8afe40178d50d",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/industrial_skyline.glb.import",
+      "sha256": "ce6e48f69f34df412ce8dadbe0d48cf41fa39f5d52d16985a72b4b66eaa47f27",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/parking_wreck.glb",
+      "sha256": "30f972f8fd860436292196105d6ecac2d912bb0a29fea508fcfcb597c6635456",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/parking_wreck.glb.import",
+      "sha256": "030332835e181dbdb47f317548fc4a78e100fdeae3b48d41144ca5850205dcb9",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/scrap_pile.glb",
+      "sha256": "f29f11a96f8b0386ecb348f3b290f907a35acbbcd0df470ab8d20c1e224061db",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/scrap_pile.glb.import",
+      "sha256": "d4130487bfa6e633a68146273cd1c44b96844bb991e5cf1512bf696a5af90a6a",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/source/.gdignore",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/source/build_scrapyard.py",
+      "sha256": "ea7d71d615c8ac354f06abf628b0b43cbe57b5644953552a7a25b87f8dd6b029",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/source/scrapyard.blend",
+      "sha256": "6f2e2da16a784a3c3e1014bb8880100acb5e403dad590ebb25a7e0ec91f770f8",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/workshop.glb",
+      "sha256": "efc47fe133bd2a4714b3894bab59a782c5a50cbedaf700406434cc9d5fe2c7b8",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/workshop.glb.import",
+      "sha256": "6936aed86581a772bfc69cfce77f6deaf465624069ded02581ad96cdfecfa67f",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/wreck.glb",
+      "sha256": "4b05c30450092d0795801998eb892eaa860562544130243abb18c51e0c40c744",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/wreck.glb.import",
+      "sha256": "49b35f6a3d1ac65f00fbe76feed036812a761ba4cdb8b6109577c6e854b7b389",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/wreck_stack.glb",
+      "sha256": "dde17e9069a7d0d53c3d96582a02998935a2ff538ad67e219991951f8de9ec33",
+      "native_equal": true
+    },
+    {
+      "path": "assets/scrapyard/wreck_stack.glb.import",
+      "sha256": "3d097178c765d3efc0d29faa161d1e31cfeb6d08f592827fea2af352ce08901a",
+      "native_equal": true
+    }
+  ]
+}

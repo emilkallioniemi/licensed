@@ -1,8 +1,7 @@
 class_name TestArea
 extends Node3D
-## The car park beyond the Test Area door: asphalt, painted bays as boxes, daylight,
-## one MONSTER TRUCK sign. TEMPORARY ARRIVAL GEOMETRY: ticket 02 replaces the
-## car park with the secured truck, seated examiner and boarding space.
+## Static scrapyard around the retained cooperation exercise.
+## Full route and encounters remain later tickets.
 
 ## Centre-to-centre spacing of the three bays, metres (spec section 8).
 const BAY_SPACING := 1.5
@@ -42,16 +41,16 @@ func _build() -> void:
 	add_child(boarding)
 	daylight = Environment.new()
 	daylight.background_mode = Environment.BG_COLOR
-	daylight.background_color = Color(0.62, 0.78, 0.92)
+	daylight.background_color = Color("9caeac")
 	daylight.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	daylight.ambient_light_color = Color(0.92, 0.93, 0.88)
-	daylight.ambient_light_energy = 0.9
+	daylight.ambient_light_color = Color("c3d2d0")
+	daylight.ambient_light_energy = 0.65
 	daylight.tonemap_mode = Environment.TONE_MAPPER_ACES
 
 	var sun := DirectionalLight3D.new()
 	sun.name = "Sun"
-	sun.light_color = Color(1.0, 0.96, 0.88)
-	sun.light_energy = 1.35
+	sun.light_color = Color("fff0d5")
+	sun.light_energy = 1.3
 	sun.shadow_enabled = true
 	sun.rotation_degrees = Vector3(-48.0, 35.0, 0.0)
 	add_child(sun)
@@ -72,8 +71,8 @@ func _build() -> void:
 		bay.position = Vector3(xs[i], 0.0, 0.0)
 		_bays.append(bay)
 
-	_add_box("SignPost", Vector3(0.12, 2.2, 0.12), Vector3(0.0, 1.1, 6.0), Color("4a4034"), false)
-	_add_box("SignBoard", Vector3(2.6, 0.7, 0.08), Vector3(0.0, 2.35, 6.0), Color("e8e0cc"), false)
+	_add_box("SignPost", Vector3(0.12, 2.2, 0.12), Vector3(0.0, 1.1, 6.0), Color("4a4034"), true)
+	_add_box("SignBoard", Vector3(2.6, 0.7, 0.08), Vector3(0.0, 2.35, 6.0), Color("e8e0cc"), true)
 	var sign := Label3D.new()
 	sign.name = "Vehicle"
 	sign.text = "MONSTER TRUCK"
@@ -134,6 +133,10 @@ func _build() -> void:
 	for z in [-16.5, -8.5]:
 		_add_box("ParkingLine", Vector3(8, 0.02, 0.12), Vector3(16, 0.02, z), Color("e4b752"), false)
 
+	var scrapyard := Scrapyard.new()
+	add_child(scrapyard)
+	scrapyard.dress_exercise(self)
+
 func announce_arrival() -> void:
 	_announced_result = ""
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -167,11 +170,12 @@ func _process(delta: float) -> void:
 func _add_box(box_name: String, size: Vector3, at: Vector3, color: Color, collide: bool) -> void:
 	var mesh_instance := MeshInstance3D.new()
 	mesh_instance.name = box_name
+	mesh_instance.set_meta("scenery_kind", box_name)
 	var mesh := BoxMesh.new()
 	mesh.size = size
 	mesh_instance.mesh = mesh
 	var mat := StandardMaterial3D.new()
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.roughness = 0.92
 	mat.albedo_color = color
 	mesh_instance.set_surface_override_material(0, mat)
 	add_child(mesh_instance)
@@ -181,7 +185,7 @@ func _add_box(box_name: String, size: Vector3, at: Vector3, color: Color, collid
 	var body := StaticBody3D.new()
 	if box_name in ["Asphalt", "ApronBump"]:
 		body.collision_layer = 9
-	if box_name in ["Gate", "ParkingWreck"]:
+	if box_name in ["Gate", "ParkingWreck", "SignPost", "SignBoard"]:
 		body.collision_layer = 5
 	body.name = "%sCollision" % box_name
 	var shape := CollisionShape3D.new()
