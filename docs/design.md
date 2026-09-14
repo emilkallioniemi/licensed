@@ -1,5 +1,7 @@
 # Design judgment
 
+> Monster-truck revision (2026-09-14): the [active spec amendment](../.scratch/monster-truck/spec.md) supersedes older rules here for seated sight, role split, awkward controls, boarding, recovery and the next test. Build the approachable short test first; full-route expansion remains gated by human acceptance.
+
 The judgment to carry when building anything for licensed: a vehicle, a test item, a screen, an examiner line, a control. `README.md` is the design doc; this file is the part of it an agent has to *act on*, rewritten so each rule is observable. Every line here traces to a decision in the README or to a correction that repeated in `docs/corrections.md`. Vocabulary is in `CONTEXT.md`.
 
 ## The moment we are building

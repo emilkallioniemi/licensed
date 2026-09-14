@@ -12,6 +12,9 @@ const JUMP_VELOCITY := 5.0
 const EYE_HEIGHT := 1.75
 ## Seated camera height, metres above the feet. Mouse look stays live (spec section 7).
 const SEATED_EYE_HEIGHT := 1.2
+## Shared truck-seated camera offsets from truck origin (local truck space).
+const SEATED_TRUCK_CAMERA_OFFSET := Vector3(0.0, 11.0, 10.0)
+const SEATED_TRUCK_CAMERA_TARGET := Vector3(0.0, 1.0, -2.5)
 ## Radians per mouse-pixel. Not a setting; ticket 12's overlay does not expose it.
 const MOUSE_SENSITIVITY := 0.0022
 ## Pitch stops just short of straight up/down so the camera cannot flip.
@@ -185,7 +188,7 @@ func _apply_body_visible() -> void:
 		return
 	# Own hands/legs and friends share one world rig; only name tags stay remote.
 	visual.visible = _body_visible
-	visual.set_first_person(_local)
+	visual.set_first_person(_local and not (truck_movement and _seated))
 	name_tag.visible = _body_visible and not _local
 
 
@@ -247,12 +250,15 @@ func _update_presentation(delta: float, fraction: float) -> void:
 		if not global_position.is_equal_approx(_current_position):
 			_previous_position = global_position
 			_current_position = global_position
-		var eye_height := 0.6 if movement_mode in [&"trapped", &"crushed"] else (SEATED_EYE_HEIGHT if _seated else EYE_HEIGHT)
-		_eye_height = lerpf(_eye_height, eye_height, 1.0 - exp(-16.0 * delta)) if truck_movement else eye_height
-		camera.global_transform = Transform3D(
-			global_basis * Basis(Vector3.RIGHT, _pitch),
-			_previous_position.lerp(_current_position, clampf(fraction, 0.0, 1.0)) + Vector3.UP * _eye_height + _correction
-		)
+		if support == &"truck" and _seated:
+			camera.global_transform = _truck_seated_camera_transform()
+		else:
+			var eye_height := 0.6 if movement_mode in [&"trapped", &"crushed"] else (SEATED_EYE_HEIGHT if _seated else EYE_HEIGHT)
+			_eye_height = lerpf(_eye_height, eye_height, 1.0 - exp(-16.0 * delta)) if truck_movement else eye_height
+			camera.global_transform = Transform3D(
+				global_basis * Basis(Vector3.RIGHT, _pitch),
+				_previous_position.lerp(_current_position, clampf(fraction, 0.0, 1.0)) + Vector3.UP * _eye_height + _correction
+			)
 	else:
 		# Keep collision at the received position, smoothing only visible geometry.
 		# A large discontinuity is a teleport, not a walk to interpolate.
@@ -265,6 +271,12 @@ func _update_presentation(delta: float, fraction: float) -> void:
 		name_tag.global_transform = _remote_pose * _tag_offset
 	_animate_body(delta)
 
+
+func _truck_seated_camera_transform() -> Transform3D:
+	var frame := Transform3D(Basis(Vector3.UP, support_pose.basis.get_euler().y), support_pose.origin)
+	var origin: Vector3 = frame * SEATED_TRUCK_CAMERA_OFFSET
+	var target: Vector3 = frame * SEATED_TRUCK_CAMERA_TARGET
+	return Transform3D(Basis.looking_at(target - origin, Vector3.UP), origin)
 
 
 func _physics_process(delta: float) -> void:
@@ -324,7 +336,7 @@ func set_truck_movement(enabled: bool) -> void:
 
 func walk_intention() -> Dictionary:
 	var wish := Vector2(float(Input.is_physical_key_pressed(KEY_D)) - float(Input.is_physical_key_pressed(KEY_A)), float(Input.is_physical_key_pressed(KEY_S)) - float(Input.is_physical_key_pressed(KEY_W)))
-	return {"wish": wish.limit_length(), "yaw": rotation.y, "pitch": _pitch, "jump": Input.is_action_just_pressed("jump"), "sprint": Input.is_action_pressed("sprint")}
+	return {"wish": wish.limit_length(), "yaw": rotation.y, "pitch": _pitch, "climb": Input.is_physical_key_pressed(KEY_SPACE), "jump": Input.is_action_just_pressed("jump"), "sprint": Input.is_action_pressed("sprint")}
 
 func simulate_truck_walk(command: Dictionary, truck_body: AnimatableBody3D, previous: Transform3D, control: StringName, delta: float) -> void:
 	_previous_position = global_position
@@ -376,6 +388,17 @@ func simulate_truck_walk(command: Dictionary, truck_body: AnimatableBody3D, prev
 		_detach_velocity = Vector3.ZERO
 	velocity.x = direction.x * speed + _detach_velocity.x
 	velocity.z = direction.z * speed + _detach_velocity.z
+	if command.get("climb", false) and direction.length_squared() > 0.01:
+		# Feet, waist and chest probes keep contact as tyres/ledge tops pass below
+		# the learner; the high grab reaches the lifted body between the tyres.
+		for height in [0.05, 0.6, 1.4, 2.5]:
+			var from: Vector3 = global_position + Vector3.UP * height
+			var ray := PhysicsRayQueryParameters3D.create(from, from + direction.normalized() * 0.9, 1, [get_rid()])
+			var wall := get_world_3d().direct_space_state.intersect_ray(ray)
+			if not wall.is_empty() and wall.collider == truck_body:
+				velocity.y = 3.8
+				break
+
 	move_and_slide()
 	var on_truck := false
 	var floor_normal := Vector3.UP
@@ -457,6 +480,7 @@ func smooth_truck_correction(error: Vector3) -> void:
 
 ## Render-only contact references. TruckBoarding supplies confirmed occupancy;
 ## no predicted key press can seat this rig before the host grants the control.
+var balance_pose := Vector2.ZERO
 var control_presentation: StringName = &""
 var presentation_frame: Node3D
 var presentation_contacts: Dictionary = {}
@@ -481,6 +505,10 @@ func _animate_body(delta: float) -> void:
 		# Looking rotates the head/camera, never the seated pelvis or bound hands.
 		visual.global_basis = presentation_frame.global_basis * Basis(Vector3.UP, 0.0 if control_presentation == &"rear" else PI)
 		visual.global_position = presentation_frame.to_global(AttemptState.CONTROLS[control_presentation])
+	if control_presentation == &"rear" and is_instance_valid(presentation_frame):
+		visual.global_position += presentation_frame.global_basis * Vector3(balance_pose.x * 0.6, 0, balance_pose.y * 0.5)
+		visual.rotate_object_local(Vector3.BACK, -balance_pose.x * 0.25)
+		visual.rotate_object_local(Vector3.RIGHT, balance_pose.y * 0.2)
 	var speed := Vector2(velocity.x, velocity.z).length()
 	var vertical := velocity.y
 	var grounded := pose_grounded

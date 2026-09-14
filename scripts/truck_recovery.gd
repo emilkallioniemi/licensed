@@ -16,8 +16,9 @@ func simulate(learner: Learner, command: Dictionary, truck: MonsterTruck, previo
 		state.observe_accident(player_id, state.id, &"landed", learner.global_position)
 
 func _resolve(learner: Learner, truck: MonsterTruck, previous: Transform3D, state: AttemptState, player_id: int, delta: float) -> void:
-	if absf(truck.body.global_basis.y.dot(Vector3.UP)) < 0.35:
-		state.observe_accident(player_id, state.id, &"overturn", truck.body.global_position)
+	# Occupants stay secured through bumps, impacts and overturns.
+	if state.control_of(player_id) != &"":
+		return
 	if learner.movement_mode in [&"crushed", &"ravine"]:
 		return
 	if learner.global_position.y < -12.0:

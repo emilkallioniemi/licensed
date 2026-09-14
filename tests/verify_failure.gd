@@ -4,9 +4,9 @@ func _initialize() -> void:
 	var a := AttemptState.new()
 	a.begin(&"monster_truck", [1, 2, 3])
 	for p in [1, 2, 3]: a.scene_ready(p, a.id)
-	a.observe_accident(1, a.id, &"crushed", Vector3.ZERO)
+	a.remaining = 0.1
 	a.tick(0.1)
-	check(a.phase == &"aftermath", "serious accident immediately guarantees failure")
+	check(a.phase == &"aftermath", "timer expiration settles failure")
 	var original := a.assessment()
 	a.tick(6.0)
 	check(a.phase == &"settled", "aftermath finishes before results")
@@ -45,9 +45,9 @@ func _initialize() -> void:
 			check(a.observe_accident(1, a.id, fault, Vector3.ZERO), "accept serious observation")
 			check(not a.observe_accident(1, a.id, fault, Vector3.ZERO), "duplicate serious observation rejected")
 		a.tick(360.0)
-		check(a.assessment().reason == fault, "serious observation wins zero tie or timeout settles")
+		check(a.assessment().reason == &"timeout", "recoverable accidents do not override timeout")
 		a.observe_accident(1, a.id, &"rescued", Vector3.ZERO)
-		check(a.assessment().reason == fault and a.assessment().outcome == &"failed", "physical recovery cannot revoke failure")
+		check(a.assessment().reason == &"timeout" and a.assessment().outcome == &"failed", "physical recovery cannot revoke failure")
 		var immutable := a.assessment()
 		immutable["outcome"] = &"passed"
 		check(a.assessment().outcome == &"failed", "caller cannot mutate shared outcome")

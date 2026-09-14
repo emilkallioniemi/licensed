@@ -24,8 +24,11 @@ func _ready() -> void:
 		wheels[axle] = model.find_child(axle + "Wheel", true, false)
 		var control: Node3D = wheels[axle]
 		highlighted[axle.to_lower()] = meshes(control)
-	var pedals := model.find_child("PedalsConsole", true, false)
-	highlighted["pedals"] = meshes(pedals.find_child("ThrottlePedal", true, false)) + meshes(pedals.find_child("BrakePedal", true, false))
+	for title in ["Front", "Pedals", "Rear"]:
+		highlighted[title.to_lower()] = meshes(model.find_child(title + "Seat", true, false))
+	model.find_child("RearConsole", true, false).hide()
+	pivots["ParkingLever"].hide()
+	pivots["DirectionLever"].hide()
 	timer = lettering("Timer", Vector3(1.2, 2.38, -1.875), 0.0016, 36)
 	direction = lettering("Direction", Vector3(1.0, 2.28, -1.905), 0.0012, 30)
 	parking = lettering("Parking", Vector3(1.42, 2.28, -1.905), 0.0012, 30)
@@ -36,7 +39,7 @@ func _ready() -> void:
 func lettering(title: String, at: Vector3, pixel: float, font: int) -> Label3D:
 	var label := Label3D.new()
 	label.name = title
-	label.position = at
+	label.position = at + Vector3(-0.336, 1.1, 0.26 if at.z < 0.0 else -0.28)
 	label.pixel_size = pixel
 	label.font_size = font
 	label.outline_size = 0
@@ -56,7 +59,7 @@ func meshes(node: Node3D) -> Array[MeshInstance3D]:
 	return result
 
 func update(state: AttemptState, vertical: float, delta: float) -> void:
-	roll = fmod(roll - state.speed * delta / 1.1, TAU)
+	roll = fmod(roll - state.speed * delta / 1.6, TAU)
 	for axle in ["Front", "Rear"]:
 		var angle: float = state.front_angle if axle == "Front" else state.rear_angle
 		wheels[axle].rotation.z = -angle * 2.4 * (-1.0 if axle == "Rear" else 1.0)
@@ -64,8 +67,8 @@ func update(state: AttemptState, vertical: float, delta: float) -> void:
 		for side in ["L", "R"]:
 			pivots[axle + side + "Steer"].rotation.y = -angle
 			pivots[axle + side + "Roll"].rotation.x = roll
-			pivots[axle + side + "Suspension"].position.y = 1.1 - clampf(vertical * 0.035, -0.12, 0.12)
-		pivots[axle + "Axle"].position.y = 1.1 - clampf(vertical * 0.035, -0.12, 0.12)
+			pivots[axle + side + "Suspension"].position.y = 1.6 - clampf(vertical * 0.035, -0.12, 0.12)
+		pivots[axle + "Axle"].position.y = 1.6 - clampf(vertical * 0.035, -0.12, 0.12)
 	var command: Dictionary = state.effective_driving_input(&"pedals")
 	pivots["ThrottlePedal"].rotation.x = -0.3 if command.get("throttle", false) else 0.0
 	pivots["BrakePedal"].rotation.x = -0.3 if command.get("brake", false) else 0.0

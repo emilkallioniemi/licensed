@@ -7,6 +7,23 @@ Approval: user authorized the proposed 28-ticket breakdown (“I trust you.”).
 
 These are implementation tickets, distinct from the sixteen resolved wayfinder decisions. Every ticket starts ready-for-agent; blockers determine whether it may start. Statuses in individual files are authoritative. No implementation or human acceptance is claimed by publication.
 
+## Current next work — 2026-09-14
+
+Checkpoint 06 was not accepted following the reported three-human playtest. Read the [active spec amendment](../monster-truck/spec.md) and [approved revision breakdown](revision-plan.md). Tickets 29–32 are published; start with 29. Completed work is retained; 09–28 stay deferred and require reconciliation with the amendment before implementation.
+
+## Active revision tickets
+
+| Ticket | Blocked by | Deliverable |
+| --- | --- | --- |
+| [29: Board and drive with shared visibility](issues/29-board-and-drive.md) | 08b | Revised boarding/truck, shared camera, secure seating and simple driving. |
+| [30: Cooperate through balance and consensual swaps](issues/30-balance-and-swap.md) | 29 | Directional weight shifting and stopped, accepted seat swaps. |
+| [31: Recover mistakes and pass the short test](issues/31-short-test-and-recovery.md) | 30 | Turn, bumps, parking, shared guidance, recovery, pass/results and retry. |
+| [32: Prepare the revised three-human playtest](issues/32-revised-playtest-package.md) | 31 | Verified Windows/macOS packages and revised human procedure. |
+
+Then perform existing checkpoint 06; its acceptance gates expansion.
+
+## Original ticket index (historical deliverables where superseded)
+
 | Ticket | Blocked by | Deliverable |
 | --- | --- | --- |
 | [01: Book and launch without preassigned roles](issues/01-book-and-launch.md) | None | Three friends book the monster truck, sit down, and arrive together without selecting roles. |
@@ -14,7 +31,7 @@ These are implementation tickets, distinct from the sixteen resolved wayfinder d
 | [03: Drive with three shared controls](issues/03-three-shared-controls.md) | 02 | Three players steer both axles and operate throttle/brakes to negotiate a moving turn and tight reverse. |
 | [04: Fall, reboard, and rescue physically](issues/04-falls-and-rescue.md) | 03 | Learners can ride the roof, fall harmlessly, reboard, and physically rescue a trapped friend while time continues. |
 | [05: Fail, assess, concede, and retry together](issues/05-failure-and-retry.md) | 04 | An accident or timeout fails the trio after its aftermath; players can unanimously concede, retry or return. |
-| [06: Validate three-player cooperation and online feel](issues/06-cooperation-checkpoint.md) | 05 | A retained playable checkpoint demonstrates whether all three controls are necessary, enjoyable and responsive online. |
+| [06: Validate three-player cooperation and online feel](issues/06-cooperation-checkpoint.md) | 05, 32 | A retained playable checkpoint demonstrates whether all three controls are necessary, enjoyable and responsive online. |
 | [07: Drive the modeled and animated truck](issues/07-modeled-truck.md) | 05 | The playable truck gains decent Blender models, animated controls and motion, preserving provisional driving and sight. |
 | [08: Move as expressive, animated learners](issues/08-animated-learners.md) | 05 | Each player moves, boards and drives as an expressive learner visible consistently to friends. |
 | [08a: Set the playtest in a static scrapyard](issues/08a-static-scrapyard.md) | 07, 08 | Original modular Blender scenery dresses the retained exercise with clear boarding/driving/rescue space; no route gameplay. |
@@ -41,7 +58,7 @@ These are implementation tickets, distinct from the sixteen resolved wayfinder d
 
 ## Starting and progressing
 
-Ticket 01 is the initial frontier. Work blockers first, with a fresh implementation context per ticket. Independent branches may proceed when their own blockers are done; this index does not authorize spawning agents or separate tasks by itself.
+Ticket 01 was the original frontier. The revision plan above now governs next work. Work blockers first, with a fresh implementation context per ticket. Independent branches may proceed when their own blockers are done; this index does not authorize spawning agents or separate tasks by itself.
 
 User sequencing override (2026-09-13): “Let’s do seven and eight before playtest.” Produce 07–08 after 05, then refresh the checkpoint build and perform 06. This authorizes early truck/learner assets, not human acceptance. Cooperation checkpoint 06 continues to gate all other downstream expansion, including route and radio. Full-test checkpoint 16 gates final presentation validation. Tickets 06, 16 and 27 require three-human evidence; 21 requires authorized owned-app configuration and real account/computer restoration evidence. Prepare all agent-owned work before a human handoff, and park ready-for-human only when the remaining dependency actually prevents completion.
 
@@ -58,3 +75,7 @@ User sequencing addition (2026-09-13): static scrapyard ticket 08a is authorized
 The complete playable checkpoint includes decent models and generated audio. Later presentation tickets finish the full coverage; they do not defer all assets until after gameplay. Model, rig, audio and integration work remains agent-owned. Broader release operations are outside this effort.
 
 The refreshed local Windows checkpoint after 07–08 is `export/checkpoint-06-modeled/licensed-checkpoint-06.zip`; use its adjacent manifest/hash and the [session procedure](checkpoint-06/session.md). The earlier `export/checkpoint-06/` ZIP is historical. Windows launch and three-human Steam acceptance remain pending in 06.
+
+Current continuation (2026-09-14): coding for the revised short test is complete; continue with [Astra’s truck-art handoff](astra-handoff.md), then final ticket 32 packages. See [verification and tuning](revision-verification.md). The old staircase still exists in the temporary batched GLB; do not distribute old exports as the revised build.
+
+Latest build: [high-body monster-truck verification](art-verification.md). Tickets 29–32 complete; human checkpoint 06 is next. The initial open-pickup export is superseded.

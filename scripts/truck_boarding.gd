@@ -73,22 +73,47 @@ func _unhandled_input(event: InputEvent) -> void:
 		var state: AttemptState = room.room_state().attempt
 		var player_id: int = room.player_id_for_peer(multiplayer.get_unique_id())
 		var control := state.control_of(player_id)
+		if control != &"" and event.physical_keycode in [KEY_1, KEY_2, KEY_3, KEY_Y, KEY_N]:
+			interaction_sequence += 1
+			var target := &""
+			var requester := 0
+			var request_sequence := 0
+			if event.physical_keycode in [KEY_1, KEY_2, KEY_3]:
+				target = [&"front", &"pedals", &"rear"][event.physical_keycode - KEY_1]
+			else:
+				for asking in state.swaps:
+					if state.swaps[asking].other == player_id:
+						requester = asking
+						request_sequence = state.swaps[asking].sequence
+			if multiplayer.is_server():
+				_accept_swap(multiplayer.get_unique_id(), state.id, interaction_sequence, target, requester, event.physical_keycode == KEY_Y, request_sequence)
+			else:
+				_swap.rpc_id(1, state.id, interaction_sequence, target, requester, event.physical_keycode == KEY_Y, request_sequence)
 		if event.physical_keycode == KEY_H and control != &"":
 			hint_time = 6.0
-		if control == &"pedals" and driving_armed and event.physical_keycode in [KEY_R, KEY_SPACE]:
-			action_sequence += 1
-			var action: StringName = &"direction" if event.physical_keycode == KEY_R else &"parking"
-			var generation: int = state.generations.get(player_id, 0)
-			if multiplayer.is_server():
-				_accept_action(multiplayer.get_unique_id(), state.id, action_sequence, generation, action)
-			else:
-				_action.rpc_id(1, state.id, action_sequence, generation, action)
-				pending_actions.append({"sequence": action_sequence, "generation": generation, "action": action})
-				state.driving_action(player_id, state.id, action_sequence, generation, action)
-			get_viewport().set_input_as_handled()
 	if active and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_E:
 		interact()
 		get_viewport().set_input_as_handled()
+
+
+func _nearest_control(at: Vector3) -> StringName:
+	var learner := room._learner_of(multiplayer.get_unique_id())
+	if learner == null:
+		return &""
+	var best := 0.80
+	var chosen := &""
+	for candidate in AttemptState.CONTROLS:
+		if room.room_state().attempt.operators.has(candidate):
+			continue
+		var seat: Vector3 = truck.body.to_global(AttemptState.CONTROLS[candidate])
+		if seat.distance_to(at) > AttemptState.CONTROL_REACH:
+			continue
+		var aim := -learner.camera.global_basis.z
+		var score := aim.dot((seat + Vector3.UP * 0.5 - learner.camera.global_position).normalized())
+		if score > best:
+			best = score
+			chosen = candidate
+	return chosen
 
 func interact() -> void:
 	var learner := room._learner_of(multiplayer.get_unique_id())
@@ -98,13 +123,10 @@ func interact() -> void:
 	var player_id: int = room.player_id_for_peer(multiplayer.get_unique_id())
 	var control := room.room_state().attempt.control_of(player_id)
 	if control == &"":
-		var nearest := AttemptState.CONTROL_REACH
-		var at := truck.body.to_local(learner.global_position)
-		for candidate in AttemptState.CONTROLS:
-			var distance: float = at.distance_to(AttemptState.CONTROLS[candidate])
-			if distance < nearest:
-				nearest = distance
-				control = candidate
+		control = _nearest_control(learner.global_position)
+		if control == &"":
+			get_parent().show_own_role("Move to a seat first")
+			return
 	else:
 		control = &""
 		release_pending = true
@@ -173,7 +195,8 @@ func _physics_process(_delta: float) -> void:
 	if control == &"":
 		release_pending = false
 	if not driving_armed and not release_pending:
-		driving_armed = not (Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_SPACE) or Input.is_physical_key_pressed(KEY_R))
+		driving_armed = not (Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_D))
+	command["recover"] = Input.is_physical_key_pressed(KEY_R)
 	command["steer"] = float(Input.is_physical_key_pressed(KEY_D)) - float(Input.is_physical_key_pressed(KEY_A)) if driving_armed else 0.0
 	command["throttle"] = driving_armed and Input.is_physical_key_pressed(KEY_W)
 	command["brake"] = driving_armed and Input.is_physical_key_pressed(KEY_S)
@@ -236,7 +259,7 @@ func _accept_input(peer_id: int, attempt_id: String, command: Dictionary) -> voi
 	var pitch: float = command.get("pitch", 0.0)
 	if not wish.is_finite() or not is_finite(yaw) or not is_finite(pitch):
 		return
-	inputs[peer_id] = {"sequence": seq, "wish": wish.limit_length(), "yaw": yaw, "pitch": clampf(pitch, -Learner.PITCH_LIMIT, Learner.PITCH_LIMIT), "jump": command.get("jump", false) == true, "sprint": command.get("sprint", false) == true}
+	inputs[peer_id] = {"sequence": seq, "wish": wish.limit_length(), "yaw": yaw, "pitch": clampf(pitch, -Learner.PITCH_LIMIT, Learner.PITCH_LIMIT), "recover": command.get("recover", false) == true, "climb": command.get("climb", false) == true, "jump": command.get("jump", false) == true, "sprint": command.get("sprint", false) == true}
 	ages[peer_id] = 0.0
 	room.room_state().attempt.drive(player_id, attempt_id, seq, command.generation, command)
 
@@ -255,6 +278,11 @@ func advance_truck(present := true) -> void:
 	var state: AttemptState = room.room_state().attempt
 	state.advance_driving(STEP)
 	truck.drive(state, STEP, present)
+	if multiplayer.is_server() and state.phase == &"active":
+		if _advance_recovery(state):
+			return
+		get_parent().observe_cones(state)
+		state.observe_course(get_parent().global_transform.affine_inverse() * truck.body.global_transform, STEP)
 
 func _send_snapshot(reliable: bool) -> void:
 	snapshot_sequence += 1
@@ -265,6 +293,8 @@ func _send_snapshot(reliable: bool) -> void:
 		learners[peer_id]["ack"] = acknowledged.get(peer_id, 0)
 	var data := {"attempt": room.room_state().attempt.id, "sequence": snapshot_sequence, "truck": truck.body.global_transform, "motion": truck.motion, "angular": truck.angular_motion, "vertical": truck.vertical_speed, "recovery": room.room_state().attempt.recovery_snapshot(), "learners": learners, "operators": room.room_state().attempt.operators.duplicate(), "generations": room.room_state().attempt.generations.duplicate()}
 	data["driving"] = room.room_state().attempt.driving_snapshot()
+	data["course"] = room.room_state().attempt.course_snapshot()
+	data["swaps"] = room.room_state().attempt.swaps.duplicate(true)
 	data["remaining"] = room.room_state().attempt.remaining
 	if reliable:
 		_control_snapshot.rpc(var_to_bytes(data).compress(FileAccess.COMPRESSION_DEFLATE))
@@ -307,7 +337,9 @@ func _apply_snapshot(data: Dictionary) -> void:
 	room.room_state().attempt.generations = data.generations.duplicate()
 	room.room_state().attempt.restore_driving(data.driving)
 	room.room_state().attempt.restore_recovery(data.recovery)
+	room.room_state().attempt.restore_course(data.get("course", {}))
 	room.room_state().attempt.remaining = data.remaining
+	room.room_state().attempt.swaps = data.get("swaps", {}).duplicate(true)
 	var action_ack: int = data.driving.toggles.get(player_id, 0)
 	while not pending_actions.is_empty() and pending_actions[0].sequence <= action_ack:
 		pending_actions.pop_front()
@@ -355,14 +387,29 @@ func _apply_snapshot(data: Dictionary) -> void:
 
 func _present_controls() -> void:
 	var player_id: int = room.player_id_for_peer(multiplayer.get_unique_id())
+	var local := room._learner_of(multiplayer.get_unique_id())
+	if local == null:
+		return
 	var control := room.room_state().attempt.control_of(player_id)
-	var copy := ""
-	if control != &"" and hint_time > 0.0:
-		copy = "W · Throttle   S · Service brake   R · Forward/reverse (stopped)   Space · Parking brake" if control == &"pedals" else "A / D · Axle left / right (truck-relative; angle holds)"
-		copy += "\nE · Leave control   H · Show bindings"
-		if control == &"pedals":
-			copy += "\nPedals below: W throttle / S brake"
-	truck.highlight(control, hint_time > 0.0)
+	var hinted_control := control
+	if control == &"":
+		hinted_control = _nearest_control(local.global_position)
+	var copy := "Hold SPACE and walk against the truck to climb. Aim at a seat; E to sit."
+	if control != &"":
+		match control:
+			&"front": copy = "STEERING — A / D turn left / right. The wheel holds its angle."
+			&"pedals": copy = "SPEED — W forward. S brake, then reverse. Release to slow down."
+			&"rear": copy = "BALANCE — A / D lean left / right. W / S lean forward / back."
+		copy += "\nE leave seat. Stop to swap: 1 steering / 2 speed / 3 balance."
+	elif hinted_control != &"":
+		copy = "E · Sit — " + str(hinted_control).replace("front", "steering").replace("pedals", "speed").replace("rear", "balance")
+	for requester in room.room_state().attempt.swaps:
+		var request: Dictionary = room.room_state().attempt.swaps[requester]
+		if request.other == player_id:
+			copy += "\nSwap requested — Y accept / N decline."
+		elif requester == player_id:
+			copy += "\nWaiting for your friend's agreement."
+	truck.highlight(hinted_control, hinted_control != &"")
 	get_parent().show_own_role(copy)
 
 
@@ -373,7 +420,7 @@ func _process(_delta: float) -> void:
 	for learner in room._learners():
 		var control := state.control_of(room.player_id_for_peer(learner.get_multiplayer_authority()))
 		var contacts := {}
-		if control in [&"front", &"rear"]:
+		if control == &"front":
 			var wheel: Node3D = truck.visuals.wheels["Front" if control == &"front" else "Rear"]
 			# Left/right are the learner's anatomical sides, reversed at rear.
 			var side := -1.0 if control == &"front" else 1.0
@@ -387,4 +434,78 @@ func _process(_delta: float) -> void:
 			var brake: Node3D = truck.visuals.pivots["BrakePedal"]
 			contacts.LeftFoot = throttle.to_global(Vector3(0, 0.23, 0.08))
 			contacts.RightFoot = brake.to_global(Vector3(0, 0.23, 0.08))
+		learner.balance_pose = state.balance
 		learner.present_control(control, truck.visuals, contacts)
+
+@rpc("any_peer", "call_remote", "reliable", 1)
+func _swap(attempt_id: String, seq: int, target: StringName, requester: int, accept: bool, request_sequence: int = 0) -> void:
+	if multiplayer.is_server():
+		_accept_swap(multiplayer.get_remote_sender_id(), attempt_id, seq, target, requester, accept, request_sequence)
+
+func _accept_swap(peer_id: int, attempt_id: String, seq: int, target: StringName, requester: int, accept: bool, request_sequence: int = 0) -> void:
+	if not active:
+		return
+	var state: AttemptState = room.room_state().attempt
+	var player_id: int = room.player_id_for_peer(peer_id)
+	if target != &"":
+		state.request_swap(player_id, attempt_id, seq, target)
+	else:
+		state.answer_swap(player_id, attempt_id, seq, requester, accept, request_sequence)
+	_send_snapshot(true)
+
+func _advance_recovery(state: AttemptState) -> bool:
+	var at: Vector3 = get_parent().to_local(truck.body.global_position)
+	var overturned := truck.body.global_basis.y.dot(Vector3.UP) < 0.5
+	var outside := absf(at.x) > 25.0 or at.z < -33.0 or at.z > 5.0 or at.y < -2.0
+	var stranded := false
+	for learner in room._learners():
+		if learner.movement_mode in [&"trapped", &"crushed", &"ravine"]:
+			stranded = true
+	var settled := absf(truck.vertical_speed) < 0.5 and absf(state.speed) < 0.3
+	state.recovery_available = outside or stranded or (overturned and settled)
+	var held := false
+	for peer_id in inputs:
+		if ages.get(peer_id, INF) < FRESHNESS and inputs[peer_id].get("recover", false):
+			held = true
+	if not state.recovery_available or not held:
+		state.recovery_elapsed = 0.0
+		return false
+	state.recovery_elapsed += STEP
+	if state.recovery_elapsed < 2.0:
+		return false
+	# Authored flat recovery pads, nearest safe pad first; test actual hull space.
+	var pads := [Vector3(0, 0, -9), Vector3(6, 0, -24), Vector3(22, 0, -24), Vector3(17, 0, -10)]
+	pads.sort_custom(func(a: Vector3, b: Vector3): return a.distance_squared_to(at) < b.distance_squared_to(at))
+	for pad in pads:
+		var pose := Transform3D(Basis.IDENTITY, get_parent().to_global(pad))
+		var query := PhysicsShapeQueryParameters3D.new()
+		var hull := BoxShape3D.new()
+		hull.size = Vector3(6.8, 4.8, 7.4)
+		query.shape = hull
+		query.transform = pose.translated_local(Vector3.UP * 2.5)
+		query.collision_mask = 4
+		if not truck.get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty():
+			continue
+		truck.body.global_transform = pose
+		truck.motion = Vector3.ZERO
+		truck.angular_motion = 0.0
+		truck.vertical_speed = 0.0
+		state.record_recovery()
+		inputs.clear()
+		pending.clear()
+		driving_armed = false
+		var index := 0
+		for learner in room._learners():
+			var player_id: int = room.player_id_for_peer(learner.get_multiplayer_authority())
+			learner.apply_recovery(&"independent")
+			state.accident_states.erase(player_id)
+			var control := state.control_of(player_id)
+			learner.global_position = pose * (AttemptState.CONTROLS[control] if control != &"" else Vector3(-4.0, 0.1, index * 2.0 - 2.0))
+			learner.support_pose = pose
+			learner.support = &"truck" if control != &"" else &""
+			if control != &"":
+				learner.simulate_truck_walk({}, truck.body, pose, control, STEP)
+			index += 1
+		_send_snapshot(true)
+		return true
+	return false

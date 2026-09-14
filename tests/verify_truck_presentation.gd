@@ -40,10 +40,10 @@ func verify() -> void:
 	state.advance_driving(0.2)
 	truck.drive(state, 0.02)
 	var rear_wheel: Node3D = truck.find_child("RearWheel", true, false)
-	check(absf(rear_wheel.rotation.z) > 0.1 and is_equal_approx(wheel.rotation.z, held), "rear control animates independently of held front wheel")
+	check(not rear_wheel.is_visible_in_tree() and state.balance.x < 0.0 and is_equal_approx(wheel.rotation.z, held), "balance replaces rear wheel without changing front steering")
 	var front_tyre: Node3D = truck.find_child("FrontLSteer", true, false)
 	var rear_tyre: Node3D = truck.find_child("RearLSteer", true, false)
-	check(front_tyre.rotation.y < 0.0 and rear_tyre.rotation.y > 0.0, "actual tyre pivots show opposing axle angles")
+	check(front_tyre.rotation.y < 0.0 and is_zero_approx(rear_tyre.rotation.y), "only front tyres steer")
 	state.observe_learner(3, AttemptState.CONTROLS.pedals)
 	state.request_control(3, state.id, 1, &"pedals")
 	state.driving_action(3, state.id, 1, 1, &"parking")
@@ -64,7 +64,7 @@ func verify() -> void:
 	state.driving_action(3, state.id, 2, 3, &"parking")
 	state.advance_driving(0.2)
 	truck.drive(state, 0.02)
-	check(truck.find_child("ParkingLever", true, false).rotation.x < -0.1, "persistent parking brake has a visible separate lever position")
+	check(not truck.find_child("ParkingLever", true, false).visible, "manual parking lever is removed from the controls")
 	check(truck.visuals.parking.text == "PARK ON" and truck.visuals.timer.text == "6:00", "physical pedals instruments print actual timer and parking state")
 	for player in truck.sound.get_children():
 		if player is AudioStreamPlayer3D:

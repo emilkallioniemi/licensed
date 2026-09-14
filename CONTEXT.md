@@ -33,7 +33,7 @@ One of exactly three humans in a test. Never fewer, never more, never an AI.
 _Avoid_: user, teammate, participant
 
 **Role**:
-A vehicle-specific responsibility made from control, sight, or knowledge. In the monster truck, players take over responsibilities at physical controls and can trade places during the test; roles are not assigned to players beforehand.
+A vehicle-specific responsibility made from control, sight, or knowledge. In the monster truck, players choose responsibilities by occupying seats and can trade during the test; roles are not assigned to players beforehand.
 _Avoid_: class, seat, position, job, character
 
 **Ingredient**:
@@ -45,7 +45,7 @@ Hands on something the vehicle needs: wheel, pedals, throttle, balance, gears, i
 _Avoid_: input, mechanic
 
 **Sight**:
-A view available to a player that others may lack: forward, mirrors, the ground, an instrument. In the monster truck, sight follows the learner's physical position rather than a preassigned role.
+A view available to a player that others may lack: forward, mirrors, the ground, an instrument. Seated monster-truck learners share the same elevated sight; on foot, sight follows the learner's position.
 _Avoid_: camera, view, perspective
 
 **Knowledge**:

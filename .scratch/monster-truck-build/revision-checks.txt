@@ -1,0 +1,47 @@
+Revised gameplay check summaries. Steam names and account IDs omitted.
+All listed test processes returned exit 0. See revision-verification.md for scope and limitations.
+
+licensed-revision-final.log
+REVISION final pose: (16.66039, -0.0, -8.109665) item 3 angle 2.6577033996582
+PASS: three development peers launch by RPC, share arrival/timer and return on guest loss
+
+licensed-revision-verified.log
+REVISION final pose: (16.65151, -0.0, -8.311234) item 3 angle 2.61137461662292
+FAILURE: shared concession, examiner, aftermath, changed choices and synchronized retry verified
+PASS: three development peers launch by RPC, share arrival/timer and return on guest loss
+
+licensed-revision-controls-final.log
+PASS: three development peers launch by RPC, share arrival/timer and return on guest loss
+
+final-attempt_state.log
+PASS: scene readiness barrier, stale/duplicate rejection, arrival timer, load timeout and physical occupancy rules
+
+final-driving.log
+Driving failures: 0
+
+final-balance_swap.log
+Balance/swap failures: 0
+
+final-short_test.log
+Short test failures: 0
+
+final-motion.log
+Motion: PASS
+
+final-failure.log
+PASS: failure boundary
+
+final-recovery.log
+Recovery failures: 0
+
+final-truck_presentation.log
+PASS: modeled truck controls follow public attempt commands
+
+final-learner_animation.log
+Learner animation: PASS
+
+revised-recovery_scene.log
+Recovery scene failures: 0
+
+revised-boarding_scene.log
+Boarding scene failures: 0

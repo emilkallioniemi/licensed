@@ -4,6 +4,48 @@ Status: ready-for-agent
 Date: 2026-09-13
 Source: [resolved decision map](map.md)
 
+## Active amendment: approachable cooperation (2026-09-14)
+
+This amendment governs the next playable revision and supersedes conflicting requirements in the 2026-09-13 baseline below, its decision tickets, and existing implementation tickets. Completed implementation remains retained history. The complete vehicle remains the longer-term objective; expansion requires acceptance of the revised cooperation checkpoint and reconciliation of deferred requirements.
+
+### Playtest finding and objective
+
+The user and two friends played. Visibility required dismounting before nearly every move, preventing improvement; front steering felt good, speed control felt unintuitive and unpleasant, and rear steering felt unnecessary. Laughter faded. These are reported human findings, not a claim that every planned network/control comparison ran. The distributed scrapyard was static scenery; the full route was not yet implemented. No successful complete-test or network acceptance is inferred.
+
+Younger and less mechanical players must understand basic operation quickly, contribute, recover from mistakes, and realistically pass. A clean rating may take practice. Deliberate awkwardness in every control and restricted sight are superseded as mandatory sources of difficulty.
+
+### Next playable behavior
+
+- Retain exactly three humans, the existing waiting room, Steam shipping transport, useful assets, host authority, voice, and shared result/retry/return foundations.
+- All seated players share an elevated third-person truck camera with readable road, destinations, hazards, and accidents. On-foot movement remains available. Seated learners stay attached through crashes and rollovers until deliberately exiting.
+- Remove the rear staircase and revise the silhouette toward a recognisable monster truck. Board by holding Space while moving against the truck to climb; target a highlighted seat and press E to enter. Retain deliberate exit. Choose available physical seats initially; while stopped, request a swap that the other occupant accepts. Preserve exclusive occupancy and reject stale driving commands after handover.
+- Test steering / speed / balance as three simple active responsibilities. Retain the satisfying front-steering feel. Replace the rear-steering role with directional weight shifting: lean into turns and shift forward/backward over bumps, with a clear exaggerated truck response. Easy ground stays manageable without balancing. Regular contribution and enjoyment are unproven and must be evaluated; avoid making the truck constantly threaten rollover just to occupy the third player.
+- Speed: hold W to accelerate forward; hold S to brake then reverse after stopping; release both to slow gently. Ordinary driving requires neither separate direction selection nor parking-brake management. Bindings and guidance must agree with the implemented behavior.
+- Everyone sees the current short instruction, destination/target area, passing requirement before attempting a manoeuvre, and completion feedback. Retain dry examiner personality and subtitles; speech is not the sole guidance channel.
+- Build one short continuous test in the existing scrapyard: a turn, forgiving bumps, and parking to finish. Include actual ordered completion, a shared pass/result, retry, and a generous timer. Repeated parking attempts and cone contacts permit passing. Faults affect rating only; speed earns no rating bonus.
+- Any player can use a clearly prompted hold-to-right action after an overturned truck settles. Restore it upright nearby and add a fault. Leaving the course similarly offers nearby recovery with a fault. Recovery permits continuing to pass; supersede automatic rollover failure and the ban on recovery assistance.
+- Keep workers outside the driving path and the ravine inaccessible in this short test. Complete all three manoeuvres before timer zero to pass; timeout and existing voluntary concession can fail the test. Preserve established disconnect/lifecycle handling. Dangerous encounter rules for later route expansion require reconsideration, not automatic reuse.
+
+### Validation and unresolved tuning
+
+Reuse the previously confirmed public attempt/occupancy/lifecycle boundaries and existing Godot scene and multiplayer harnesses. Verify real input through visible driving, exclusive occupancy and consensual stopped swaps, stale-command rejection, secure seating, once-per-recovery faults, recovery without losing progress, ordered completion, timeout, one shared result, and clean retry. Update tests encoding superseded behavior rather than preserving old controls to satisfy them. No new test seam is assumed.
+
+Three humans including the user rotate every responsibility and record whether each is understandable within a minute, regularly engaging, responsive, and useful. Include a successful short test and recovery followed by a pass; record build/settings and feedback. Compare active balance with an idle balance player after familiarisation. If balance is dull or routinely dispensable, revise the candidate before route expansion; artificial input gates do not establish useful cooperation. Preserve the ADR's three-player requirement while allowing easy ground to be forgiving.
+
+Camera framing, balance strength, speed/braking response, stopping tolerance, recovery hold duration, and timer length are implementation tuning candidates. Use visibly explained, forgiving completion conditions; document chosen values with the build. Agent checks cannot establish human enjoyment or Steam feel.
+
+### Scope and ticket disposition
+
+- Retain done tickets 01–05, 07–08b as implementation history; new revision work changes their behavior where this amendment applies.
+- Ticket 06 remains unaccepted. Replace its old comparison criteria with this revision's human acceptance criteria and keep it as the gate for expansion.
+- Preserve tickets 09–28, with full-route hazards, persistence and presentation deferred. Reconcile their old role/sight/recovery assumptions before making them executable after the revised checkpoint. The short test includes a real pass and result; full personal-license durability/Cloud remains owned by the existing later tickets.
+- Cuter, softer, simpler learners and friendlier movement/animation are a recorded later presentation direction, outside this revision.
+- See the [approved revision breakdown](../monster-truck-build/revision-plan.md). Tickets 29–32 were authorized on 2026-09-14 (“I trust you.”) and are published in the existing implementation tracker; 32 blocks human checkpoint 06.
+
+## Historical baseline (2026-09-13)
+
+The following records the original complete-vehicle plan. Apply it only where it agrees with the active amendment above. In particular, its front/rear split, physical-only seated sight, direction/parking-brake bindings, mandatory physical rescue, automatic rollover failure, five-item next checkpoint, and related exclusions and tests are superseded for this revision. Deferred route and presentation details require reconciliation after the revised checkpoint.
+
 ## Problem Statement
 
 Three friends can gather in the existing waiting room, but departure currently leads to an empty car park. They cannot yet share a monster truck, take its driving test, fail spectacularly, earn a personal license, or retry together. Completing only a manoeuvre demo would leave the intended experience unfinished.

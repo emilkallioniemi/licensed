@@ -21,6 +21,12 @@ var _results: PanelContainer
 var _assessment: Label
 var _retry: Button
 var _return: Button
+var _reticle: Label
+var _guidance: Label
+var _target: Label3D
+var _cones: Array[MeshInstance3D] = []
+var _noted_faults := 0
+var _noted_cones := 0
 
 
 func _ready() -> void:
@@ -93,11 +99,32 @@ func _build() -> void:
 	_own_role.name = "Line"
 	_own_role.visible = false
 	_own_role.position = Vector2(16, 16)
+	_own_role.size.x = 760
+	_own_role.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_own_role.add_theme_font_size_override("font_size", 16)
 	_own_role.add_theme_color_override("font_color", Color("f4ecd7"))
 	_own_role.add_theme_color_override("font_outline_color", Color(0.08, 0.08, 0.1, 1))
 	_own_role.add_theme_constant_override("outline_size", 4)
 	own_role_layer.add_child(_own_role)
+	_reticle = Label.new()
+	_reticle.text = "+"
+	_reticle.add_theme_font_size_override("font_size", 20)
+	_reticle.add_theme_constant_override("outline_size", 3)
+	own_role_layer.add_child(_reticle)
+	_guidance = Label.new()
+	_guidance.position = Vector2(16, 125)
+	_guidance.size.x = 760
+	_guidance.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_guidance.add_theme_font_size_override("font_size", 20)
+	_guidance.add_theme_color_override("font_outline_color", Color.BLACK)
+	_guidance.add_theme_constant_override("outline_size", 5)
+	own_role_layer.add_child(_guidance)
+	_target = Label3D.new()
+	_target.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	_target.font_size = 96
+	_target.pixel_size = 0.02
+	_target.modulate = Color("fff098")
+	add_child(_target)
 	examiner_subtitle = Label.new()
 	examiner_subtitle.position = Vector2(16, 550)
 	examiner_subtitle.add_theme_font_size_override("font_size", 22)
@@ -119,30 +146,43 @@ func _build() -> void:
 	_return.pressed.connect(func(): (get_parent() as WaitingRoom).choose_attempt(&"waiting_room"))
 	column.add_child(_return)
 	_results.hide()
-	# Temporary side-bank overturn sample; route tickets replace this geometry.
-	_add_box("ApronBump", Vector3(3, 1.4, 10), Vector3(-25, 0.7, -12), Color("777d7b"), true)
-	# Temporary uneven-ground checkpoint sample; route ticket 12 owns replacement.
-	_add_box("ApronBump", Vector3(7, 0.9, 1.5), Vector3(-14, 0.45, -8), Color("777d7b"), true)
-	# Cooperation course only. Tickets 09–12 replace this apron with the fixed route.
-	for at in [Vector3(-4, 0.6, -21), Vector3(4, 0.6, -21), Vector3(4, 0.6, -30), Vector3(12, 0.6, -30)]:
-		_add_box("Gate", Vector3(0.5, 1.2, 0.5), at, Color("e4b752"), true)
-	for at in [Vector3(16, 0.7, -18), Vector3(16, 0.7, -7)]:
-		_add_box("ParkingWreck", Vector3(3, 1.4, 3), at, Color("705f56"), true)
-	for x in [12.0, 20.0]:
-		_add_box("ParkingLine", Vector3(0.12, 0.02, 8), Vector3(x, 0.02, -12.5), Color("e4b752"), false)
-	for z in [-16.5, -8.5]:
-		_add_box("ParkingLine", Vector3(8, 0.02, 0.12), Vector3(16, 0.02, z), Color("e4b752"), false)
+	# Short test: broad right turn, low transverse ridges, generous parking box.
+	for x in [14.5, 17.0, 19.5]:
+		_add_box("ApronBump", Vector3(0.8, 0.3, 8.0), Vector3(x, 0.15, -24), Color("d6b75e"), true)
+	for x in [11.0, 23.0]:
+		_add_box("ParkingLine", Vector3(0.15, 0.03, 14), Vector3(x, 0.03, -10), Color("e4b752"), false)
+	for z in [-17.0, -3.0]:
+		_add_box("ParkingLine", Vector3(12, 0.03, 0.15), Vector3(17, 0.03, z), Color("e4b752"), false)
+	for at in [Vector3(0, 0.03, -17), Vector3(5, 0.03, -22), Vector3(10, 0.03, -24), Vector3(22, 0.03, -20), Vector3(20, 0.03, -17)]:
+		_add_box("RouteMark", Vector3(1.0, 0.02, 1.0), at, Color("e4b752"), false)
+
+	# Simple code placeholders for nonblocking cones; each contact is one fault.
+	for at in [Vector3(5, 0.4, -25), Vector3(10, 0.4, -19), Vector3(13, 0.4, -29), Vector3(21, 0.4, -29), Vector3(11, 0.4, -17), Vector3(23, 0.4, -3)]:
+		var cone := MeshInstance3D.new()
+		var mesh := CylinderMesh.new()
+		mesh.top_radius = 0.06
+		mesh.bottom_radius = 0.35
+		mesh.height = 0.8
+		cone.mesh = mesh
+		var material := StandardMaterial3D.new()
+		material.albedo_color = Color("ed8b3b")
+		cone.material_override = material
+		cone.position = at
+		add_child(cone)
+		_cones.append(cone)
 
 	var scrapyard := Scrapyard.new()
 	add_child(scrapyard)
 	scrapyard.dress_exercise(self)
 
 func announce_arrival() -> void:
+	_noted_faults = 0
+	_noted_cones = 0
 	_announced_result = ""
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	examiner_audio.stream = load("res://assets/monster_truck/temporary_request.wav")
-	examiner_audio.play()
-	examiner_subtitle.text = "I would like to see a turn, a reverse, and a parked vehicle."
+	# Old request audio names a superseded manoeuvre; subtitle until re-recorded.
+	examiner_subtitle.text = "I would like to see a turn, the bumps, and a parked vehicle."
 	subtitle_time = 7.0
 
 func _process(delta: float) -> void:
@@ -152,16 +192,39 @@ func _process(delta: float) -> void:
 	if waiting == null or waiting.room_state() == null:
 		return
 	var state: AttemptState = waiting.room_state().attempt
+	var local: Learner = waiting._local_learner()
+	_reticle.visible = visible and state.phase == &"active" and local != null and not local.is_seated()
+	_reticle.position = get_viewport().get_visible_rect().size * 0.5 - Vector2(6, 12)
+	for index in _cones.size():
+		_cones[index].rotation.z = PI / 2.0 if state.cone_hits.has(index) else 0.0
+	if state.minor_faults > _noted_faults:
+		examiner_subtitle.text = "That was a cone." if state.cone_hits.size() > _noted_cones else "We will carry on from here."
+		subtitle_time = 4.0
+		_noted_faults = state.minor_faults
+		_noted_cones = state.cone_hits.size()
 	var result := state.assessment()
+	_guidance.visible = visible and state.phase == &"active"
+	_target.visible = _guidance.visible
+	var instructions := ["1 / 3 · Turn right toward TURN. Reach the marker facing across the yard.", "Turn complete. 2 / 3 · Cross BUMPS from left to right, staying on the yellow ridges.", "Bumps complete. 3 / 3 · Park in the yellow box, aligned lengthways. Stop for 2 seconds.", "Test complete."]
+	_guidance.text = instructions[clampi(state.test_item, 0, 3)]
+	_guidance.text += "\nTime %d:%02d · Minor faults %d" % [int(state.remaining) / 60, int(state.remaining) % 60, state.minor_faults]
+	if truck.body.global_basis.y.dot(Vector3.UP) < 0.5 and not state.recovery_available:
+		_guidance.text += "\nRelease the driving controls and let the truck settle to recover."
+	if state.recovery_available:
+		_guidance.text += "\nHold R for 2 seconds to recover nearby (+1 minor fault). %d%%" % int(state.recovery_elapsed * 50.0)
+	var targets := [Vector3(10, 3, -24), Vector3(21, 3, -24), Vector3(17, 3, -10), Vector3(17, 3, -10)]
+	_target.position = targets[clampi(state.test_item, 0, 3)]
+	_target.text = ["TURN ↓", "BUMPS →", "PARK ↓", "FINISHED"][clampi(state.test_item, 0, 3)]
 	_results.visible = visible and state.phase == &"settled"
 	if not result.is_empty() and visible and _announced_result != state.id:
 		_announced_result = state.id
 		examiner_audio.stream = load("res://assets/monster_truck/temporary_failure.wav")
-		examiner_audio.play()
-		examiner_subtitle.text = "We will leave it there."
+		if result.outcome == &"failed":
+			examiner_audio.play()
+		examiner_subtitle.text = "That will do." if result.outcome == &"passed" else "We will leave it there."
 		subtitle_time = 5.0
 	if _results.visible:
-		_assessment.text = "DRIVING TEST — FAILED\n%s\nMinor faults: %d" % [str(result.reason).capitalize(), result.minor_faults]
+		_assessment.text = "DRIVING TEST — %s\n%s\nMinor faults: %d" % [str(result.outcome).to_upper(), str(result.get("rating", result.reason)).capitalize(), result.minor_faults]
 		_retry.text = "Retry (%d/3)" % state.choices.values().count(&"retry")
 		_return.text = "Waiting room (%d/3)" % state.choices.values().count(&"waiting_room")
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -217,3 +280,9 @@ func show_own_role(copy: String) -> void:
 		return
 	_own_role.text = copy
 	_own_role.visible = copy != ""
+
+func observe_cones(state: AttemptState) -> void:
+	for index in _cones.size():
+		var local := truck.body.to_local(_cones[index].global_position)
+		if absf(local.x) < 3.55 and absf(local.z) < 3.9 and absf(local.y) < 1.8:
+			state.observe_cone(index)

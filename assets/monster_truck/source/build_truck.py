@@ -11,6 +11,7 @@ OUT = Path(__file__).resolve().parent.parent
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
 bpy.context.scene.unit_settings.system='METRIC'
+bpy.context.preferences.filepaths.save_version=0
 colors={'Paint':'b96a35','Edge':'df9b4a','Cream':'eadcb9','Dark':'263537','Steel':'617779','Bright':'a3b1aa','Rubber':'20262a','Tread':'323b3c','Seat':'40666b','SeatInset':'537c7c','Red':'b44937','Lamp':'ffe2a2','Screen':'142d2d','Ink':'101b20','Rust':'714732'}
 mats={}
 for name,h in colors.items():
@@ -56,25 +57,31 @@ def text(name,copy,at,size,mat='Cream',parent=root,rear=False):
     ob.rotation_euler=(pi/2,0,pi if not rear else 0); ob.data.materials.append(mats[mat])
     bpy.ops.object.select_all(action='DESELECT'); ob.select_set(True); bpy.context.view_layer.objects.active=ob; bpy.ops.object.convert(target='MESH'); return ob
 
-# Heavy cab, deliberate tall opaque sills and bonnet preserve ground blind spots.
-box('Deck',(0,1.45,0),(4.8,.3,5),'Paint',bevel=.075)
+# Open competition pickup: low body, exposed tyres and a sparse safety cage.
+# No roof sheet or rear staircase obscures occupants in the shared camera.
+box('Deck',(0,1.45,0),(4.8,.3,5),'Paint',bevel=.10)
 box('CabFloor',(0,1.61,0),(4.65,.025,4.85),'Dark',bevel=.005)
 for x in [-2.25,2.25]:
-    for z in [-2.3,2.3]:
-        box('Pillar',(x,2.8,z),(.3,2.6,.3),'Paint',bevel=.05)
-        box('PillarWear',(x*.99,3.15,z*.99),(.035,.65,.035),'Edge',bevel=.005)
-    box('Sill',(x,1.9,-.95),(.2,.65,2.7),'Paint')
+    box('Sill',(x,1.9,-.95),(.2,.65,2.7),'Paint',bevel=.07)
     box('CreamBelt',(x*1.047,2.14,-.95),(.025,.12,2.65),'Cream',bevel=.003)
     box('SillRubStrip',(x*1.05,1.7,-.95),(.09,.09,2.7),'Dark')
-    # Rear doors intentionally open: safe standing/release aisle stays clear.
-    rod('EntryHandle',(x,2.15,2.1),(x,2.75,2.1),.045,'Edge')
-box('Roof',(0,4.15,0),(4.8,.2,5),'Paint',bevel=.07)
-box('RoofWalkingInset',(0,4.26,0),(4.55,.025,4.7),'Steel',bevel=.008)
-for z in [-2,-1.5,-1,-.5,0,.5,1,1.5,2]:
-    box('RoofGrip',(0,4.282,z),(4.3,.012,.045),'Dark',bevel=.003)
-# Low roof edge has actual matching collider; no decorative rail through riders.
+    # Short windshield frame and central roll hoop; rear balance deck is open.
+    for z in [-2.3,0.1]:
+        rod('CageUpright',(x,1.6,z),(x,3.55,z),.075,'Dark')
+    rod('CageRoofSide',(x,3.55,-2.3),(x,3.55,.1),.075,'Dark')
+    rod('RearCageBrace',(x,3.55,.1),(x,1.7,2.3),.06,'Steel')
+    box('DoorNumberPlate',(x*1.052,1.93,-.65),(.025,.37,.60),'Cream',bevel=.025)
+    # Broad shoulders above the wheels make the exposed tyre scale obvious.
+    for z in [-1.8,1.8]:
+        box('FenderShoulder',(x,2.34,z),(.60,.16,1.1),'Paint',bevel=.075)
+        box('FenderLip',(x*1.105,2.27,z),(.08,.13,1.12),'Dark',bevel=.04)
+for z in [-2.3,.1]:
+    rod('CageCrossbar',(-2.25,3.55,z),(2.25,3.55,z),.075,'Dark')
+# A racing bonnet and exposed intake distinguish the nose from the open bed.
 box('Bonnet',(0,2.1,-2.6),(4.1,1,.9),'Paint',bevel=.12)
 box('BonnetTop',(0,2.615,-2.6),(4.02,.03,.8),'Edge')
+box('IntakeScoop',(0,2.77,-2.55),(.95,.28,.65),'Dark',bevel=.065)
+box('IntakeOpening',(0,2.78,-2.89),(.76,.15,.025),'Ink')
 for x in [-1.0,-.7,-.4,-.1,.2,.5,.8,1.1]:
     box('BonnetVent',(x,2.638,-2.6),(.11,.013,.45),'Dark',bevel=.01)
 box('GrilleFrame',(0,2.02,-3.075),(2.35,.65,.08),'Cream')
@@ -135,11 +142,21 @@ for name,x,z,back in [('Front',-1.2,-1.3,1),('Pedals',1.2,-1.3,1),('Rear',-1.2,1
     for sx in [-.28,.28]: box('SeatPipe',(sx,.6,back*.35),(.035,.75,.035),'Steel',seat,.012)
     for zz in [-.14,0,.14]: box('UpholsteryStitch',(0,.461,zz),(.45,.008,.008),'Cream',seat,.002)
     if name=='Examiner': continue
+    if name=='Rear':
+        # Legacy transform names remain for presentation compatibility, without
+        # a steering wheel or console mesh. Weight shifting is the control.
+        dash=group('RearConsole',(x,0,z),root)
+        group('RearWheel',parent=dash)
+        group('RearNeedle',parent=dash)
+        for side in [-1,1]:
+            rod('BalanceGrip',(side*.46,.48,-.1),(side*.46,.70,.2),.035,'Edge',seat)
+        box('BalancePlatform',(0,.01,0),(1.65,.025,1.65),'Steel',seat,.02)
+        continue
     dash=group(name+'Console',(x,0,z),root)
     box('ConsoleStand',(0,1.94,-back*.66),(.16,.64,.17),'Steel',dash)
     box('ConsoleHousing',(0,2.38,-back*.72),(1.02,.44,.16),'Dark',dash,.06)
     box('ConsoleFace',(0,2.38,-back*.625),(.91,.37,.025),'Cream',dash,.025)
-    text(name+'ControlName',name.upper(),(.24,2.51,-back*.604),.068,'Dark',dash,rear=back==1)
+    text(name+'ControlName',('STEERING' if name=='Front' else 'SPEED'),(.24,2.51,-back*.604),.068,'Dark',dash,rear=back==1)
     for sx in [-.4,.4]:
         for yy in [2.24,2.52]: cylinder('PanelScrew',(sx,yy,-back*.595),.013,.012,'Steel',dash,'z',8)
     if name!='Pedals':
@@ -161,40 +178,13 @@ for name,x,z,back in [('Front',-1.2,-1.3,1),('Pedals',1.2,-1.3,1),('Rear',-1.2,1
             box('PedalPad',(0,.23,.03),(.22,.23,.075),'Rubber',pedal)
             for yy in [.16,.22,.28]: box('PedalGrip',(0,yy,.075),(.17,.022,.012),'Steel',pedal,.003)
         park=group('ParkingLever',(.45,2.15,-.32),dash)
-        rod('ParkingStem',(0,0,0),(0,.32,0),.032,'Steel',park)
-        box('ParkingGrip',(0,.35,0),(.09,.11,.17),'Red',park)
-        direction=group('DirectionLever',(-.44,2.21,-.36),dash)
-        rod('DirectionStem',(0,0,0),(0,.22,0),.021,'Steel',direction)
-        cylinder('DirectionKnob',(0,.23,0),.055,.08,'Cream',direction)
+        group('DirectionLever',(-.44,2.21,-.36),dash)
 # Radio provision: a physical unpowered unit; interactions/music belong to 24.
 box('RadioHousing',(.25,2.24,-2.26),(.65,.31,.29),'Steel',bevel=.04)
 box('RadioFace',(.25,2.24,-2.10),(.58,.24,.025),'Dark')
 for x in [.02,.055,.09,.125,.16,.195]: box('RadioGrille',(x,2.24,-2.08),(.013,.16,.012),'Bright',bevel=.003)
 for x in [.34,.47]: cylinder('RadioKnob',(x,2.24,-2.06),.037,.055,'Cream',axis='z')
 text('RadioOff','OFF',(.4,2.32,-2.078),.035,'Cream',rear=True)
-# Compact rear switchback stair: two continuous collision slopes with physical
-# fine metal treads, generous landing, separate ground/cab boarding stair.
-def stair(name,x,z0,z1,y0,y1,width):
-    length=sqrt((z1-z0)**2+(y1-y0)**2); center=(x,(y0+y1)/2,(z0+z1)/2)
-    ob=box(name+'Bed',center,(width,.10,length),'Steel',bevel=.012)
-    ob.rotation_euler.x=atan2(y1-y0,-(z1-z0))
-    ob.location.z-=.05/abs(cos(ob.rotation_euler.x))
-    for i in range(21):
-        t=i/20; z=z0+(z1-z0)*t; y=y0+(y1-y0)*t
-        ob=box(name+'Grip',(x,y+.013,z),(width-.08,.025,.045),'Dark',bevel=.004)
-    for side in [-1,1]:
-        xx=x+side*(width/2-.02)
-        rod(name+'Stringer',(xx,y0-.06,z0),(xx,y1-.06,z1),.055,'Dark')
-        # Handrails stay outside walking capsules and never cross entrances.
-        rod(name+'Handrail',(xx,y0+.85,z0),(xx,y1+.85,z1),.035,'Edge')
-        for t in [0,.5,1]:
-            y=y0+(y1-y0)*t; z=z0+(z1-z0)*t
-            rod(name+'RailPost',(xx,y,z),(xx,y+.85,z),.025,'Steel')
-stair('Boarding',1.15,6.3,3.35,-.05,1.60,1.4)
-box('RearAccessLanding',(-.1,1.55,2.925),(4.1,.10,.85),'Steel')
-stair('RoofLower',-1.5,3.3,5.5,1.60,2.9,1.1)
-box('RoofLanding',(-.75,2.85,5.9),(2.6,.10,.8),'Steel')
-stair('RoofUpper',0,5.5,2.5,2.9,4.28,1.1)
 # Scuffs, fasteners and modest hazard paint integrated into bodywork.
 for x in [-2.15,-1.75,-.8,0,.8,1.75,2.15]:
     cylinder('DeckRivet',(x,1.45,-2.514),.026,.016,'Bright',axis='z',vertices=8)
@@ -204,16 +194,50 @@ for i in range(10):
 for x,y,z in [(-1.8,2.32,-3.063),(.7,1.9,-3.063),(1.35,2.4,-3.063),(-.4,2.22,-3.063)]:
     box('PaintChip',(x,y,z),(.14,.025,.009),'Rust',bevel=.003)
 
+# Toy monster-truck proportions: compact shell lifted above oversized wheels.
+# Seats/controls retain human-scale contact geometry; their spacing follows shell.
+body_shell=group('RaisedBody',parent=root)
+for ob in list(root.children):
+    if ob == body_shell: continue
+    if ob.name.endswith('Suspension'):
+        ob.location.x = 2.4 if ob.location.x > 0 else -2.4
+        ob.location.y = 2.1 if ob.location.y > 0 else -2.1
+        ob.location.z = 1.6
+        for child in ob.children_recursive:
+            if child.name.endswith('Roll'): child.scale=(1.45,1.45,1.45)
+    elif ob.name.endswith('Axle'):
+        ob.location.y = 2.1 if ob.location.y > 0 else -2.1
+        ob.location.z = 1.6
+        ob.scale.x = 4.8/5.5
+    elif ob.name.startswith(('SuspensionArm','Damper')) or ob.name.endswith('Spring'):
+        bpy.data.objects.remove(ob,do_unlink=True)
+    elif ob.type == 'EMPTY' and ob.name.endswith(('Seat','Console')):
+        ob.location.x *= .72
+        ob.location.y *= .8
+        ob.location.z += 1.1
+    else:
+        ob.parent=body_shell
+body_shell.scale=(.72,.8,1.0)
+body_shell.location.z=1.1
+# Long exposed suspension is the visual explanation for the lifted body.
+for x in [-2.4,2.4]:
+    for z in [-2.1,2.1]:
+        rod('LongTravelArm',(x*.55,2.5,z*.72),(x,1.6,z),.10,'Steel')
+        rod('LiftedDamper',(x*.70,2.8,z*.8),(x*.88,1.6,z),.085,'Bright')
+        for ring in range(7):
+            t=ring/6
+            torus('LiftedSpring',(x*(.70+.18*t),2.75-1.08*t,z*(.8+.2*t)),.14,.035,'Edge',axis='y')
+
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'source'/'truck.blend'))
 bpy.ops.export_scene.gltf(filepath=str(OUT/'truck.glb'),export_format='GLB',export_yup=True)
 # Studio views live outside the GLB/source model; actual sight verified in Godot.
 bpy.ops.mesh.primitive_plane_add(size=200); bpy.context.object.data.materials.append(mats['Cream']); bpy.context.object.location.z=-.015
-scene=bpy.context.scene; scene.render.engine='CYCLES'; scene.cycles.samples=32
-scene.render.resolution_x=1440; scene.render.resolution_y=1080; scene.render.resolution_percentage=100
+scene=bpy.context.scene; scene.render.engine='CYCLES'; scene.cycles.samples=16
+scene.render.resolution_x=960; scene.render.resolution_y=720; scene.render.resolution_percentage=100
 scene.world.color=(.22,.22,.22)
 for at,energy,size in [((3,-5,10),1700,7),((-6,2,7),1300,6),((0,7,9),1800,5)]:
     bpy.ops.object.light_add(type='AREA',location=at); bpy.context.object.data.energy=energy; bpy.context.object.data.shape='DISK'; bpy.context.object.data.size=size
-bpy.ops.object.camera_add(); camera=bpy.context.object; camera.data.type='ORTHO'; camera.data.ortho_scale=13; scene.camera=camera
+bpy.ops.object.camera_add(); camera=bpy.context.object; camera.data.type='ORTHO'; camera.data.ortho_scale=10; scene.camera=camera
 for title,at,target in [('front',(10,13,8),(0,-.5,2)),('rear',(10,-14,10),(0,-1.8,2)),('cabin',(5,7,7),(0,0,2.5))]:
 
     if title=='cabin':

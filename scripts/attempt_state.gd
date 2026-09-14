@@ -6,14 +6,21 @@ extends RefCounted
 const DURATION := 360.0
 const LOAD_TIMEOUT := 30.0
 const AFTERMATH_DURATION := 6.0
-const SERIOUS_ACCIDENTS := [&"crushed", &"ravine", &"overturn"]
+const SERIOUS_ACCIDENTS := []
+var test_item := 0
+var minor_faults := 0
+var cone_hits: Array[int] = []
+var parking_elapsed := 0.0
+var bumps_entered := false
+var recovery_elapsed := 0.0
+var recovery_available := false
 var _result: Dictionary = {}
 var _aftermath_elapsed := 0.0
 var _serious_reason: StringName = &""
 var choices: Dictionary = {}
 var _choice_sequences: Dictionary = {}
-const CONTROLS := {&"front": Vector3(-1.2, 1.6, -1.3), &"pedals": Vector3(1.2, 1.6, -1.3), &"rear": Vector3(-1.2, 1.6, 1.3)}
-const CONTROL_REACH := 1.15
+const CONTROLS := {&"front": Vector3(-0.864, 2.7, -1.04), &"pedals": Vector3(0.864, 2.7, -1.04), &"rear": Vector3(-0.864, 2.7, 1.04)}
+const CONTROL_REACH := 3.5
 var operators: Dictionary = {}
 var generations: Dictionary = {}
 var _learner_positions: Dictionary = {}
@@ -28,6 +35,12 @@ var _ready: Array[int] = []
 var _loading_elapsed := 0.0
 const INPUT_FRESHNESS := 0.35
 const AXLE_LIMIT := 0.6
+const DRIVE_ACCEL := 3.0
+const BRAKE_SPEED := 8.0
+const COAST_SPEED := 1.6
+const REVERSE_SPEED := 3.0
+var balance := Vector2.ZERO
+var swaps: Dictionary = {}
 var front_angle := 0.0
 var rear_angle := 0.0
 var speed := 0.0
@@ -53,6 +66,8 @@ func begin(booked_vehicle: StringName, participants: Array[int]) -> void:
 	generations.clear()
 	_learner_positions.clear()
 	_interaction_sequences.clear()
+	balance = Vector2.ZERO
+	swaps.clear()
 	front_angle = 0.0
 	rear_angle = 0.0
 	speed = 0.0
@@ -70,6 +85,13 @@ func begin(booked_vehicle: StringName, participants: Array[int]) -> void:
 	_choice_sequences.clear()
 	_result.clear()
 	_aftermath_elapsed = 0.0
+	test_item = 0
+	minor_faults = 0
+	cone_hits.clear()
+	parking_elapsed = 0.0
+	bumps_entered = false
+	recovery_elapsed = 0.0
+	recovery_available = false
 	remaining = DURATION
 	_loading_elapsed = 0.0
 	phase = &"loading"
@@ -94,6 +116,10 @@ func tick(delta: float) -> void:
 		if _aftermath_elapsed >= AFTERMATH_DURATION:
 			phase = &"settled"
 	elif phase == &"active":
+		for requester in swaps.keys():
+			swaps[requester].ttl -= maxf(delta, 0.0)
+			if swaps[requester].ttl <= 0.0:
+				swaps.erase(requester)
 		remaining = maxf(0.0, remaining - maxf(0.0, delta))
 		if _serious_reason != &"":
 			_settle_failure(_serious_reason)
@@ -105,17 +131,19 @@ func tick(delta: float) -> void:
 func depart() -> void:
 	if phase != &"waiting":
 		choices.clear()
+		swaps.clear()
 		phase = &"departing"
 
 
 func snapshot() -> Dictionary:
-	return {"id": id, "phase": phase, "vehicle": vehicle, "remaining": remaining,
+	return {"course": course_snapshot(), "id": id, "phase": phase, "vehicle": vehicle, "remaining": remaining,
 		"participants": _participants.duplicate(), "ready": _ready.duplicate(),
 		"serious_reason": _serious_reason, "result": assessment(), "aftermath_elapsed": _aftermath_elapsed, "choices": choices.duplicate(), "choice_sequences": _choice_sequences.duplicate(),
-		"loading_elapsed": _loading_elapsed, "operators": operators.duplicate(), "generations": generations.duplicate(), "driving": driving_snapshot(), "recovery": recovery_snapshot()}
+		"loading_elapsed": _loading_elapsed, "swaps": swaps.duplicate(true), "operators": operators.duplicate(), "generations": generations.duplicate(), "driving": driving_snapshot(), "recovery": recovery_snapshot()}
 
 
 func restore(data: Dictionary) -> void:
+	restore_course(data.get("course", {}))
 	_serious_reason = data.get("serious_reason", &"")
 	_result = data.get("result", {}).duplicate(true)
 	_aftermath_elapsed = data.get("aftermath_elapsed", 0.0)
@@ -128,6 +156,7 @@ func restore(data: Dictionary) -> void:
 	_participants.assign(data["participants"])
 	_ready.assign(data["ready"])
 	_loading_elapsed = data["loading_elapsed"]
+	swaps = data.get("swaps", {}).duplicate(true)
 	operators = data.get("operators", {}).duplicate()
 	generations = data.get("generations", {}).duplicate()
 	if data.has("driving"):
@@ -200,11 +229,8 @@ func driving_action(player_id: int, attempt_id: String, sequence: int, generatio
 	if not _valid_operator(player_id, attempt_id, generation) or control_of(player_id) != &"pedals" or sequence <= toggle_sequences.get(player_id, 0):
 		return false
 	toggle_sequences[player_id] = sequence
-	if action == &"parking":
-		parking_brake = not parking_brake
-		return true
-	if action == &"direction" and absf(speed) < 0.05:
-		direction *= -1
+	if action == &"parking" or action == &"direction":
+		# Deprecated controls are intentionally retained for network compatibility.
 		return true
 	return false
 
@@ -219,6 +245,7 @@ func advance_driving(delta: float) -> void:
 		driving_inputs.clear()
 	var throttle := false
 	var brake := false
+	var lean := Vector2.ZERO
 	for player_id in driving_inputs:
 		driving_ages[player_id] = driving_ages.get(player_id, 0.0) + delta
 	for control in CONTROLS:
@@ -227,17 +254,29 @@ func advance_driving(delta: float) -> void:
 			continue
 		match control:
 			&"front": front_angle = clampf(front_angle + command.steer * 1.8 * delta, -AXLE_LIMIT, AXLE_LIMIT)
-			&"rear": rear_angle = clampf(rear_angle + command.steer * 1.8 * delta, -AXLE_LIMIT, AXLE_LIMIT)
+			&"rear": lean = Vector2(command.steer, float(command.brake) - float(command.throttle)).limit_length()
 			&"pedals":
 				throttle = command.throttle
 				brake = command.brake
-	if parking_brake or brake:
-		speed = move_toward(speed, 0.0, (12.0 if parking_brake else 8.0) * delta)
+	balance = balance.move_toward(lean, delta * 3.0)
+	rear_angle = 0.0
+	if throttle and brake:
+		speed = move_toward(speed, 0.0, BRAKE_SPEED * delta)
 	elif throttle:
-		speed = move_toward(speed, direction * 8.0, 3.0 * delta)
+		speed = move_toward(speed, 8.0, DRIVE_ACCEL * delta)
+	elif brake:
+		if speed <= 0.0:
+			speed = move_toward(speed, -REVERSE_SPEED, 2.0 * delta)
+		else:
+			speed = move_toward(speed, 0.0, BRAKE_SPEED * delta)
 	else:
-		speed = move_toward(speed, 0.0, 0.45 * delta)
+		speed = move_toward(speed, 0.0, COAST_SPEED * delta)
 
+	if absf(speed) > 0.1:
+		swaps.clear()
+	parking_brake = is_zero_approx(speed) and not throttle and not brake
+	if not is_zero_approx(speed):
+		direction = 1 if speed > 0.0 else -1
 
 ## The currently effective held input, shared by mechanics and presentation.
 ## Stale or unoccupied controls are neutral even while their last packet is kept.
@@ -248,9 +287,10 @@ func effective_driving_input(control: StringName) -> Dictionary:
 	return driving_inputs.get(player_id, {}).duplicate()
 
 func driving_snapshot() -> Dictionary:
-	return {"front": front_angle, "rear": rear_angle, "speed": speed, "direction": direction, "parking": parking_brake, "inputs": driving_inputs.duplicate(true), "ages": driving_ages.duplicate(), "sequences": driving_sequences.duplicate(), "toggles": toggle_sequences.duplicate()}
+	return {"balance": balance, "front": front_angle, "rear": rear_angle, "speed": speed, "direction": direction, "parking": parking_brake, "inputs": driving_inputs.duplicate(true), "ages": driving_ages.duplicate(), "sequences": driving_sequences.duplicate(), "toggles": toggle_sequences.duplicate()}
 
 func restore_driving(data: Dictionary) -> void:
+	balance = data.get("balance", Vector2.ZERO)
 	front_angle = data.front
 	rear_angle = data.rear
 	speed = data.speed
@@ -266,6 +306,8 @@ func observe_accident(player_id: int, attempt_id: String, kind: StringName, at: 
 	if attempt_id != id or phase not in [&"active", &"aftermath", &"settled"] or not _participants.has(player_id):
 		return false
 	if kind not in [&"ejected", &"landed", &"trapped", &"rescued", &"crushed", &"ravine", &"overturn"] or not at.is_finite() or not impulse.is_finite():
+		return false
+	if control_of(player_id) != &"" and kind in [&"ejected", &"trapped", &"crushed", &"ravine"]:
 		return false
 	var prior: StringName = accident_states.get(player_id, &"")
 	if prior == kind or prior in SERIOUS_ACCIDENTS:
@@ -291,6 +333,7 @@ func restore_recovery(data: Dictionary) -> void:
 	accidents = data.get("events", []).duplicate(true)
 
 func _drop_operator(player_id: int) -> void:
+	swaps.clear()
 	var control := control_of(player_id)
 	if control != &"":
 		operators.erase(control)
@@ -303,8 +346,9 @@ func assessment() -> Dictionary:
 func _settle_failure(reason: StringName) -> void:
 	if phase != &"active" or not _result.is_empty():
 		return
-	_result = {"attempt": id, "outcome": &"failed", "reason": reason, "participants": _participants.duplicate(), "minor_faults": 0}
+	_result = {"attempt": id, "outcome": &"failed", "reason": reason, "participants": _participants.duplicate(), "minor_faults": minor_faults}
 	choices.clear()
+	swaps.clear()
 	phase = &"aftermath"
 	driving_inputs.clear()
 
@@ -335,3 +379,97 @@ func choose(player_id: int, attempt_id: String, sequence: int, choice: StringNam
 		&"retry": begin(vehicle, _participants.duplicate())
 		&"waiting_room": depart()
 	return true
+
+## A request reserves both occupants; acceptance is explicit and expires in 8s.
+func request_swap(player_id: int, attempt_id: String, sequence: int, target: StringName) -> bool:
+	if not _accept_interaction(player_id, attempt_id, sequence) or absf(speed) > 0.1:
+		return false
+	var own := control_of(player_id)
+	var other: int = operators.get(target, 0)
+	if own == &"" or other == 0 or other == player_id:
+		return false
+	for requester in swaps:
+		if requester in [player_id, other] or swaps[requester].other in [player_id, other]:
+			return false
+	swaps[player_id] = {"other": other, "own": own, "target": target, "sequence": sequence, "ttl": 8.0}
+	return true
+
+func answer_swap(player_id: int, attempt_id: String, sequence: int, requester: int, accept: bool, request_sequence: int) -> bool:
+	if not _accept_interaction(player_id, attempt_id, sequence) or not swaps.has(requester):
+		return false
+	var request: Dictionary = swaps[requester]
+	if request.other != player_id or request.sequence != request_sequence:
+		return false
+	swaps.erase(requester)
+	if not accept:
+		return true
+	if absf(speed) > 0.1 or control_of(requester) != request.own or control_of(player_id) != request.target:
+		return false
+	operators[request.own] = player_id
+	operators[request.target] = requester
+	for occupant in [player_id, requester]:
+		neutralize_driving(occupant)
+		generations[occupant] = generations.get(occupant, 0) + 1
+	return true
+
+func course_snapshot() -> Dictionary:
+	return {"item": test_item, "cones": cone_hits.duplicate(), "faults": minor_faults, "parking": parking_elapsed, "bumps": bumps_entered, "recovery": recovery_elapsed, "recoverable": recovery_available}
+
+func restore_course(data: Dictionary) -> void:
+	cone_hits.assign(data.get("cones", []))
+	test_item = data.get("item", 0)
+	minor_faults = data.get("faults", 0)
+	parking_elapsed = data.get("parking", 0.0)
+	bumps_entered = data.get("bumps", false)
+	recovery_elapsed = data.get("recovery", 0.0)
+	recovery_available = data.get("recoverable", false)
+
+## Observations come from the host's actual truck pose in test-area coordinates.
+func observe_course(pose: Transform3D, delta: float) -> void:
+	if phase != &"active" or remaining <= 0.0 or recovery_available:
+		return
+	var at := pose.origin
+	if pose.basis.y.dot(Vector3.UP) < 0.85:
+		parking_elapsed = 0.0
+		return
+	match test_item:
+		0:
+			if Vector2(at.x - 10.0, at.z + 24.0).length() <= 4.0 and absf(pose.basis.z.x) > 0.35:
+				test_item = 1
+		1:
+			if absf(at.z + 24.0) > 4.0:
+				bumps_entered = false
+			elif at.x >= 10.0 and at.x <= 13.0:
+				bumps_entered = true
+			elif bumps_entered and at.x >= 20.0 and at.x <= 24.0:
+				test_item = 2
+		2:
+			var fits := absf(at.x - 17.0) <= 2.0 and absf(at.z + 10.0) <= 3.0 and absf(pose.basis.z.z) >= 0.766 and absf(speed) <= 0.2
+			parking_elapsed = parking_elapsed + maxf(delta, 0.0) if fits else 0.0
+			if parking_elapsed >= 2.0:
+				test_item = 3
+				_result = {"attempt": id, "outcome": &"passed", "reason": &"completed", "participants": _participants.duplicate(), "minor_faults": minor_faults, "rating": "Clean" if minor_faults == 0 else ("Scrappy" if minor_faults < 4 else "Survivors")}
+				choices.clear()
+				swaps.clear()
+				driving_inputs.clear()
+				phase = &"aftermath"
+
+func record_recovery() -> void:
+	if phase == &"active":
+		minor_faults += 1
+		bumps_entered = false
+		recovery_elapsed = 0.0
+		recovery_available = false
+		parking_elapsed = 0.0
+		driving_inputs.clear()
+		swaps.clear()
+		speed = 0.0
+		balance = Vector2.ZERO
+		front_angle = 0.0
+		for player_id in generations:
+			generations[player_id] += 1
+
+func observe_cone(index: int) -> void:
+	if phase == &"active" and index >= 0 and index < 6 and not cone_hits.has(index):
+		cone_hits.append(index)
+		minor_faults += 1

@@ -19,46 +19,44 @@ func _ready() -> void:
 	body.name = "Body"
 	body.sync_to_physics = false
 	add_child(body)
-	box("Deck", Vector3(4.8, 0.3, 5.0), Vector3(0, 1.45, 0))
-	box("Roof", Vector3(4.8, 0.24, 5.0), Vector3(0, 4.16, 0))
+	shell_box("Deck", Vector3(4.8, 0.3, 5.0), Vector3(0, 1.45, 0))
 	for x in [-2.25, 2.25]:
-		box("FrontPillar", Vector3(0.3, 2.6, 0.3), Vector3(x, 2.8, -2.3))
-		box("RearPillar", Vector3(0.3, 2.6, 0.3), Vector3(x, 2.8, 2.3))
-		box("Sill", Vector3(0.2, 0.65, 2.7), Vector3(x, 1.9, -0.95))
+		for z in [-2.3, 0.1]:
+			shell_rail(Vector3(x, 1.6, z), Vector3(x, 3.55, z), 0.075)
+		shell_rail(Vector3(x, 3.55, -2.3), Vector3(x, 3.55, 0.1), 0.075)
+		shell_rail(Vector3(x, 3.55, 0.1), Vector3(x, 1.7, 2.3), 0.06)
+		shell_box("Sill", Vector3(0.2, 0.65, 2.7), Vector3(x, 1.9, -0.95))
 		for z in [-1.8, 1.8]:
 			# Direct-body shapes participate in AnimatableBody collision. Steering
 			# cylinders are symmetric about the rolling axle, with tread envelope.
 			var tyre := CollisionShape3D.new()
 			var shape := CylinderShape3D.new()
-			shape.radius = 1.1
-			shape.height = 1.0
+			shape.radius = 1.6
+			shape.height = 1.9
 			tyre.shape = shape
 			body.add_child(tyre)
-			tyre.position = Vector3(x / 2.25 * 2.75, 1.1, z)
+			tyre.position = Vector3(x / 2.25 * 2.4, 1.6, signf(z) * 2.1)
 			tyre.rotation.z = PI / 2.0
 			tyres.append(tyre)
-	# Continuous supporting surfaces coincide with modeled metal stair beds.
-	stair("Boarding", 1.15, 6.3, 3.35, -0.05, 1.60, 1.4)
-	box("RearAccessLanding", Vector3(4.1, 0.10, 0.85), Vector3(-0.1, 1.55, 2.925))
-	stair("RoofLower", -1.5, 3.3, 5.5, 1.60, 2.9, 1.1)
-	box("RoofLanding", Vector3(2.6, 0.10, 0.8), Vector3(-0.75, 2.85, 5.9))
-	stair("RoofUpper", 0, 5.5, 2.5, 2.9, 4.28, 1.1)
+	for z in [-2.3, 0.1]:
+		shell_rail(Vector3(-2.25, 3.55, z), Vector3(2.25, 3.55, z), 0.075)
 	for control in AttemptState.CONTROLS:
 		var at: Vector3 = AttemptState.CONTROLS[control]
 		var back := -1.0 if control == &"rear" else 1.0
 		box("Seat", Vector3(0.68, 0.44, 0.68), at + Vector3(0, 0.22, 0))
 		box("SeatBack", Vector3(0.66, 0.7, 0.17), at + Vector3(0, 0.76, back * 0.28))
-		box("Console", Vector3(1.02, 0.44, 0.16), at + Vector3(0, 0.78, -back * 0.72))
-	box("ExaminerSeat", Vector3(0.7, 0.44, 0.7), Vector3(1.2, 1.82, 1.4))
-	box("Bonnet", Vector3(4.1, 1.0, 0.9), Vector3(0, 2.1, -2.6))
-	box("RearPanel", Vector3(2.0, 0.8, 0.2), Vector3(-0.9, 2.05, 2.35))
+		if control != &"rear":
+			box("Console", Vector3(1.02, 0.44, 0.16), at + Vector3(0, 0.78, -back * 0.72))
+	box("ExaminerSeat", Vector3(0.7, 0.44, 0.7), Vector3(0.864, 2.92, 1.12))
+	shell_box("Bonnet", Vector3(4.1, 1.0, 0.9), Vector3(0, 2.1, -2.6))
+	shell_box("RearPanel", Vector3(2.0, 0.8, 0.2), Vector3(-0.9, 2.05, 2.35))
 	visuals = TruckPresentation.new()
 	visuals.name = "Presentation"
 	body.add_child(visuals)
 	# Existing learner is temporary examiner body; full distinct rig belongs to 23.
 	var examiner: Node3D = preload("res://assets/slice_0/player/learner.glb").instantiate()
 	visuals.add_child(examiner)
-	examiner.position = Vector3(1.2, 1.6, 1.4)
+	examiner.position = Vector3(0.864, 2.7, 1.12)
 	examiner.find_child("BodyPivot", true, false).position.y = 0.59
 	examiner.rotation.y = PI
 	for side in ["Left", "Right"]:
@@ -109,7 +107,7 @@ func drive(state: AttemptState, delta: float, present := true) -> void:
 	var rear := tan(state.rear_angle)
 	angular_motion = -state.speed * (front - rear) / 3.6
 	var sideways := (front + rear) * 0.5
-	motion = body.global_basis * Vector3(sideways, 0, -1).normalized() * state.speed
+	motion = Basis(Vector3.UP, body.global_rotation.y) * Vector3(sideways, 0, -1).normalized() * state.speed
 	# Forgiving ordinary turns; a fast tight turn throws an unsecured rider
 	# outward. These arcade thresholds remain candidates for checkpoint 06.
 	if absf(state.speed * angular_motion) > 8.0:
@@ -119,16 +117,16 @@ func drive(state: AttemptState, delta: float, present := true) -> void:
 	# not stop the truck. Sweep a whole-cab hull, including rotation corners.
 	var query := PhysicsShapeQueryParameters3D.new()
 	var hull := BoxShape3D.new()
-	hull.size = Vector3(5.8, 3.8, 5.8)
+	hull.size = Vector3(6.8, 4.8, 7.4)
 	query.shape = hull
-	query.transform = from.translated_local(Vector3(0, 2.0, -0.2))
+	query.transform = from.translated_local(Vector3(0, 2.4, 0))
 	query.motion = motion * delta
 	query.collision_mask = 4
 	var fractions := get_world_3d().direct_space_state.cast_motion(query)
 	var fraction := fractions[0]
 	body.global_position += motion * delta * fraction
-	body.rotate_y(angular_motion * delta * fraction)
-	query.transform = body.global_transform.translated_local(Vector3(0, 2.0, -0.2))
+	body.rotation.y += angular_motion * delta * fraction
+	query.transform = body.global_transform.translated_local(Vector3(0, 2.4, 0))
 	if not get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty():
 		body.global_transform = from
 		fraction = 0.0
@@ -146,7 +144,7 @@ func drive(state: AttemptState, delta: float, present := true) -> void:
 		angular_motion = 0.0
 	for tyre in tyres:
 		tyre.rotation.y = -state.front_angle if tyre.position.z < 0 else -state.rear_angle
-	_advance_suspension(delta)
+	_advance_suspension(delta, state)
 	if not present:
 		return
 	visuals.position = visuals.position.move_toward(Vector3.ZERO, delta * 8.0)
@@ -164,25 +162,29 @@ func smooth_correction(previous_visual: Transform3D) -> void:
 	else:
 		visuals.transform = Transform3D.IDENTITY
 
-func _advance_suspension(delta: float) -> void:
+func _advance_suspension(delta: float, state: AttemptState) -> void:
 	# Terrain is layer 8, separate from hull-blocking structures (4). Four tyre
 	# probes preserve real vertical support while the arcade cab stays upright.
 	var heights: Array[float] = []
 	var side_heights: Dictionary = {}
-	for x in [-2.75, 2.75]:
-		for z in [-1.8, 1.8]:
+	for x in [-2.4, 2.4]:
+		for z in [-2.1, 2.1]:
 			var at := body.to_global(Vector3(x, 0, z))
 			var ray := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 1.5, at - Vector3.UP * 3.0, 8)
 			var hit := get_world_3d().direct_space_state.intersect_ray(ray)
 			if not hit.is_empty():
 				heights.append(hit.position.y)
 				side_heights[x] = hit.position.y
-	# A rough side bank makes overturn observable before the full route arrives.
-	# Once on its side the truck remains a wreck; no player righting action.
-	if absf(body.rotation.z) > 0.25:
-		body.rotation.z = move_toward(body.rotation.z, signf(body.rotation.z) * PI / 2.0, delta * 1.4)
-	elif side_heights.size() == 2 and absf(side_heights[-2.75] - side_heights[2.75]) > 1.2:
-		body.rotation.z = signf(side_heights[2.75] - side_heights[-2.75]) * 0.26
+	# Balance moves the centre of weight. Ordinary cornering stays forgiving.
+	if absf(body.rotation.z) > 0.9:
+		body.rotation.z = move_toward(body.rotation.z, signf(body.rotation.z) * PI / 2.0, delta)
+	else:
+		var bank := 0.0
+		if side_heights.size() == 2:
+			bank = atan2(side_heights[2.4] - side_heights[-2.4], 4.8)
+		var roll_target := clampf(bank - state.speed * angular_motion * 0.06 - state.balance.x * 0.30, -1.2, 1.2)
+		body.rotation.z = move_toward(body.rotation.z, roll_target, delta * 1.2)
+		body.rotation.x = move_toward(body.rotation.x, clampf(vertical_speed * 0.04 + state.balance.y * 0.16, -0.28, 0.28), delta)
 	var before := vertical_speed
 	if heights.is_empty():
 		vertical_speed -= 9.8 * delta
@@ -205,3 +207,12 @@ func reset_presentation() -> void:
 func advance(delta: float) -> void:
 	body.position += motion * delta
 	body.rotate_y(angular_motion * delta)
+
+func shell_point(at: Vector3) -> Vector3:
+	return Vector3(at.x * 0.72, at.y + 1.1, at.z * 0.8)
+
+func shell_box(title: String, size: Vector3, at: Vector3) -> void:
+	box(title, size * Vector3(0.72, 1.0, 0.8), shell_point(at))
+
+func shell_rail(from: Vector3, to: Vector3, radius: float) -> void:
+	rail(shell_point(from), shell_point(to), radius)

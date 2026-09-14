@@ -1,68 +1,52 @@
-# Checkpoint 06: three-human Steam session
+# Revised checkpoint 06: three-human Steam playtest
 
-Status: prepared; no human session has occurred. Use exactly three humans including the user, each on a separate Windows x86_64 computer with a different logged-in Steam account. The user moved truck/learner production 07–08 before this session. Use the refreshed modeled checkpoint in `export/checkpoint-06-modeled/`; the older `export/checkpoint-06/` ZIP is historical. Its adjacent MANIFEST.json and SHA256.txt identify the exact source and binaries. This remains the cooperation exercise rather than the complete driving test. All handling, ejection, rescue and six-second aftermath tuning remains provisional. No player can pass the full vehicle yet: checkpoint success below means completing the comparison exercise, not earning a license.
+Status: revised truck integrated; Windows/macOS prerelease preparation. The earlier build was played and prompted this revision; it is not the build to test again. Human acceptance remains pending. The revised short test can produce a shared pass; durable personal licenses remain later work.
 
-## Build and capture
+## Build and setup
 
-Use the build manifest beside the local zip; all three verify its SHA-256. Record manifest/source digest, Godot version, GodotSteam version, Windows version, CPU/GPU, display resolution/refresh, VSync, frame cap, wired/Wi-Fi connection, host, pseudonymous A/B/C identifiers and UTC start/end. Use the same build/settings for comparisons. Begin at 1280×720 windowed, Forward+, 60 FPS cap, existing 60 Hz physics; record any necessary machine-specific deviation. Keep Steam running. Launch via `run-checkpoint.cmd` (or `licensed.exe --windowed --resolution 1280x720 --max-fps 60 -- --checkpoint-diagnostics`). No ENet flag. App 480 is development Steam transport, not owned-app acceptance. Invite/join through reception; all pick monster truck and sit. Steam failure screen or absent invite/join is a blocker to investigate, never permission to substitute ENet.
+Use the revised Windows/macOS ZIPs alongside this procedure. All three people, including the user, need the same manifest/source hash and separate Steam accounts. Keep Steam running, launch via the packaged launcher, invite/join at reception, choose monster truck, and sit. Do not use ENet for human acceptance. Start at 1280×720, 60 FPS, existing 60 Hz physics; record any changes. Record build hash, OS, host, settings, connection type and trial identifiers A/B/C.
 
-Capture all three screens with visible keystrokes (external recorder/keyboard view; avoid an omniscient game overlay) and voice with the players' consent. Each person says their identifier and a shared countdown before the first action. Retain the automatic `checkpoint-*.jsonl` files in `%APPDATA%\Godot\app_userdata\licensed`; archive immediately after each host block. The launch log is `checkpoint-engine.log` next to the executable. Record the scenario ID aloud. Logs use monotonic local timestamps, so align them with video by the first boarding/control action, not by assuming synchronized clocks. Do not put real account identifiers into a public report.
+The optional `--checkpoint-diagnostics` flag records local JSONL files in Godot's user-data directory. Keep logs and consensually recorded video/voice per trial. The existing `summarize.py` reports observed probe round trips, variation/timeouts, frame intervals and input acknowledgement ages. Those are not one-way latency, Steam packet loss, or click-to-photon latency. Use video for visible response; report unavailable measurements as unavailable.
 
-Diagnostics are opt-in, off in normal play, and grant no extra sight. Application probes measure round-trip time, successive RTT variation and fraction of probes whose replies are absent after three seconds. They measure combined network/engine scheduling and round-trip failure, not one-way latency or Steam packet loss. Input acknowledgement age is local command sample to host-applied snapshot receipt; it is not click-to-photon latency. Snapshot correction distance is the learner displacement during reconciliation, including intentional occupancy/recovery changes; use video to distinguish them. Frame intervals use the wall-clock time between process callbacks, not the engine's smoothed delta; they include actual process scheduling. For true input-to-visible response, annotate key-down and first visible local movement, then confirmed/remote movement in the recordings, reporting frame counts and recording FPS (one-frame precision limit). Never enter zero for unavailable transport statistics; enter unavailable. Steam transport-level loss is unavailable in this capture.
+## Learn and pass
 
-## Repeatable exercise
+Hold Space while walking against the truck to climb. Aim the centre crosshair at a highlighted seat and press E; E also deliberately leaves a seat. Everyone seated shares the elevated truck camera.
 
-The truck points away from arrival toward two pairs of yellow posts. Start every comparison with fresh Retry, same secured truck and no held keys. Use three familiarisation attempts, rotating front / rear / throttle-brake clockwise so everyone has used every control. Learn E take/release, A/D held axle angles, W/S throttle/service brake, stopped-only R direction, Space persistent parking, H hints and physical instruments. Use voice; the timer keeps running. The temporary examiner requests turn, reverse and park. Free movement and roof access must remain enabled.
+| Responsibility | Controls |
+| --- | --- |
+| Steering | A/D left/right; unwind the wheel yourself. |
+| Speed | W forward; S brake then reverse. Release to slow. |
+| Balance | A/D lean left/right; W/S forward/back over bumps. Directions are truck-relative. |
+| Swap | Stop, press 1 steering / 2 speed / 3 balance. The other occupant presses Y to accept or N to refuse. Requests expire. |
+| Recovery | When prompted, hold R for two seconds. Release driving controls and let an overturned truck settle first. |
 
-1. Board on the short rear ramp; each take one control. Release parking brake, move through the first yellow gate, turn toward and clear the offset second gate. Deliberately unwind held axle angles. Count stops, shunts, contacts, ejections and completion time.
-2. Brake to rest, select reverse, reverse through the offset gates in reverse order without going around their outer sides. The offset requires a tight change in direction. Return to the open apron, then reverse into the yellow rectangle between the two compressed wrecks. Stop with the whole truck inside and engage parking brake. These are manual exercise observations; no automated completion/scoring is claimed.
-3. All release controls and climb the rear switchback stair to the roof; walk to opposite edges and describe what is hidden from each position. Reboard. Have one ride the roof through an ordinary slow turn. A separate faster sharp turn/bump tests detachment: show the same consequence on every screen, walk back and climb aboard after a harmless landing.
-4. On the open apron, position a hands-free learner under the deck from the side between the tyres while the truck is secured. If entry is blocked by the standing capsule, try moving the truck slowly over a stationary learner between the tyres on a separate attempt; record whether this ordinary setup works. If physically trapped, friends cautiously move it away to restore standing clearance. Record whether setup is achievable through ordinary movement; never teleport to manufacture human evidence. Avoid tyres except in the separate catastrophic compression trial. If rescue is impossible, use Escape and three changeable concession votes, observe aftermath, change a result choice, then unanimously Retry. Also capture one side-bank overturn as a separate attempt. The static scrapyard now has solid ground beyond the fence: the old apron edge is no longer an unsupported fall. Use the recoverable roof-fall trial above for fall/reboarding coverage; unsupported outer-edge failure is not a nearby exercise or a validated scenario in this package.
+Follow the shared instruction and yellow target: turn right, cross the bumps from left to right, then park lengthways inside the yellow bay and stop for two seconds. Corrections and reverse approaches are allowed. Recoveries and cone contacts lower the rating but permit passing. The timer is six minutes. Observe the shared result, then unanimously Retry. Escape offers a unanimous concession.
 
-## Host/control/comparison matrix
+First play three attempts, rotating responsibilities so each person tries all three. Record whether controls make sense within a minute and what prevented any pass. Include at least one successful test and one recovery followed by a pass. Nobody should need to dismount to find out where to drive.
 
-A is the user. Each cell is one complete repeat of steps 1–3, following familiarisation. F/R/P mean front/rear/throttle-brake. Rotate the host by returning to own rooms and inviting the other two; never attempt host migration.
+## Compare cooperation
 
-| Host block | Trial 1 (A/B/C) | Trial 2 (A/B/C) | Trial 3 (A/B/C) |
-| --- | --- | --- | --- |
-| A | F/R/P | R/P/F | P/F/R |
-| B | F/R/P | R/P/F | P/F/R |
-| C | F/R/P | R/P/F | P/F/R |
+After familiarisation, repeat a matched attempt with active balance, then with the balance player connected but idle; alternate the order on a repeat. Record where balance helped, where it was engaging or idle, and whether it was merely busywork. Do not infer fun from passing or force the role to matter with artificial input gates.
 
-Within each cell run coordinated baseline, then the following matched comparison; distribute comparison variants over the three trials and repeat any ambiguous result. In trial 1, one human stays connected and deliberately idle; repeat with each control's contributor idle. In trial 2, rear operator sets a documented fixed angle (first zero, then the trio's best candidate) and stops steering but remains connected; record whether communication alone compensates. In trial 3, one stays connected/idle and two physically hop between all three controls; allow them to plan an efficient strategy. Alternate baseline/comparison order on repeat to reduce learning bias. Do not silently treat route memory or fewer collisions as enjoyment. Repeat baseline afterward when fatigue or learning changes the result.
+Rotate the host and repeat the relevant steering/speed/balance comparisons. Each person reports concrete examples: what was funny, what felt unfair, when their contribution mattered, whether they could see the destination, and whether they wanted another attempt. A dull or dispensable balance role means revise before expanding the route.
 
-Ask each person separately: what did you anticipate, when were you engaged or waiting, what did you need someone to see/say/do, could walking eliminate the blind spot, what was funny, what felt unfair, and would you retry? Record examples and timestamps. Rear optionality, dull throttle/brake, routine two-person success, erased blind spots or frustrating ordinary footing mean REVISE, even if everyone completed the exercise.
+## Network and interruption checks
 
-## Connections and interruptions
+Cover simultaneous attempts to occupy one seat; accepted/refused/expired swaps; movement cancelling a request; held input during handover; secure seating during impact/rollover; and guest recovery followed by shared progress/result/retry. Check mixed result choices and withdrawing concession as well.
 
-Run the matrix first on ordinary connections. Repeat each host/control rotation under the adverse profile below, including its baseline/comparison. Keep raw observed metrics and configured impairment distinct. Run only a network impairment tool already authorized for the test computer/router; record its exact version, filter and screenshot. If none is available, stop the adverse-connection criterion as missing dependency; do not call a slower frame cap network adversity.
+Repeat relevant cases on ordinary and adverse Steam connections. If an already-authorized network shaper is available, use nominal 75 ms added delay each direction, ±25 ms variation and 2% datagram loss; record the actual configuration and observed diagnostics separately. Also cover 0.5- and 2-second blackouts with a held command released during the blackout. If no shaper is available, record the missing adverse check; low FPS is not a network impairment substitute.
 
-Apply to one guest's game traffic, both directions: nominal 75 ms added delay each direction, random ±25 ms variation, 2% independent datagram drop. These are reproducibility settings, not acceptance thresholds or measured readings. Use a UDP-capable process-scoped shaper or dedicated test router, including Steam relay UDP traffic (do not filter only a direct peer IP). Validate the profile with observed probe distributions versus baseline. Rotate affected guest, then affect host. Separately blackhole game traffic for 0.5 seconds and 2 seconds, restoring it each time. Record actual tool settings when symmetric jitter/drop is unsupported; never pretend equivalence. Remove the profile and verify recovery at the end.
+Test guest loss and host loss during loading, driving and results. Survivors must return appropriately, without a partial test or host migration. Re-form three people between cases. No two-player acceptance run.
 
-For each host on ordinary and adverse connections, cover and timestamp:
+## Trial record
 
-- Two people press E at the same empty control; only one wins. Release/walk/takeover during a turn; no old held input should fire on takeover.
-- Hold throttle/steer, start a short blackhole, release while disconnected, restore. Check stale intent times out and new operator/retry does not inherit it. A queued old reliable E/action during interruption must not take over a new attempt. Label scenarios as human observation; fixtures separately cover deliberate duplicate/reordered packets.
-- Roof walking/ordinary turning, abrupt detachment, collection and physical rescue with all three views. Compare guest versus host bodily and driving response.
-- Guest quit and host quit separately during operation, scene loading/fade, and settlement/results: six cases. Re-form exactly three after each; note return destinations, loading timeout, immutable result where already settled, no stuck partial test and no migration. Do not wait for someone to play with only two.
-- Unanimous concession, withdrawn vote, mixed result choices, changed third choice and retry; confirm fresh truck/timer/controls and desire to retry after the provisional six-second aftermath.
+Build hash / settings / trial / host / responsibilities / connection profile:
+Pass or failure / elapsed time / contacts / recovery / parking corrections:
+Steering, speed and balance: understandable, responsive, engaging, useful?
+Visibility and instruction problems / exact unfair or funny moments:
+Active-versus-idle balance difference:
+Desire to retry / rating motivation:
+Video and log filenames / measured diagnostics / unavailable checks:
+Retain or revise / specific next change / matched repeat:
 
-## Finding record (copy per trial)
-
-Build hash / settings / scenario / UTC:
-Host / A,B,C controls / profile / impaired machine:
-Completion, elapsed time, shunts, contacts, falls and rescue:
-Anticipation / F engagement / R engagement / P engagement:
-Sight-sharing and whether movement removes blind spots:
-Physical comedy, unfairness, aftermath and retry reaction (quotes/timestamps):
-Each player's driving / walking / boarding / handover judgement:
-User explicitly judges each of those four “very good”, with no laggy feel: pending.
-Raw log/video filenames; measured probe RTT/jitter/timeouts, frame p50/p95/p99/max, acknowledgement age, reconciliation rate/distance, video input response:
-Retain / revise / insufficient evidence, specific reason:
-One bounded change to handling, sight, geometry or networking; new build hash:
-Matched repeat and player reactions after that change:
-Remaining work / owner:
-
-No retain decision or box is prefilled. Retain only with build-linked human evidence; make bounded relevant revisions one at a time, rerun agent checks and repeat matched comparisons. Keep the implementation. No free-movement removal, optional-control workaround or agent proxy can clear this checkpoint. The user’s sequencing overrides authorize 07–08 and static scrapyard 08a before this checkpoint, followed by the separate Windows/macOS package and publishing work. Route gameplay and other expansion remain gated until required evidence and revisions exist.
-
-Summarize each captured file with `python summarize.py checkpoint-*.jsonl` (the recorder writes no fabricated samples). Host RTT and acknowledgement statistics are null because these concern the guest-to-host path. Unresolved probes at shutdown are counted separately from timeouts. Use per-trial files/recording annotations to separate intentional disconnects from ordinary networking.
+Ticket 06 remains unaccepted until build-linked human evidence and material fixes are recorded. Tickets 09–28 remain deferred.
