@@ -103,8 +103,16 @@ func drive(state: AttemptState, delta: float, present := true) -> void:
 	var sideways := (front + rear) * 0.5
 	var has_traction := _has_tyre_contact()
 	if has_traction:
-		angular_motion = -state.speed * (front - rear) / 3.6
-		motion = Basis(Vector3.UP, body.global_rotation.y) * Vector3(sideways, 0, -1).normalized() * state.speed
+		var heading := Basis(Vector3.UP, body.global_rotation.y)
+		var desired := heading * Vector3(sideways, 0, -1).normalized() * state.speed
+		# Tyre forces change velocity over time; touching dirt cannot replace
+		# takeoff momentum with the chassis's new facing after a spin.
+		var horizontal := Vector3(motion.x, 0, motion.z)
+		horizontal = horizontal.move_toward(desired, AttemptState.BRAKE_SPEED * delta)
+		motion.x = horizontal.x
+		motion.z = horizontal.z
+		var rolling_speed := horizontal.dot(-heading.z)
+		angular_motion = -rolling_speed * (front - rear) / 3.6
 	# Forgiving ordinary turns; a fast tight turn throws an unsecured rider
 	# outward. These arcade thresholds remain candidates for checkpoint 06.
 	if has_traction and absf(state.speed * angular_motion) > 8.0:
@@ -233,6 +241,8 @@ func highlight(control: StringName, enabled: bool) -> void:
 	visuals.highlight(control, enabled)
 
 func reset_presentation() -> void:
+	motion = Vector3.ZERO
+	angular_motion = 0.0
 	suspension_rotation_velocity = Vector2.ZERO
 	visuals.reset()
 	sound.reset()
