@@ -184,3 +184,4 @@ Areas: `examiner`, `controls`, `split`, `sight`, `sheet`, `scope`, `ui`, `scorin
 - 2026-10-09 | stadium | Spectator tiers must have solid collision matching their modeled geometry so the truck and players cannot pass through the stands.
 - 2026-10-09 | momentum | Landing after a spin preserves world-space travel momentum; tyre grip and throttle must progressively slow and redirect it instead of snapping velocity to the truck's facing.
 - 2026-10-09 | rollover | Remove hard tilt immunity: impact momentum can overturn the truck, roof/chassis contact supports it, and the existing recovery action rights it on solid ground.
+- 2026-10-09 | camera | During a rollover the chase camera keeps a level horizon and stable orbit heading; it resumes following smoothly when upright instead of inheriting tumble-induced heading changes.

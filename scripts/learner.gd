@@ -251,7 +251,7 @@ func _update_presentation(delta: float, fraction: float) -> void:
 			_previous_position = global_position
 			_current_position = global_position
 		if support == &"truck" and _seated:
-			camera.global_transform = _truck_seated_camera_transform()
+			camera.global_transform = _truck_seated_camera_transform(delta)
 		else:
 			var eye_height := 0.6 if movement_mode in [&"trapped", &"crushed"] else (SEATED_EYE_HEIGHT if _seated else EYE_HEIGHT)
 			_eye_height = lerpf(_eye_height, eye_height, 1.0 - exp(-16.0 * delta)) if truck_movement else eye_height
@@ -272,8 +272,22 @@ func _update_presentation(delta: float, fraction: float) -> void:
 	_animate_body(delta)
 
 
-func _truck_seated_camera_transform() -> Transform3D:
-	var frame := Transform3D(Basis(Vector3.UP, support_pose.basis.get_euler().y), support_pose.origin)
+var _truck_camera_heading := 0.0
+var _truck_camera_initialized := false
+
+func _truck_seated_camera_transform(delta := 1.0 / 60.0) -> Transform3D:
+	# Euler yaw becomes ambiguous during a tumble. Keep a separate, level
+	# orbit heading and only follow the chassis while it is mostly upright.
+	var forward := support_pose.basis.z
+	var upright := support_pose.basis.y.dot(Vector3.UP) > 0.65
+	if not _truck_camera_initialized:
+		_truck_camera_heading = atan2(forward.x, forward.z) if upright else rotation.y
+		_truck_camera_initialized = true
+	elif upright:
+		var target_heading := atan2(forward.x, forward.z)
+		var difference := wrapf(target_heading - _truck_camera_heading, -PI, PI)
+		_truck_camera_heading += clampf(difference * (1.0 - exp(-5.0 * delta)), -1.8 * delta, 1.8 * delta)
+	var frame := Transform3D(Basis(Vector3.UP, _truck_camera_heading), support_pose.origin)
 	var origin: Vector3 = frame * SEATED_TRUCK_CAMERA_OFFSET
 	var target: Vector3 = frame * SEATED_TRUCK_CAMERA_TARGET
 	return Transform3D(Basis.looking_at(target - origin, Vector3.UP), origin)
@@ -311,6 +325,7 @@ var _detach_velocity := Vector3.ZERO
 var ejection_time := 0.0
 
 func set_truck_movement(enabled: bool) -> void:
+	_truck_camera_initialized = false
 	truck_movement = enabled
 	var synchronizer := $MultiplayerSynchronizer as MultiplayerSynchronizer
 	if enabled:
