@@ -100,12 +100,14 @@ func drive(state: AttemptState, delta: float, present := true) -> void:
 	impact_speed = 0.0
 	var front := tan(state.front_angle)
 	var rear := tan(state.rear_angle)
-	angular_motion = -state.speed * (front - rear) / 3.6
 	var sideways := (front + rear) * 0.5
-	motion = Basis(Vector3.UP, body.global_rotation.y) * Vector3(sideways, 0, -1).normalized() * state.speed
+	var has_traction := _has_tyre_contact()
+	if has_traction:
+		angular_motion = -state.speed * (front - rear) / 3.6
+		motion = Basis(Vector3.UP, body.global_rotation.y) * Vector3(sideways, 0, -1).normalized() * state.speed
 	# Forgiving ordinary turns; a fast tight turn throws an unsecured rider
 	# outward. These arcade thresholds remain candidates for checkpoint 06.
-	if absf(state.speed * angular_motion) > 8.0:
+	if has_traction and absf(state.speed * angular_motion) > 8.0:
 		jolt = body.global_basis.x * signf(angular_motion * state.speed) * 5.0 + Vector3.UP * 3.5
 	var from := body.global_transform
 	# Only environment structures use layer 4. Learners and deck contact must
@@ -115,11 +117,13 @@ func drive(state: AttemptState, delta: float, present := true) -> void:
 	hull.size = Vector3(6.8, 4.8, 7.4)
 	query.shape = hull
 	query.transform = from.translated_local(Vector3(0, 2.4, 0))
-	query.motion = motion * delta
+	# Suspension integrates gravity once, below; this sweep moves horizontally.
+	var horizontal_motion := Vector3(motion.x, 0, motion.z)
+	query.motion = horizontal_motion * delta
 	query.collision_mask = 4
 	var fractions := get_world_3d().direct_space_state.cast_motion(query)
 	var fraction := fractions[0]
-	body.global_position += motion * delta * fraction
+	body.global_position += horizontal_motion * delta * fraction
 	body.rotation.y += angular_motion * delta * fraction
 	query.transform = body.global_transform.translated_local(Vector3(0, 2.4, 0))
 	if not get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty():
@@ -157,6 +161,16 @@ func smooth_correction(previous_visual: Transform3D) -> void:
 		visuals.global_transform = previous_visual
 	else:
 		visuals.transform = Transform3D.IDENTITY
+
+func _has_tyre_contact() -> bool:
+	for x in [-2.4, 2.4]:
+		for z in [-2.1, 2.1]:
+			var at := body.to_global(Vector3(x, 0, z))
+			var ray := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 1.8, at - Vector3.UP * 0.18, 8)
+			var hit := get_world_3d().direct_space_state.intersect_ray(ray)
+			if not hit.is_empty() and hit.position.y + 0.18 > at.y:
+				return true
+	return false
 
 func _advance_suspension(delta: float, state: AttemptState) -> void:
 	# Each tyre applies a push at its contact point, producing lift and torque.

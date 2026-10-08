@@ -179,3 +179,4 @@ Areas: `examiner`, `controls`, `split`, `sight`, `sheet`, `scope`, `ui`, `scorin
 - 2026-10-09 | retry | Retry must return every player to the truck and clear fatal/ragdoll state before accident simulation resumes.
 - 2026-10-09 | speed | Double the forward and reverse speed caps to 20 m/s and 10 m/s, preserving progressive acceleration and half-strength reverse acceleration.
 - 2026-10-09 | suspension | A one-sided wheel impact must lift and tilt that side of the truck; independent wheel forces generate roll and pitch that continue through takeoff and settle on landing.
+- 2026-10-09 | flight | Steering requires tyre contact; jumps retain horizontal takeoff momentum and follow a gravity-driven arc, slowing upward and accelerating downward without mid-air surfing.
