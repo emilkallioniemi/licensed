@@ -55,7 +55,8 @@ These are open in the README and are answered by playing the monster truck slice
 - **What a level is**: a route, a closed course, a single test item, or a mix.
 - **The monster truck's role split**: the README table is a candidate for playtesting, not a decision.
 - **Timer visibility**: HUD countdown, the examiner checking his watch, or one role's sight.
-- **Name**, **art direction**, **character customisation**: all open. Placeholder names and box art are correct until decided.
+- **Name**: decided on 2026-10-09: **license**. Use this for the player-facing title; `licensed` remains the repository folder name.
+- **Art direction**, **character customisation**: open. Box art is correct until decided.
 
 ## How this file grows
 

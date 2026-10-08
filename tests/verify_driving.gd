@@ -60,6 +60,28 @@ func _initialize() -> void:
 	a.begin(&"monster_truck", [1, 2, 3])
 	check(not a.drive(3, old_id, 51, 3, {"throttle": true}), "old attempt cannot resume")
 	check(a.parking_brake and a.direction == 1 and a.front_angle == 0.0, "fresh attempt resets controls")
+	for p in [1, 2, 3]:
+		a.scene_ready(p, a.id)
+	a.observe_learner(2, AttemptState.CONTROLS.pedals)
+	a.request_control(2, a.id, 1, &"pedals")
+	seq = 1
+	var forward_gain := 0.0
+	for reverse in [false, true]:
+		a.speed = 0.0
+		for frame in 300:
+			var before := absf(a.speed)
+			a.drive(2, a.id, seq, 1, {"throttle": not reverse, "brake": reverse})
+			seq += 1
+			a.advance_driving(1.0 / 60)
+			check(absf(a.speed) >= before, "holding a direction builds speed progressively")
+			if frame == 29:
+				if reverse:
+					check(is_equal_approx(absf(a.speed), forward_gain * 0.5), "reverse has half the forward acceleration")
+				else:
+					forward_gain = a.speed
+					check(forward_gain > 0 and forward_gain < AttemptState.FORWARD_SPEED, "forward ramps up rather than jumping to its cap")
+		var cap := AttemptState.REVERSE_SPEED if reverse else AttemptState.FORWARD_SPEED
+		check(is_equal_approx(absf(a.speed), cap), "sustained input reaches but never exceeds the direction speed cap")
 	print("Driving failures: ", failures)
 	quit(1 if failures else 0)
 

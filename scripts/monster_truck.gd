@@ -183,7 +183,8 @@ func _advance_suspension(delta: float, state: AttemptState) -> void:
 		var bank := 0.0
 		if side_heights.size() == 2:
 			bank = atan2(mean_height(side_heights[2.4]) - mean_height(side_heights[-2.4]), 4.8)
-		var roll_target := clampf(bank - state.speed * angular_motion * 0.06, -1.2, 1.2)
+		# Body roll follows wheel support, never a synthetic steering force.
+		var roll_target := clampf(bank, -1.2, 1.2)
 		body.rotation.z = move_toward(body.rotation.z, roll_target, delta * 1.2)
 		var pitch := body.rotation.x
 		if axle_heights.size() == 2:

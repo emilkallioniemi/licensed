@@ -170,3 +170,6 @@ Areas: `examiner`, `controls`, `split`, `sight`, `sheet`, `scope`, `ui`, `scorin
 - 2026-10-08 | environment | Replace the quarry/nature direction with a modeled monster truck stadium: crowd, dirt jumps, crushable wrecks, fire, rings, lighting and genuinely uneven terrain. Preserve the three cooperative roles and shared lethal failure.
 - 2026-10-08 | vehicle | Use the supplied competition-truck reference for a compact enclosed body over an exposed tall chassis, long shocks and enormous chevron-tread tires; the open buggy silhouette is insufficient.
 - 2026-10-08 | supporting art | Give spectators and wrecked cars the same modeling care as the competition truck: distinct human silhouettes, clothing and poses, recognizable salvage cars, detailed interiors and deliberately folded crush states.
+- 2026-10-09 | naming | The game is named license, not licensed; use license for future branding and player-facing titles.
+- 2026-10-09 | handling | Remove artificial steering-induced body roll; steering alone must not tilt the truck on flat ground, while physical terrain banking and jump/landing response remain.
+- 2026-10-09 | handling | Increase forward pace slightly; holding forward builds speed to a cap, and holding reverse builds backward speed with half the forward acceleration.

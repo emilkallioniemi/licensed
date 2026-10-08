@@ -37,10 +37,12 @@ var _ready: Array[int] = []
 var _loading_elapsed := 0.0
 const INPUT_FRESHNESS := 0.35
 const AXLE_LIMIT := 0.6
-const DRIVE_ACCEL := 3.0
+const FORWARD_SPEED := 10.0
+const DRIVE_ACCEL := 4.0
+const REVERSE_ACCEL := DRIVE_ACCEL * 0.5
 const BRAKE_SPEED := 8.0
 const COAST_SPEED := 1.6
-const REVERSE_SPEED := 3.0
+const REVERSE_SPEED := 5.0
 var swaps: Dictionary = {}
 var front_angle := 0.0
 var rear_angle := 0.0
@@ -262,10 +264,10 @@ func advance_driving(delta: float) -> void:
 	if throttle and brake:
 		speed = move_toward(speed, 0.0, BRAKE_SPEED * delta)
 	elif throttle:
-		speed = move_toward(speed, 8.0, DRIVE_ACCEL * delta)
+		speed = move_toward(speed, FORWARD_SPEED, DRIVE_ACCEL * delta)
 	elif brake:
 		if speed <= 0.0:
-			speed = move_toward(speed, -REVERSE_SPEED, 2.0 * delta)
+			speed = move_toward(speed, -REVERSE_SPEED, REVERSE_ACCEL * delta)
 		else:
 			speed = move_toward(speed, 0.0, BRAKE_SPEED * delta)
 	else:

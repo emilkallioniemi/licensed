@@ -1,4 +1,4 @@
-# licensed (working title, name not decided)
+# license
 
 > Active revision (2026-10-08): [Navigation and survival](.scratch/monster-truck-build/navigation-survival.md) supersedes the older monster-truck amendments below. Steering / speed / navigation; no balance or examiner. Get through the track alive: ordinary crashes are recoverable, lethal falls and crushing lose the shared attempt. Three-human fun remains unvalidated. [Solo development rehearsal](docs/navigation-rehearsal.md).
 
@@ -13,8 +13,7 @@ pass the driving test for it. Each vehicle is a level with its own awkward contr
 its own split of who-controls / who-sees / who-knows, and its own ways to fail. Get the
 license, unlock the next vehicle, repeat until you have a license for everything.
 
-> Status: design phase. No name, no engine, no level format decided yet. "licensed" is
-> just the folder.
+> Name decided (2026-10-09): **license**. The repository folder remains `licensed`.
 
 ---
 
@@ -274,9 +273,7 @@ it won't be funny with art. Change the design, not the art.
 - **Engine**: Godot 4 vs Unity 6. Deferred. Both have usable vehicle physics
   (`VehicleBody3D` / `WheelCollider`) and Steam networking options (GodotSteam /
   Facepunch.Steamworks).
-- **Name**: not decided. "licensed" is the repo name, nothing more. Ideas so far, none
-  favoured: LICENSED!, L PLATES, THREE-POINT TURN, PASS OR CRASH. Tagline idea:
-  *alone, together*.
+- **Name**: decided on 2026-10-09: **license**. `licensed` remains the repository name.
 - **Art direction**: style undecided; deliberately crude and stylized is the default
   assumption. Characters are most likely human, and customizable (players dress their
   own learner). Not final.
