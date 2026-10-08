@@ -46,9 +46,16 @@ func verify() -> void:
 		pitch = maxf(pitch, absf(truck.body.rotation.x))
 	check(highest > 3 and pitch > 0.15, "authored ramps physically lift and pitch the truck")
 	check(state.crushed_cars != 0, "actual driving crushes wrecks")
+	for index in track.cars.size():
+		var crushed := (state.crushed_cars & (1 << index)) != 0
+		check(track.cars[index].visible != crushed and track.folded_cars[index].visible == crushed, "crush selects authored folded body and preserves wheel proportions")
 	var guest := AttemptState.new()
 	guest.restore(state.snapshot())
 	check(guest.crushed_cars == state.crushed_cars, "crushed wreck state survives a complete guest snapshot")
+	track.sync_obstacles(AttemptState.new(), Vector3.ZERO, false)
+	track.sync_obstacles(guest, Vector3.ZERO, false)
+	for index in track.cars.size():
+		check(track.folded_cars[index].visible == ((guest.crushed_cars & (1 << index)) != 0), "guest snapshot selects matching damage models")
 	check(truck.body.position.z < -75 and state.phase == &"active", "the car obstacle is traversable")
 	start(Vector3(18, 0.3, -103))
 	for i in 1000:
@@ -75,7 +82,7 @@ func verify() -> void:
 			break
 	check(state.assessment().get("reason") == &"ravine", "crawling into the jump cannot substitute for the speed player's run-up")
 	start(Vector3(18, 0.3, -159))
-	check(state.crushed_cars == 0 and track.cars[0].scale.y == 1.0, "retry restores uncrushed cars")
+	check(state.crushed_cars == 0 and track.cars[0].visible and not track.folded_cars[0].visible, "retry restores salvage body and hides folded body")
 	# Clients may render a snapshot but cannot invent a crush through proximity.
 	track.sync_obstacles(state, track.car_positions[0], false)
 	check(state.crushed_cars == 0, "guest proximity cannot author crushed cars")

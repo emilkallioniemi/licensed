@@ -1,8 +1,10 @@
 """Original monster-truck stadium. Blender 5.2 --background --python this_file.
 Authored in Godot metres: X right, Y up, -Z forward. No external assets.
 """
-import bpy, math, random
+import bpy, math, random, sys, os
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from stadium_detail import CrowdBuilder, build_wreck
 from mathutils import Vector
 OUT=Path(__file__).resolve().parents[1]
 random.seed(709)
@@ -37,26 +39,47 @@ def export(name,objects):
     bpy.ops.object.select_all(action='DESELECT')
     for o in objects:o.select_set(True)
     bpy.context.view_layer.objects.active=objects[0]
-    bpy.ops.export_scene.gltf(filepath=str(OUT/(name+'.glb')),export_format='GLB',use_selection=True)
+    # Publish a complete GLB atomically, including when Godot has imported it.
+    target=OUT/(name+'.glb'); temporary=OUT/(name+'.pending.glb')
+    bpy.ops.export_scene.gltf(filepath=str(temporary),export_format='GLB',use_selection=True)
+    os.replace(temporary,target)
+def save_source(name):
+    target=OUT/'source'/(name+'.blend'); temporary=OUT/'source'/(name+'.pending.blend')
+    bpy.ops.wm.save_as_mainfile(filepath=str(temporary))
+    os.replace(temporary,target)
 def batch(objects,name):
     bpy.ops.object.select_all(action='DESELECT')
     for o in objects:o.select_set(True)
     bpy.context.view_layer.objects.active=objects[0]; bpy.ops.object.join(); o=bpy.context.object; o.name=name; return o
-crowd_geometry={}
-def crowd_box(p,s,m):
-    vs,fs=crowd_geometry.setdefault(m,([],[])); n=len(vs)
-    vs.extend([(p[0]+x*s[0]/2,p[1]+y*s[1]/2,p[2]+z*s[2]/2) for x,y,z in [(-1,-1,-1),(1,-1,-1),(1,1,-1),(-1,1,-1),(-1,-1,1),(1,-1,1),(1,1,1),(-1,1,1)]])
-    fs.extend([tuple(n+i for i in f) for f in [(0,3,2,1),(4,5,6,7),(0,1,5,4),(3,7,6,2),(0,4,7,3),(1,2,6,5)]])
-def crowd_head(p,m):
-    vs,fs=crowd_geometry.setdefault(m,([],[])); n=len(vs)
-    vs.extend([(p[0]+x*.22,p[1]+y*.25,p[2]+z*.22) for x,y,z in [(1,0,0),(-1,0,0),(0,1,0),(0,-1,0),(0,0,1),(0,0,-1)]])
-    fs.extend([tuple(n+i for i in f) for f in [(2,0,4),(2,4,1),(2,1,5),(2,5,0),(3,4,0),(3,1,4),(3,5,1),(3,0,5)]])
+fans=CrowdBuilder()
+chairs=CrowdBuilder()
+denim=mat('Crowd denim','39516A')
+hair=[mat('Crowd hair '+str(i),h) for i,h in enumerate(['292321','6C422D','C49A59','6B6260'])]
+fan_index=0
 def bump(x,z):
     fade=min(1,math.hypot(x,z+9)/9)
     return fade*(.18+.18*math.sin(z*.8+x*.31)+.12*math.sin(x*.73-z*.37)+1.4*math.exp(-((z+25)/6)**2)*math.exp(-(x/23)**2))
 def ramp_height(z):
     t=max(0,min(1,(z+18)/36))
     return 3.8*math.sin(math.pi*t)**2+.28*math.sin(t*math.pi*12)**2
+
+def build_wrecks():
+    for variant in range(3):
+        for crushed in [False,True]:
+            bpy.ops.object.select_all(action='SELECT'); bpy.ops.object.delete(use_global=False)
+            build_wreck(globals(),variant,crushed)
+            title='crush_car'+('' if variant==0 else '_'+str(variant))+('_folded' if crushed else '')
+            # Preserve individual editable parts in Blender; batch only the export.
+            save_source(title)
+            groups={}
+            for obj in list(bpy.context.scene.objects):
+                groups.setdefault(obj.data.materials[0],[]).append(obj)
+            objects=[batch(group,'Wreck_'+material.name) for material,group in groups.items()]
+            export(title,objects)
+
+if '--wrecks-only' in sys.argv:
+    build_wrecks()
+    raise SystemExit(0)
 
 # Continuous sculpted dirt infield, interrupted by three unmistakable stunt pits.
 verts=[]; faces=[]; nx=97; nz=265
@@ -103,17 +126,18 @@ for sector in range(48):
         seat=box('Grandstand tread',p,(width,.8,3),concrete); seat.rotation_euler.z=math.pi/2-angle
         seat_parts.append(seat)
         if sector%6==0:continue
-        for j in [-width*.36,-width*.12,width*.12,width*.36]:
-            x=p[0]+math.sin(angle)*j; z=p[2]-math.cos(angle)*j; y=p[1]+.6
-            crowd_box((x,y,z),(.8,.18,.8),red if (sector//6)%2 else blue)
-            # Geometry crowd, varied clothing, skin, pose and gaps; no cardboard cards.
-            if random.random()<.16:continue
-            h=random.uniform(.65,.9); shirt=random.choice(crowd_mats)
-            crowd_box((x,y+h*.5,z),(.48,h,.30),shirt)
-            crowd_head((x,y+h+.16,z),random.choice(skin))
-            for s in [-1,1]:
-                crowd_box((x+s*.33,y+h*(1.0 if (sector+row)%3==0 else .4),z),(.14,h*.8,.16),shirt)
-                crowd_box((x+s*.14,y+.1,z+.25),(.16,.18,.45),black)
+        count=max(4,min(8,int(width/1.1)))
+        for seat_index in range(count):
+            j=(seat_index-(count-1)/2)*min(1.25,width/count)
+            x=p[0]+math.sin(angle)*j; z=p[2]-math.cos(angle)*j; y=p[1]+.83
+            seat_color=red if (sector//6)%2 else blue
+            chairs.origin=(x,y,z); chairs.angle=math.atan2(-dx,-dz)
+            chairs.oval((0,0,0),(.35,.08,.34),seat_color,3)
+            chairs.oval((0,.31,-.29),(.35,.34,.065),seat_color,4)
+            if random.random()<.12:continue
+            forward=.42 if fan_index%6 in [0,1,4] else 0
+            fans.fan((x-dx*forward,p[1]+.4,z-dz*forward),math.atan2(-dx,-dz),crowd_mats,skin,black,denim,hair,cream,gold if fan_index%2 else red,fan_index)
+            fan_index+=1
     # Upper promenade, roof support and cantilevered canopy.
     p=(dx*78,15,-110+dz*163)
     beam('Roof support',(p[0],0,p[2]),(p[0],26,p[2]),.25,steel)
@@ -123,7 +147,9 @@ for sector in range(48):
     if sector%3==0:
         box('Floodlight bank',(dx*55,24,-110+dz*140),(6,.8,1.2),steel,.1)
         for k in [-2,-1,0,1,2]:box('Lamp lens',(dx*55+k,23.55,-110+dz*140),( .7,.12,.7),light)
-for m,(vs,fs) in crowd_geometry.items():mesh('Crowd_'+m.name,vs,fs,m)
+fans.finish(mesh)
+chairs.finish(mesh,'Seats_')
+print('Detailed spectators:',fan_index)
 batch(seat_parts,'Grandstands')
 # Closed architectural bowl and continuous roof fascia, not floating bleachers.
 def oval_band(name,rx,rz,y0,y1,m):
@@ -227,20 +253,7 @@ for src in ring:
     for x in [-18,18]:
         o=src.copy(); o.data=src.data; bpy.context.collection.objects.link(o); o.location+=Vector(xyz((x,1.8,-120)))
 for o in ring:bpy.data.objects.remove(o,do_unlink=True)
-bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'source'/'stadium.blend'))
+save_source('stadium')
 
-# Wreck shell with wheel arches, bent panels and an open engine cavity.
-bpy.ops.object.select_all(action='SELECT'); bpy.ops.object.delete(use_global=False)
-box('Crushable body',(0,.48,0),(2.7,.55,4.8),red,.22)
-box('Cabin',(0,.92,.3),(2.3,.6,2.6),blue,.24)
-box('Roof',(0,1.27,.35),(2.2,.13,2.5),red,.1)
-box('Windshield',(0,1.01,-1.05),(1.95,.35,.04),glass,.025)
-for side in [-1,1]:
-    box('Side window',(side*1.17,1.02,.25),(.035,.34,1.8),glass)
-    for z in [-1.55,1.55]:
-        o=beam('Wreck wheel',(side*1.19,.40,z),(side*1.51,.40,z),.43,black)
-        beam('Wreck hub',(side*1.48,.40,z),(side*1.53,.40,z),.22,silver)
-box('Bent bumper',(0,.4,-2.5),(2.7,.22,.18),silver,.06)
-for x in [-.9,.9]:box('Broken headlight',(x,.66,-2.43),(.4,.25,.04),cream,.04)
-export('crush_car',list(bpy.context.scene.objects))
-bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'source'/'crush_car.blend'))
+# Three salvage designs, each with a separately authored folded shell.
+build_wrecks()

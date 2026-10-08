@@ -7,6 +7,7 @@ const FINISH_Z := -218.0
 const ART := "res://assets/stadium/"
 var layout := -1
 var cars: Array[Node3D] = []
+var folded_cars: Array[Node3D] = []
 var car_colliders: Array[CollisionShape3D] = []
 var car_positions: Array[Vector3] = []
 var _crush_mask := -1
@@ -19,6 +20,7 @@ func build(route: int) -> void:
 		remove_child(child)
 		child.queue_free()
 	cars.clear()
+	folded_cars.clear()
 	car_colliders.clear()
 	car_positions.clear()
 	_crush_mask = -1
@@ -43,15 +45,25 @@ func build(route: int) -> void:
 			flame(Vector3(side * 32, 0.5, JUNCTIONS[index] - 7), 3.2)
 	for offset in [-1.5, 1.5]:
 		for z in [-52.0, -60.0, -68.0]:
-			var at := Vector3(safe_side(route, 0) * BRIDGE_X + offset, ramp_height(z + 60), z)
-			var car := asset("crush_car")
-			car.position = at
+			var pose := wreck_pose(offset, z)
+			pose.origin.x += safe_side(route, 0) * BRIDGE_X
+			var at := pose.origin
+			var variant := cars.size() % 3
+			var title := "crush_car" + ("_" + str(variant) if variant > 0 else "")
+			var car := asset(title)
+			decorate(car)
+			car.transform = pose
 			cars.append(car)
+			var folded := asset(title + "_folded")
+			decorate(folded)
+			folded.transform = pose
+			folded.hide()
+			folded_cars.append(folded)
 			car_positions.append(at)
 			var body := StaticBody3D.new()
 			body.collision_layer = 9
 			add_child(body)
-			body.position = at
+			body.transform = pose
 			var collision := CollisionShape3D.new()
 			var shape := BoxShape3D.new()
 			shape.size = Vector3(2.7, 0.9, 4.8)
@@ -83,11 +95,34 @@ static func ramp_height(z: float) -> float:
 	var t := clampf((z + 18) / 36, 0, 1)
 	return 3.8 * pow(sin(PI * t), 2) + 0.28 * pow(sin(t * PI * 12), 2)
 
+static func wreck_surface(x: float, z: float) -> float:
+	return ramp_height(z + 60) + 0.15 * sin(x * 1.2) * sin(PI * (z + 78) / 36)
+
+static func wreck_pose(x: float, z: float) -> Transform3D:
+	# Fit the salvage chassis to the bank and slope, then clear the curved dirt
+	# beneath the whole footprint. A level model buries its nose on these ramps.
+	var pitch := atan2(wreck_surface(x, z - 2.4) - wreck_surface(x, z + 2.4), 4.8)
+	var bank := atan2(wreck_surface(x + 1.35, z) - wreck_surface(x - 1.35, z), 2.7)
+	var basis := Basis.from_euler(Vector3(pitch, 0, bank))
+	var height := -INF
+	for sx in [-1.5, 0.0, 1.5]:
+		for sz in [-2.5, 0.0, 2.5]:
+			var contact := basis * Vector3(sx, 0, sz)
+			height = maxf(height, wreck_surface(x + contact.x, z + contact.z) - contact.y)
+	return Transform3D(basis, Vector3(x, height + 0.03, z))
+
 func decorate(node: Node) -> void:
 	for child in node.get_children():
 		decorate(child)
 	if node is MeshInstance3D:
 		var title := str(node.name)
+		if title.begins_with("Wreck_") and (title.contains("Salvage") or title.contains("Faded") or title.contains("Taxi")):
+			var worn := ShaderMaterial.new()
+			worn.shader = load(ART + "wreck_paint.gdshader")
+			var finish := node.mesh.surface_get_material(0) as StandardMaterial3D
+			if finish != null:
+				worn.set_shader_parameter("paint", finish.albedo_color)
+			node.material_override = worn
 		if title.begins_with("Crowd_"):
 			var material := ShaderMaterial.new()
 			material.shader = load(ART + "crowd.gdshader")
@@ -162,6 +197,7 @@ func sync_obstacles(state: AttemptState, truck_at: Vector3, authoritative: bool)
 	_crush_mask = state.crushed_cars
 	for index in cars.size():
 		var crushed := (state.crushed_cars & (1 << index)) != 0
-		cars[index].scale.y = 0.24 if crushed else 1.0
+		cars[index].visible = not crushed
+		folded_cars[index].visible = crushed
 		car_colliders[index].scale.y = 0.24 if crushed else 1.0
 		car_colliders[index].position.y = 0.108 if crushed else 0.45
