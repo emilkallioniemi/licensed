@@ -55,6 +55,15 @@ func verify() -> void:
 		if role != &"":
 			check(learner.global_position.distance_to(room.test_area.truck.body.to_global(AttemptState.CONTROLS[role])) < 0.1, "Retry returns every player to the truck")
 		check(learner.movement_mode == &"occupied" and not is_instance_valid(learner.visual.pose.ragdoll), "Retry clears death and physical ragdolls")
+	room.reset(false)
+	room.set_physics_process(false)
+	room.test_area.truck.body.transform = Transform3D(Basis(Vector3.FORWARD, PI), Vector3(0, 4.93, 0))
+	room.test_area.truck.vertical_speed = 0
+	room.test_area.boarding.inputs = {1: {"recover": true}}
+	room.test_area.boarding.ages = {1: 0.0}
+	for frame in 125:
+		room.test_area.boarding._advance_recovery(room.room_state().attempt)
+	check(room.test_area.truck.body.global_basis.y.dot(Vector3.UP) > 0.99, "held recovery rights a truck resting on its roof")
 	room.free()
 	print("Solo rehearsal failures: ", failures)
 	quit(1 if failures else 0)

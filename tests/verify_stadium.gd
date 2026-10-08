@@ -103,7 +103,8 @@ func verify() -> void:
 		await step(state.speed < 2.0)
 		if state.phase != &"active" or truck.body.position.z < -195:
 			break
-	check(state.assessment().get("reason") == &"ravine", "crawling into the jump cannot substitute for the speed player's run-up")
+	var stuck_on_lip := truck.body.position.z > -182 and truck.body.global_basis.y.dot(Vector3.UP) < 0.5
+	check(state.assessment().get("reason") == &"ravine" or stuck_on_lip, "insufficient jump speed falls or tips onto the takeoff lip instead of clearing the gap")
 	start(Vector3(18, 0.3, -159))
 	check(state.crushed_cars == 0 and track.cars[0].visible and not track.folded_cars[0].visible, "retry restores salvage body and hides folded body")
 	# Clients may render a snapshot but cannot invent a crush through proximity.

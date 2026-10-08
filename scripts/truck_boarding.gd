@@ -464,7 +464,7 @@ func _advance_recovery(state: AttemptState) -> bool:
 			stranded = true
 	var settled := absf(truck.vertical_speed) < 0.5 and absf(state.speed) < 0.3
 	# A fall has no recovery. Righting is available only on supporting road.
-	var ray := PhysicsRayQueryParameters3D.create(truck.body.global_position + Vector3.UP * 2, truck.body.global_position - Vector3.UP * 2, 8)
+	var ray := PhysicsRayQueryParameters3D.create(truck.body.global_position + Vector3.UP * 2, truck.body.global_position - Vector3.UP * 6, 8)
 	var supported := not truck.get_world_3d().direct_space_state.intersect_ray(ray).is_empty()
 	state.recovery_available = supported and settled and at.y > -1 and (overturned or stranded)
 	var held := false

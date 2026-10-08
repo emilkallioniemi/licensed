@@ -54,7 +54,7 @@ func verify() -> void:
 	for frame in 10:
 		await physics_frame
 		truck.drive(state, 1.0 / 60, false)
-	check(truck.body.rotation.x > 0.06, "front-wheel impact pitches the nose up")
+	check(truck.body.rotation.x > 0.02, "front-wheel impact pitches the nose up with the heavier pitch inertia")
 	check(absf(truck.body.rotation.z) < 0.01, "symmetric axle impact does not invent lateral roll")
 	world.free()
 	print("Asymmetric suspension failures: ", failures)

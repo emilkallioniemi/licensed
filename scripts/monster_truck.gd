@@ -182,6 +182,8 @@ func _hull_overlap_depth(query: PhysicsShapeQueryParameters3D) -> float:
 	return depth
 
 func _has_tyre_contact() -> bool:
+	if body.global_basis.y.dot(Vector3.UP) < 0.3:
+		return false
 	for x in [-2.4, 2.4]:
 		for z in [-2.1, 2.1]:
 			var at := body.to_global(Vector3(x, 0, z))
@@ -200,6 +202,8 @@ func _advance_suspension(delta: float, state: AttemptState) -> void:
 	var heading := Basis(Vector3.UP, body.rotation.y)
 	for x in [-2.4, 2.4]:
 		for z in [-2.1, 2.1]:
+			if body.global_basis.y.dot(Vector3.UP) < 0.3:
+				continue
 			var at := body.to_global(Vector3(x, 0, z))
 			var ray := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 1.8, at - Vector3.UP * 3.0, 8)
 			var hit := get_world_3d().direct_space_state.intersect_ray(ray)
@@ -210,32 +214,44 @@ func _advance_suspension(delta: float, state: AttemptState) -> void:
 				continue
 			supported = true
 			var lever := heading.inverse() * (at - body.global_position)
-			var wheel_speed := vertical_speed + 2.0 * (suspension_rotation_velocity.y * lever.x - suspension_rotation_velocity.x * lever.z)
+			var wheel_speed := vertical_speed + 2.0 * suspension_rotation_velocity.y * lever.x - 8.0 * suspension_rotation_velocity.x * lever.z
 			var force := maxf(0.0, compression * 110.0 - wheel_speed * 5.0) / 4.0
 			support_force += force
 			torque += Vector2(-lever.z, lever.x) * force
 	# Wheel damping settles landing rotation; unloaded wheels keep their momentum.
-	suspension_rotation_velocity += torque / 10.0 * delta
-	body.rotation.x += suspension_rotation_velocity.x * delta
-	body.rotation.z += suspension_rotation_velocity.y * delta
-	if supported:
-		# Suspension travel stops keep repeated sharp wreck edges from winding
-		# the chassis upright onto its nose. Airborne rotation remains free.
-		if absf(body.rotation.x) > 0.65:
-			body.rotation.x = clampf(body.rotation.x, -0.65, 0.65)
-			if suspension_rotation_velocity.x * body.rotation.x > 0.0:
-				suspension_rotation_velocity.x = 0.0
-		if absf(body.rotation.z) > 1.2:
-			body.rotation.z = clampf(body.rotation.z, -1.2, 1.2)
-			if suspension_rotation_velocity.y * body.rotation.z > 0.0:
-				suspension_rotation_velocity.y = 0.0
+	suspension_rotation_velocity += Vector2(torque.x / 30.0, torque.y / 10.0) * delta
+	body.global_basis = (Basis(heading.x, suspension_rotation_velocity.x * delta) * Basis(heading.z, suspension_rotation_velocity.y * delta) * body.global_basis).orthonormalized()
 	var before := vertical_speed
 	if supported:
 		if before < -3.0 and support_force > 9.8:
 			jolt = motion * 0.3 + Vector3.UP * 5.5
 	vertical_speed += (support_force - 9.8) * delta
 	body.global_position.y += vertical_speed * delta
+	_support_chassis(delta)
 	motion.y = vertical_speed
+
+func _support_chassis(delta: float) -> void:
+	if body.global_basis.y.dot(Vector3.UP) > 0.5:
+		return
+	# Tyres cannot support a roof landing. Sample the modeled cab and tyre
+	# envelope against terrain, resolving the lowest actual chassis contact.
+	var penetration := 0.0
+	for y in [1.6, 4.9]:
+		var width := 3.3 if y < 2 else 1.65
+		for x in [-width, width]:
+			for z in [-2.1, 2.1]:
+				var at := body.to_global(Vector3(x, y, z))
+				var ray := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 6, at - Vector3.UP * 0.1, 8)
+				var hit := get_world_3d().direct_space_state.intersect_ray(ray)
+				if not hit.is_empty():
+					penetration = maxf(penetration, hit.position.y + 0.03 - at.y)
+	if penetration > 0:
+		body.global_position.y += penetration
+		vertical_speed = maxf(0.0, -vertical_speed * 0.12) if vertical_speed < -1.0 else maxf(0.0, vertical_speed)
+		suspension_rotation_velocity *= exp(-5.0 * delta)
+		motion.x = move_toward(motion.x, 0, 6 * delta)
+		motion.z = move_toward(motion.z, 0, 6 * delta)
+		angular_motion *= exp(-5.0 * delta)
 
 func highlight(control: StringName, enabled: bool) -> void:
 	visuals.highlight(control, enabled)
