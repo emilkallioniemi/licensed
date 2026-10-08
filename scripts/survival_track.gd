@@ -137,7 +137,7 @@ func decorate(node: Node) -> void:
 				node.material_override = dirt
 			node.create_trimesh_collision()
 			set_layers(node, 9)
-		elif title.begins_with("Solid_") or title.begins_with("Ring steel"):
+		elif title.begins_with("Solid_") or title.begins_with("Ring steel") or title.begins_with("Grandstands"):
 			node.create_trimesh_collision()
 			set_layers(node, 5)
 

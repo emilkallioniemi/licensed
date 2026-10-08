@@ -181,3 +181,4 @@ Areas: `examiner`, `controls`, `split`, `sight`, `sheet`, `scope`, `ui`, `scorin
 - 2026-10-09 | suspension | A one-sided wheel impact must lift and tilt that side of the truck; independent wheel forces generate roll and pitch that continue through takeoff and settle on landing.
 - 2026-10-09 | flight | Steering requires tyre contact; jumps retain horizontal takeoff momentum and follow a gravity-driven arc, slowing upward and accelerating downward without mid-air surfing.
 - 2026-10-09 | collisions | A crash must permit reversing out, including when suspension or steering leaves the truck slightly overlapping an obstacle; block deeper penetration while allowing escape.
+- 2026-10-09 | stadium | Spectator tiers must have solid collision matching their modeled geometry so the truck and players cannot pass through the stands.
