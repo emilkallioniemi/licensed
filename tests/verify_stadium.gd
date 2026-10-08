@@ -19,6 +19,7 @@ func start(at: Vector3) -> void:
 	state.request_control(1, state.id, 1, &"pedals")
 	truck.body.transform = Transform3D(Basis.IDENTITY, at)
 	truck.vertical_speed = 0
+	truck.reset_presentation()
 	track.sync_obstacles(state, Vector3.ZERO, true)
 func step(throttle: bool) -> void:
 	await physics_frame

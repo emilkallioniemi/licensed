@@ -293,7 +293,7 @@ func _send_snapshot(reliable: bool) -> void:
 		var peer_id := learner.get_multiplayer_authority()
 		learners[peer_id] = learner.truck_snapshot()
 		learners[peer_id]["ack"] = acknowledged.get(peer_id, 0)
-	var data := {"attempt": room.room_state().attempt.id, "sequence": snapshot_sequence, "truck": truck.body.global_transform, "motion": truck.motion, "angular": truck.angular_motion, "vertical": truck.vertical_speed, "recovery": room.room_state().attempt.recovery_snapshot(), "learners": learners, "operators": room.room_state().attempt.operators.duplicate(), "generations": room.room_state().attempt.generations.duplicate()}
+	var data := {"attempt": room.room_state().attempt.id, "sequence": snapshot_sequence, "truck": truck.body.global_transform, "motion": truck.motion, "angular": truck.angular_motion, "vertical": truck.vertical_speed, "suspension_rotation": truck.suspension_rotation_velocity, "recovery": room.room_state().attempt.recovery_snapshot(), "learners": learners, "operators": room.room_state().attempt.operators.duplicate(), "generations": room.room_state().attempt.generations.duplicate()}
 	data["driving"] = room.room_state().attempt.driving_snapshot()
 	data["course"] = room.room_state().attempt.course_snapshot()
 	data["swaps"] = room.room_state().attempt.swaps.duplicate(true)
@@ -351,6 +351,7 @@ func _apply_snapshot(data: Dictionary) -> void:
 	truck.motion = data.motion
 	truck.angular_motion = data.angular
 	truck.vertical_speed = data.vertical
+	truck.suspension_rotation_velocity = data.get("suspension_rotation", Vector2.ZERO)
 	var confirmed_control := room.room_state().attempt.control_of(player_id)
 	_local_control = confirmed_control
 	if confirmed_control != &"" and prior_control != confirmed_control:
@@ -492,6 +493,7 @@ func _advance_recovery(state: AttemptState) -> bool:
 		truck.motion = Vector3.ZERO
 		truck.angular_motion = 0.0
 		truck.vertical_speed = 0.0
+		truck.suspension_rotation_velocity = Vector2.ZERO
 		state.record_recovery()
 		inputs.clear()
 		pending.clear()

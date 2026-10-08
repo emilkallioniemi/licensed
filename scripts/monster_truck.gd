@@ -11,6 +11,7 @@ var impact_cooldown := 0.0
 var visuals: TruckPresentation
 var sound: TruckSound
 var vertical_speed := 0.0
+var suspension_rotation_velocity := Vector2.ZERO
 var jolt := Vector3.ZERO
 var impact_speed := 0.0
 
@@ -158,50 +159,43 @@ func smooth_correction(previous_visual: Transform3D) -> void:
 		visuals.transform = Transform3D.IDENTITY
 
 func _advance_suspension(delta: float, state: AttemptState) -> void:
-	# Terrain is layer 8, separate from hull-blocking structures (4). Four tyre
-	# probes preserve real vertical support while the arcade cab stays upright.
-	var heights: Array[float] = []
-	var compressions: Array[float] = []
-	var side_heights: Dictionary = {}
-	var axle_heights: Dictionary = {}
+	# Each tyre applies a push at its contact point, producing lift and torque.
+	# No steering-induced lean or airborne terrain attraction.
+	var supported := false
+	var support_force := 0.0
+	var torque := Vector2.ZERO # pitch, roll in the truck's heading frame
+	var heading := Basis(Vector3.UP, body.rotation.y)
 	for x in [-2.4, 2.4]:
 		for z in [-2.1, 2.1]:
 			var at := body.to_global(Vector3(x, 0, z))
 			var ray := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 1.8, at - Vector3.UP * 3.0, 8)
 			var hit := get_world_3d().direct_space_state.intersect_ray(ray)
-			if not hit.is_empty():
-				heights.append(hit.position.y)
-				compressions.append(hit.position.y + 0.18 - at.y)
-				if not side_heights.has(x):
-					side_heights[x] = []
-				if not axle_heights.has(z):
-					axle_heights[z] = []
-				side_heights[x].append(hit.position.y)
-				axle_heights[z].append(hit.position.y)
-	# A terrain ray is not a wheel contact. Springs can push a compressed
-	# chassis upward, but cannot pull an airborne truck toward distant ground.
-	var supported := false
-	var support_force := 0.0
-	for compression in compressions:
-		if compression > 0.0:
+			if hit.is_empty():
+				continue
+			var compression: float = hit.position.y + 0.18 - at.y
+			if compression <= 0.0:
+				continue
 			supported = true
-			# Each tyre carries a quarter of the chassis. Unloaded wheels
-			# contribute no force instead of cancelling another tyre's push.
-			support_force += maxf(0.0, compression * 110.0 - vertical_speed * 5.0) / 4.0
-	# Keep the takeoff attitude in flight; only supported wheels follow a bank.
-	if supported and absf(body.rotation.z) > 0.9:
-		body.rotation.z = move_toward(body.rotation.z, signf(body.rotation.z) * PI / 2.0, delta)
-	elif supported:
-		var bank := 0.0
-		if side_heights.size() == 2:
-			bank = atan2(mean_height(side_heights[2.4]) - mean_height(side_heights[-2.4]), 4.8)
-		# Body roll follows wheel support, never a synthetic steering force.
-		var roll_target := clampf(bank, -1.2, 1.2)
-		body.rotation.z = move_toward(body.rotation.z, roll_target, delta * 1.2)
-		var pitch := body.rotation.x
-		if axle_heights.size() == 2:
-			pitch = atan2(mean_height(axle_heights[-2.1]) - mean_height(axle_heights[2.1]), 4.2)
-		body.rotation.x = move_toward(body.rotation.x, clampf(pitch, -0.65, 0.65), delta * 1.5)
+			var lever := heading.inverse() * (at - body.global_position)
+			var wheel_speed := vertical_speed + 2.0 * (suspension_rotation_velocity.y * lever.x - suspension_rotation_velocity.x * lever.z)
+			var force := maxf(0.0, compression * 110.0 - wheel_speed * 5.0) / 4.0
+			support_force += force
+			torque += Vector2(-lever.z, lever.x) * force
+	# Wheel damping settles landing rotation; unloaded wheels keep their momentum.
+	suspension_rotation_velocity += torque / 10.0 * delta
+	body.rotation.x += suspension_rotation_velocity.x * delta
+	body.rotation.z += suspension_rotation_velocity.y * delta
+	if supported:
+		# Suspension travel stops keep repeated sharp wreck edges from winding
+		# the chassis upright onto its nose. Airborne rotation remains free.
+		if absf(body.rotation.x) > 0.65:
+			body.rotation.x = clampf(body.rotation.x, -0.65, 0.65)
+			if suspension_rotation_velocity.x * body.rotation.x > 0.0:
+				suspension_rotation_velocity.x = 0.0
+		if absf(body.rotation.z) > 1.2:
+			body.rotation.z = clampf(body.rotation.z, -1.2, 1.2)
+			if suspension_rotation_velocity.y * body.rotation.z > 0.0:
+				suspension_rotation_velocity.y = 0.0
 	var before := vertical_speed
 	if supported:
 		if before < -3.0 and support_force > 9.8:
@@ -210,16 +204,11 @@ func _advance_suspension(delta: float, state: AttemptState) -> void:
 	body.global_position.y += vertical_speed * delta
 	motion.y = vertical_speed
 
-func mean_height(values: Array) -> float:
-	var total := 0.0
-	for value in values:
-		total += float(value)
-	return total / values.size()
-
 func highlight(control: StringName, enabled: bool) -> void:
 	visuals.highlight(control, enabled)
 
 func reset_presentation() -> void:
+	suspension_rotation_velocity = Vector2.ZERO
 	visuals.reset()
 	sound.reset()
 	impact_cooldown = 0.0
