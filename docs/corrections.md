@@ -167,3 +167,5 @@ Areas: `examiner`, `controls`, `split`, `sight`, `sheet`, `scope`, `ui`, `scorin
 - 2026-10-08 | environment | The survival route must read as a modeled place with terrain, supported bridges and landmarks, rather than a bare floating block course; build and retain editable Blender source.
 - 2026-10-08 | navigation | Navigation instructions belong in a modeled book visible only to the navigator, who manually turns pages to find the relevant directions.
 - 2026-10-08 | environment | The track feels too square; soften apron corners and replace regular cliff blocks with irregular layered rock silhouettes and small natural details.
+- 2026-10-08 | environment | Replace the quarry/nature direction with a modeled monster truck stadium: crowd, dirt jumps, crushable wrecks, fire, rings, lighting and genuinely uneven terrain. Preserve the three cooperative roles and shared lethal failure.
+- 2026-10-08 | vehicle | Use the supplied competition-truck reference for a compact enclosed body over an exposed tall chassis, long shocks and enormous chevron-tread tires; the open buggy silhouette is insufficient.

@@ -49,6 +49,10 @@ func _ready() -> void:
 			box("Console", Vector3(1.02, 0.44, 0.16), at + Vector3(0, 0.78, -back * 0.72))
 	shell_box("Bonnet", Vector3(4.1, 1.0, 0.9), Vector3(0, 2.1, -2.6))
 	shell_box("RearPanel", Vector3(2.0, 0.8, 0.2), Vector3(-0.9, 2.05, 2.35))
+	box("CompetitionRoof", Vector3(3.28, 0.24, 3.9), Vector3(0, 4.78, 0.35))
+	box("CompetitionRearBody", Vector3(3.15, 1.95, 0.18), Vector3(0, 3.64, 2.22))
+	for side in [-1, 1]:
+		box("CompetitionQuarter", Vector3(0.18, 1.9, 1.35), Vector3(side * 1.56, 3.64, 1.58))
 	visuals = TruckPresentation.new()
 	visuals.name = "Presentation"
 	body.add_child(visuals)
@@ -144,6 +148,7 @@ func drive(state: AttemptState, delta: float, present := true) -> void:
 ## Guests present the confirmed aftermath without authoring its physics.
 func present_state(state: AttemptState, delta: float) -> void:
 	visuals.update(state, vertical_speed, delta)
+	visuals.follow_ground(body)
 	sound.update(state, vertical_speed, delta)
 
 func smooth_correction(previous_visual: Transform3D) -> void:
@@ -157,34 +162,49 @@ func _advance_suspension(delta: float, state: AttemptState) -> void:
 	# probes preserve real vertical support while the arcade cab stays upright.
 	var heights: Array[float] = []
 	var side_heights: Dictionary = {}
+	var axle_heights: Dictionary = {}
 	for x in [-2.4, 2.4]:
 		for z in [-2.1, 2.1]:
 			var at := body.to_global(Vector3(x, 0, z))
-			var ray := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 1.5, at - Vector3.UP * 3.0, 8)
+			var ray := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 1.8, at - Vector3.UP * 3.0, 8)
 			var hit := get_world_3d().direct_space_state.intersect_ray(ray)
 			if not hit.is_empty():
 				heights.append(hit.position.y)
-				side_heights[x] = hit.position.y
+				if not side_heights.has(x):
+					side_heights[x] = []
+				if not axle_heights.has(z):
+					axle_heights[z] = []
+				side_heights[x].append(hit.position.y)
+				axle_heights[z].append(hit.position.y)
 	# Ordinary cornering stays forgiving; navigation has no suspension input.
 	if absf(body.rotation.z) > 0.9:
 		body.rotation.z = move_toward(body.rotation.z, signf(body.rotation.z) * PI / 2.0, delta)
 	else:
 		var bank := 0.0
 		if side_heights.size() == 2:
-			bank = atan2(side_heights[2.4] - side_heights[-2.4], 4.8)
+			bank = atan2(mean_height(side_heights[2.4]) - mean_height(side_heights[-2.4]), 4.8)
 		var roll_target := clampf(bank - state.speed * angular_motion * 0.06, -1.2, 1.2)
 		body.rotation.z = move_toward(body.rotation.z, roll_target, delta * 1.2)
-		body.rotation.x = move_toward(body.rotation.x, clampf(vertical_speed * 0.04, -0.28, 0.28), delta)
+		var pitch := body.rotation.x
+		if axle_heights.size() == 2:
+			pitch = atan2(mean_height(axle_heights[-2.1]) - mean_height(axle_heights[2.1]), 4.2)
+		body.rotation.x = move_toward(body.rotation.x, clampf(pitch, -0.65, 0.65), delta * 1.5)
 	var before := vertical_speed
 	if heights.is_empty():
 		vertical_speed -= 9.8 * delta
 	else:
-		var height: float = heights.max()
+		var height: float = mean_height(heights)
 		vertical_speed += ((height - body.global_position.y) * 65.0 - vertical_speed * 8.0) * delta
 		if before > 3.0 and vertical_speed < before:
 			jolt = motion * 0.3 + Vector3.UP * 5.5
 	body.global_position.y += vertical_speed * delta
 	motion.y = vertical_speed
+
+func mean_height(values: Array) -> float:
+	var total := 0.0
+	for value in values:
+		total += float(value)
+	return total / values.size()
 
 func highlight(control: StringName, enabled: bool) -> void:
 	visuals.highlight(control, enabled)

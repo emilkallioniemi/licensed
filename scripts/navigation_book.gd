@@ -1,7 +1,7 @@
 class_name NavigationBook
 extends Control
 ## A local-only 3D field manual. Page selection never follows course progress.
-const TITLES := ["THE CUT", "PUMP WORKS", "HIGH QUARRY"]
+const TITLES := ["CAR CRUNCH", "RING RUN", "BIG AIR"]
 var spread := 0
 var route := 0
 var turning := false
@@ -127,11 +127,12 @@ func refresh() -> void:
 	if left == null:
 		return
 	if spread == 0:
-		left.text = "RIFT QUARRY\n________________\n\nBRIDGE\nFIELD GUIDE\n\nOperations edition\n\nRead the landmark.\nFind its entry.\nGuide your crew.\n\nPROPERTY OF DISPATCH"
-		right.text = "CONTENTS\n________________\n\n01   THE CUT ........ 2\n\n02   PUMP WORKS ... 4\n\n03   HIGH QUARRY .. 6\n\n\nThree crossings.\nOne way home.\n\n1"
+		left.text = "MONSTER ARENA\n________________\n\nCREW\nSTUNT BOOK\n\nTonight's setup\n\nCall the live lane.\nAgree your speed.\nCommit together.\n\nPIT CREW COPY"
+		right.text = "RUNNING ORDER\n________________\n\n01   CAR CRUNCH .. 2\n\n02   RING RUN ...... 4\n\n03   BIG AIR ........ 6\n\n\nCrashes: reverse.\nPit falls: all lose.\n\n1"
 	else:
 		var index := spread - 1
 		var side := "LEFT" if SurvivalTrack.safe_side(route, index) < 0 else "RIGHT"
-		var landmark: String = ["Past the depot.\nSandstone narrows.", "Twin green tanks.\nPipes into the cut.", "The yellow crane.\nDispatch lies beyond."][index]
-		left.text = "%02d / %s\n________________\n\n%s\n\nAPPROACH\n\nSlow before turning.\nLine up straight\nbefore the bridge.\n\n%d" % [spread, TITLES[index], landmark, spread * 2]
-		right.text = "INSPECTION NOTE\n________________\n\nTAKE THE\n\n%s BRIDGE\n\nOther span is out.\n\n%s\n\n%d" % [side, "After crossing, find\nthe next landmark." if index < 2 else "Merge to the centre.\nCross DISPATCH / EXIT.", spread * 2 + 1]
+		var landmark: String = ["The wreck stacks.\nRoll over the roofs.", "The flaming hoops.\nCentre the truck.", "The final dirt jump.\nStraighten on entry."][index]
+		var advice: String = ["Use steady throttle.\nLet the tires climb.\nSteer before the cars.", "Ease off to line up.\nHold a straight line.\nPyro is show fire.", "Build speed straight.\nEase off on landing.\nThen aim for FINISH."][index]
+		left.text = "%02d / %s\n________________\n\n%s\n\nCREW CALL\n\n%s\n\n%d" % [spread, TITLES[index], landmark, advice, spread * 2]
+		right.text = "LIVE LANE\n________________\n\nTAKE THE\n\n%s LANE\n\nOther deck is out.\nA pit fall ends\neveryone's run.\n\n%s\n\n%d" % [side, "Regroup on the dirt.\nFind the next tower." if index < 2 else "Merge to the centre.\nCross the red banner.", spread * 2 + 1]

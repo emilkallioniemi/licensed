@@ -31,7 +31,7 @@ func verify() -> void:
 			book.turn(1)
 			await create_timer(0.5).timeout
 			var side := "LEFT" if SurvivalTrack.safe_side(layout, index) < 0 else "RIGHT"
-			check(book.right.text.contains(side + " BRIDGE"), "page agrees with host bridge layout")
+			check(book.right.text.contains(side + " LANE"), "page agrees with host stunt layout")
 	book.turn(1)
 	check(book.spread == 3 and not book.turning, "end of book has a firm bound")
 	room.room_state().attempt.test_item = 2

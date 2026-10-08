@@ -11,6 +11,8 @@ Steering and speed stay approachable. Remove balance and the examiner entirely. 
 
 ## Playable experiment
 
+The stadium revision supersedes the quarry presentation below: [Monster arena assets and mechanics](../../assets/stadium/README.md). Three live-lane decisions now cover Car Crunch, Ring Run and Big Air, with a private paged stunt book, authored bumpy dirt, replicated crushable wrecks and an actual jump gap. The enclosed competition truck follows the user's oversized-tire / exposed-chassis reference. Quarry details below document the preceding iteration only.
+
 Three junctions each offer left and right bridges. One has a real, visible missing span. The host selects the intact bridges for each attempt and replicates that layout. The navigation seat alone sees a modeled field book: contents and three inspection entries, found by manually turning pages. All players see numbered junction and branch signs, actual road geometry, shared crossing progress, time and results. There is no universal destination marker or spoken examiner guidance. Navigating without the book remains physically possible by cautiously inspecting the road: usefulness must come from timely information and coordination, never an artificial button gate.
 
 The modeled quarry pass adds irregular sandstone formations, rounded road aprons, supported bridges, floodwater, a depot, pump works, crane and dispatch building. Original Blender source and the generator are retained in `assets/survival_map/source/`. Local page selection does not follow progress, and retry opens the contents. See `modeled-map-evidence/` for screenshots and technical verification.

@@ -6,13 +6,13 @@ is deliberately authored separately in MonsterTruck: no tiny bolt collisions.
 from pathlib import Path
 from math import pi, sin, cos, atan2, sqrt
 import bpy
-from mathutils import Vector
+from mathutils import Vector, Matrix
 OUT = Path(__file__).resolve().parent.parent
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
 bpy.context.scene.unit_settings.system='METRIC'
 bpy.context.preferences.filepaths.save_version=0
-colors={'Paint':'b96a35','Edge':'df9b4a','Cream':'eadcb9','Dark':'263537','Steel':'617779','Bright':'a3b1aa','Rubber':'20262a','Tread':'323b3c','Seat':'40666b','SeatInset':'537c7c','Red':'b44937','Lamp':'ffe2a2','Screen':'142d2d','Ink':'101b20','Rust':'714732'}
+colors={'Paint':'183D43','Edge':'B2E43B','Cream':'eadcb9','Dark':'17312B','Steel':'3C8C42','Bright':'a3b1aa','Rubber':'151C21','Tread':'2B3439','Seat':'40666b','SeatInset':'537c7c','Red':'E76C34','Lamp':'ffe2a2','Screen':'142d2d','Ink':'101b20','Rust':'714732'}
 mats={}
 for name,h in colors.items():
     rgb=[int(h[i:i+2],16)/255 for i in (0,2,4)]
@@ -20,6 +20,7 @@ for name,h in colors.items():
     m=bpy.data.materials.new(name); m.diffuse_color=(*rgb,1); m.use_nodes=True
     bs=m.node_tree.nodes['Principled BSDF']; bs.inputs['Base Color'].default_value=(*rgb,1); bs.inputs['Roughness'].default_value=.74
     if name in ['Steel','Bright']: bs.inputs['Metallic'].default_value=.65
+    if name=='Paint': bs.inputs['Roughness'].default_value=.30; bs.inputs['Metallic'].default_value=.18
     if name=='Lamp': bs.inputs['Emission Color'].default_value=(*rgb,1); bs.inputs['Emission Strength'].default_value=.45
     mats[name]=m
 
@@ -121,8 +122,8 @@ for axle,z in [('Front',-1.8),('Rear',1.8)]:
         for i in range(24):
             a=i*2*pi/24
             for sx in [-.23,.23]:
-                ob=box('ChevronTread',(sx,1.025*cos(a),1.025*sin(a)),(.48,.145,.22),'Tread',wheel,.035)
-                ob.rotation_euler.x=-a; ob.rotation_euler.z=(.24 if sx<0 else -.24)
+                ob=box('ChevronTread',(sx,1.025*cos(a),1.025*sin(a)),(.66,.12,.15),'Tread',wheel,.03)
+                ob.rotation_euler=(Matrix.Rotation(a,4,'X') @ Matrix.Rotation(.65 if sx<0 else -.65,4,'Z')).to_euler()
         rod('SuspensionArm',(x*.67,1.3,z-.35),(x,1.1,z),.075,'Steel')
         cylinder('Damper',(x*.82,1.58,z),.075,.85,'Bright')
         # Spring is a continuous, editable beveled curve around the damper.
@@ -227,6 +228,66 @@ for x in [-2.4,2.4]:
         for ring in range(7):
             t=ring/6
             torus('LiftedSpring',(x*(.70+.18*t),2.75-1.08*t,z*(.8+.2*t)),.14,.035,'Edge',axis='y')
+
+# Enclosed competition body above the original crew/rig coordinates. Rounded
+# panel-van silhouette and exposed cage follow the supplied proportion reference.
+# Side door openings remain clear for the three learners to board.
+shell=group('CompetitionBody',parent=root)
+for ob in list(body_shell.children):
+    if ob.name.startswith(('CageRoofSide','CageCrossbar')):bpy.data.objects.remove(ob,do_unlink=True)
+roof_verts=[]; roof_faces=[]
+for layer in [0,-.10]:
+    for zi in range(9):
+        z=-1.6+zi*.49
+        for xi in range(17):
+            x=-1.65+xi*3.3/16
+            y=4.66+.30*cos(x/1.65*pi/2)+layer-.10*abs((zi-4)/4)**6
+            roof_verts.append(xyz((x,y,z)))
+for zi in range(8):
+    for xi in range(16):
+        a=zi*17+xi; roof_faces.append((a,a+17,a+18,a+1)); roof_faces.append((a+153,a+154,a+171,a+170))
+for zi in range(8):
+    for xi in [0,16]:
+        a=zi*17+xi; roof_faces.append((a,a+153,a+170,a+17))
+for zi in [0,8]:
+    for xi in range(16):
+        a=zi*17+xi; roof_faces.append((a,a+1,a+154,a+153))
+data=bpy.data.meshes.new('Arched fiberglass roof'); data.from_pydata(roof_verts,[],roof_faces); data.materials.append(mats['Paint'])
+ob=bpy.data.objects.new('Roof',data); bpy.context.collection.objects.link(ob); ob.parent=shell
+for face in data.polygons:face.use_smooth=True
+box('RearBody',(0,3.64,2.22),(3.15,1.95,.18),'Paint',shell,.13)
+box('RearWindow',(0,4.14,2.325),(2.15,.58,.025),'Screen',shell,.11)
+box('RearLowerStripe',(0,3.02,2.33),(3.0,.24,.027),'Edge',shell,.025)
+for side in [-1,1]:
+    x=side*1.56
+    box('RearQuarter',(x,3.64,1.58),(.18,1.90,1.35),'Paint',shell,.12)
+    box('SideRearGlass',(x+side*.10,4.10,1.55),(.03,.58,.89),'Screen',shell,.055)
+    box('DoorLower',(x,2.96,-.15),(.15,.5,1.9),'Paint',shell,.065)
+    box('WindowHeader',(x,4.56,-.32),(.14,.18,2.2),'Paint',shell,.055)
+    rod('WindshieldPillar',(x,3.45,-1.73),(x*.91,4.65,-1.5),.075,'Edge',shell)
+    rod('DoorPillar',(x,3.15,.85),(x,4.67,.85),.065,'Edge',shell)
+    rod('WindowLowerFrame',(x,3.42,-1.65),(x,3.42,.85),.045,'Edge',shell)
+    # Original lightning graphic, rather than copying the reference branding.
+    verts=[xyz((x+side*.105,y,z)) for y,z in [(3.3,2.08),(3.68,1.63),(3.58,1.33),(4.0,.97),(3.46,1.38),(3.52,1.69)]]
+    data=bpy.data.meshes.new('Lightning graphic'); data.from_pydata(verts,[],[tuple(range(6))]); data.materials.append(mats['Edge'])
+    ob=bpy.data.objects.new('Lightning graphic',data); bpy.context.collection.objects.link(ob); ob.parent=shell
+    cylinder('RoundTailLamp',(side*1.19,3.20,2.36),.14,.055,'Red',shell,'z')
+    rod('Exhaust stack',(side*1.4,2.1,1.8),(side*1.4,3.5,2.0),.07,'Bright',shell)
+box('WindshieldBrow',(0,4.62,-1.52),(3.12,.18,.2),'Paint',shell,.08)
+box('WindshieldLower',(0,3.48,-1.73),(3.10,.13,.12),'Paint',shell,.04)
+windshield=mats['Screen'].copy(); windshield.name='Tinted windshield'
+bs=windshield.node_tree.nodes['Principled BSDF']; bs.inputs['Alpha'].default_value=.32; bs.inputs['Roughness'].default_value=.14
+windshield.surface_render_method='DITHERED'
+for side in [-1,1]:
+    ob=box('WindshieldGlass',(side*.74,4.02,-1.64),(1.39,1.0,.018),'Screen',shell,.02)
+    ob.rotation_euler.x=-.19; ob.data.materials.clear(); ob.data.materials.append(windshield)
+rod('WindshieldSplit',(0,3.48,-1.75),(0,4.61,-1.52),.035,'Edge',shell)
+box('CompetitionHood',(0,3.47,-2.13),(3.0,.20,1.15),'Paint',shell,.14)
+box('HoodStripe',(0,3.58,-2.13),(.62,.015,1.0),'Edge',shell,.02)
+text('RearRaceName','RIFT RIDER',(0,3.55,2.335),.31,'Cream',shell,rear=True)
+for side in [-1,1]:
+    for z in [-2.1,2.1]:
+        rod('ChassisDiagonal',(side*.65,2.55,z*.75),(side*1.8,1.5,z),.075,'Edge')
 
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'source'/'truck.blend'))
 bpy.ops.export_scene.gltf(filepath=str(OUT/'truck.glb'),export_format='GLB',export_yup=True)

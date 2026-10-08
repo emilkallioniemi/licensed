@@ -8,6 +8,7 @@ const LOAD_TIMEOUT := 30.0
 const AFTERMATH_DURATION := 6.0
 const SERIOUS_ACCIDENTS := [&"ravine", &"crushed"]
 var route_layout := 0
+var crushed_cars := 0
 var test_item := 0
 var minor_faults := 0
 var cone_hits: Array[int] = []
@@ -60,6 +61,7 @@ var accident_sequence := 0
 func begin(booked_vehicle: StringName, participants: Array[int]) -> void:
 	id = Crypto.new().generate_random_bytes(16).hex_encode()
 	route_layout = Crypto.new().generate_random_bytes(1)[0] % 8
+	crushed_cars = 0
 	vehicle = booked_vehicle
 	_participants = participants.duplicate()
 	_ready.clear()
@@ -409,10 +411,11 @@ func answer_swap(player_id: int, attempt_id: String, sequence: int, requester: i
 	return true
 
 func course_snapshot() -> Dictionary:
-	return {"layout": route_layout, "item": test_item, "cones": cone_hits.duplicate(), "faults": minor_faults, "parking": parking_elapsed, "bumps": bumps_entered, "recovery": recovery_elapsed, "recoverable": recovery_available}
+	return {"layout": route_layout, "crushed_cars": crushed_cars, "item": test_item, "cones": cone_hits.duplicate(), "faults": minor_faults, "parking": parking_elapsed, "bumps": bumps_entered, "recovery": recovery_elapsed, "recoverable": recovery_available}
 
 func restore_course(data: Dictionary) -> void:
 	route_layout = data.get("layout", 0)
+	crushed_cars = data.get("crushed_cars", 0)
 	cone_hits.assign(data.get("cones", []))
 	test_item = data.get("item", 0)
 	minor_faults = data.get("faults", 0)

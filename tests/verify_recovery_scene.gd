@@ -33,17 +33,20 @@ func verify() -> void:
 	await step(5)
 	place(Vector3(0, 2.72, 0.8), true)
 	await step(10)
-	check(learner.support == &"truck", "ordinary open-bed footing secured")
+	check(learner.support == &"truck", "ordinary cabin footing secured")
 	attempt.parking_brake = false
 	attempt.speed = 2.0
 	attempt.front_angle = 0.15
 	await step(60)
-	check(learner.support == &"truck" and learner.global_position.y > 2.6, "open bed travels through ordinary moving turn")
+	check(learner.support == &"truck" and learner.global_position.y > 2.6, "cabin footing travels through ordinary moving turn")
+	# The enclosed cab roof now blocks an upward ejection. Isolate the existing
+	# unsecured external-rider behavior on the modeled, collidable roof instead.
+	place(truck.body.to_global(Vector3(0, 4.92, 0.5)), true)
 	attempt.speed = 8.0
 	attempt.front_angle = 0.6
 	attempt.rear_angle = -0.6
 	await step(1)
-	check(learner.support == &"" and learner.velocity.y > 0.0, "sharp turn physically ejects unseated bed rider")
+	check(learner.support == &"" and learner.velocity.y > 0.0, "sharp turn physically ejects an unsecured roof rider")
 	check(attempt.accidents.back().kind == &"ejected", "scene sends ejection to attempt boundary")
 	var replica: Learner = load("res://scenes/learner.tscn").instantiate()
 	world.add_child(replica)

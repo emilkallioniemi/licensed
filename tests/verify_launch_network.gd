@@ -155,7 +155,7 @@ func verify_failure_network() -> void:
 	print("FAILURE: shared concession, aftermath, changed choices and synchronized retry verified")
 
 ## Bounded real input path following; failure reports the physical stopped point.
-func drive_track_to(target: Vector3, tolerance: float) -> void:
+func drive_track_to(target: Vector3, tolerance: float, cruise_speed := 2.0) -> void:
 	var host = rooms[0]
 	var state: AttemptState = host.room_state().attempt
 	var truck: MonsterTruck = host.test_area.truck
@@ -185,7 +185,7 @@ func drive_track_to(target: Vector3, tolerance: float) -> void:
 			await create_timer(0.05).timeout
 			continue
 		rooms[0].test_area.boarding.test_intention = {"wish": Vector2.ZERO, "steer": clampf((angle - state.front_angle) * 8.0, -1.0, 1.0)}
-		rooms[1].test_area.boarding.test_intention = {"wish": Vector2.ZERO, "throttle": state.speed < 2.0}
+		rooms[1].test_area.boarding.test_intention = {"wish": Vector2.ZERO, "throttle": state.speed < cruise_speed}
 		await create_timer(0.05).timeout
 	print("ROUTE missed ", target, " at ", host.test_area.to_local(truck.body.global_position), " heading ", truck.body.rotation.y)
 	check(false, "route driver reaches " + str(target))
@@ -223,13 +223,15 @@ func verify_survival_network() -> void:
 		await drive_track_to(Vector3(side * 18, 0, junction + 3), 1.5)
 		await drive_track_to(Vector3(side * 18, 0, junction - 7), 1.0)
 		await drive_track_to(Vector3(side * 18, 0, junction - 22), 1.0)
-		await drive_track_to(Vector3(side * 18, 0, junction - 54), 0.8)
+		await drive_track_to(Vector3(side * 18, 0, junction - 54), 1.5, 7.0 if index == 2 else 2.0)
 		check(state.test_item == index + 1, "physical bridge crossing completes checkpoint " + str(index + 1))
 		if state.phase != &"active":
 			check(false, "route driver stays alive through correct bridges")
 			return
 	await drive_track_to(Vector3(0, 0, -210), 1.5)
 	await drive_track_to(Vector3(0, 0, -221), 1.0)
+	for room in rooms:
+		check(room.room_state().attempt.crushed_cars != 0, "driving over wrecks replicates crushing to every peer")
 	for room in rooms:
 		room.test_area.boarding.test_intention = {"wish": Vector2.ZERO}
 	await create_timer(6.5).timeout

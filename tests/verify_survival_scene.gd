@@ -20,7 +20,7 @@ func verify() -> void:
 		for index in 3:
 			var side := SurvivalTrack.safe_side(layout, index)
 			var z: float = SurvivalTrack.JUNCTIONS[index] - 30
-			check(has_road(Vector3(side * 18, 0, z)), "report's intact bridge has actual tyre support")
+			check(has_road(Vector3(side * 18, 0, z + (10 if index == 2 else 0))), "book's live stunt lane has actual tyre support")
 			check(not has_road(Vector3(-side * 18, 0, z)), "broken bridge has a real unsupported span")
 	truck = MonsterTruck.new()
 	world.add_child(truck)
@@ -74,11 +74,12 @@ func step(command: Dictionary) -> void:
 	sequence += 1
 	state.drive(1, state.id, sequence, 1, command)
 	state.advance_driving(STEP)
+	track.sync_obstacles(state, truck.body.position, true)
 	truck.drive(state, STEP)
 	state.observe_course(truck.body.transform, STEP)
 	state.tick(STEP)
 func has_road(at: Vector3) -> bool:
-	var ray := PhysicsRayQueryParameters3D.create(at + Vector3.UP, at - Vector3.UP, 8)
+	var ray := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 10, at - Vector3.UP, 8)
 	return not world.get_world_3d().direct_space_state.intersect_ray(ray).is_empty()
 func check(ok: bool, message: String) -> void:
 	if not ok:

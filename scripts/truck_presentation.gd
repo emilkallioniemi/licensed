@@ -86,6 +86,21 @@ func highlight(control: StringName, enabled: bool) -> void:
 			material.emission = Color("8c7945")
 			material.emission_energy_multiplier = 0.3
 
+func follow_ground(body: Node3D) -> void:
+	# Guests derive articulation from the same confirmed truck pose and terrain.
+	for axle in ["Front", "Rear"]:
+		var total := 0.0
+		for side in ["L", "R"]:
+			var x := -2.4 if side == "L" else 2.4
+			var z := -2.1 if axle == "Front" else 2.1
+			var at := body.to_global(Vector3(x, 0, z))
+			var ray := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 2, at - Vector3.UP * 3, 8)
+			var hit := get_world_3d().direct_space_state.intersect_ray(ray)
+			var height := 1.25 if hit.is_empty() else clampf(1.6 + body.to_local(hit.position).y, 1.0, 2.2)
+			pivots[axle + side + "Suspension"].position.y = height
+			total += height
+		pivots[axle + "Axle"].position.y = total / 2
+
 func reset() -> void:
 	roll = 0.0
 	transform = Transform3D.IDENTITY

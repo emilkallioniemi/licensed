@@ -1,0 +1,33 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Setting breakpad minidump AppID = 480
+SteamInternal_SetMinidumpSteamID:  Caching Steam ID:  [redacted Steam ID] [API loaded no]
+SteamClient: [local tester] ([redacted Steam ID]) is at the test centre; rich presence licensed=1
+WaitingRoom: the room waits for 3
+WaitingRoom: spawned Learner_1 palette 01 local=true
+WaitingRoom: [local tester] arrived as palette 01 (1 of 3)
+SteamClient: avatar loaded, 64 x 64
+WaitingRoom: the room waits for 3
+WaitingRoom: peer 1483101726 connected
+WaitingRoom: spawned Learner_1 palette 01 local=false
+WaitingRoom: spawned Learner_1483101726 palette 02 local=false
+WaitingRoom: [local tester] (2) arrived as palette 02 (2 of 3)
+WaitingRoom: the door for peer 1483101726
+WaitingRoom: spawned Learner_1483101726 palette 02 local=true
+WaitingRoom: the room waits for 3
+WaitingRoom: peer 971562354 connected
+WaitingRoom: spawned Learner_1 palette 01 local=false
+WaitingRoom: spawned Learner_1483101726 palette 02 local=false
+WaitingRoom: spawned Learner_971562354 palette 03 local=false
+WaitingRoom: [local tester] (3) arrived as palette 03 (3 of 3)
+WaitingRoom: the door for peer 971562354
+WaitingRoom: spawned Learner_971562354 palette 03 local=false
+WaitingRoom: the door for peer 971562354
+WaitingRoom: spawned Learner_971562354 palette 03 local=true
+PASS: navigation privacy, replicated bridges, actual three-peer driving, shared finish/retry and lethal fall
+WaitingRoom: peer 971562354 left; 2 in the room
+PASS: three development peers launch by RPC, share arrival/timer and return on guest loss
+WARNING: 2 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

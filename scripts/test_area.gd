@@ -33,21 +33,25 @@ func _ready() -> void:
 	daylight.background_mode = Environment.BG_SKY
 	var sky := Sky.new()
 	var atmosphere := ProceduralSkyMaterial.new()
-	atmosphere.sky_top_color = Color("7198a4")
-	atmosphere.sky_horizon_color = Color("e3d5b9")
-	atmosphere.ground_horizon_color = Color("d2bea0")
+	atmosphere.sky_top_color = Color("172b51")
+	atmosphere.sky_horizon_color = Color("a294ac")
+	atmosphere.ground_horizon_color = Color("8b7c8c")
 	sky.sky_material = atmosphere
 	daylight.sky = sky
 	daylight.fog_enabled = true
-	daylight.fog_light_color = Color("b9b5a2")
-	daylight.fog_density = 0.0017
+	daylight.fog_light_color = Color("69768d")
+	daylight.fog_density = 0.0005
+	daylight.glow_enabled = true
+	daylight.glow_intensity = 0.55
+	daylight.ssao_enabled = true
+	daylight.ssao_radius = 2.0
 	daylight.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	daylight.ambient_light_color = Color("c3d2d0")
-	daylight.ambient_light_energy = 0.65
+	daylight.ambient_light_energy = 0.45
 	daylight.tonemap_mode = Environment.TONE_MAPPER_ACES
 	var sun := DirectionalLight3D.new()
 	sun.light_color = Color("fff0d5")
-	sun.light_energy = 1.3
+	sun.light_energy = 0.85
 	sun.shadow_enabled = true
 	sun.rotation_degrees = Vector3(-48, 35, 0)
 	add_child(sun)
@@ -127,17 +131,19 @@ func _process(_delta: float) -> void:
 	if waiting == null or waiting.room_state() == null:
 		return
 	var state: AttemptState = waiting.room_state().attempt
+	if visible:
+		track.sync_obstacles(state, to_local(truck.body.global_position), multiplayer.is_server())
 	var local := waiting._local_learner()
 	var player_id := waiting.player_id_for_peer(multiplayer.get_unique_id())
 	_reticle.visible = visible and state.phase == &"active" and local != null and not local.is_seated()
 	_reticle.position = get_viewport().get_visible_rect().size * 0.5 - Vector2(6, 12)
 	_guidance.visible = visible and state.phase in [&"active", &"aftermath"]
-	_guidance.text = "GET THROUGH ALIVE · Bridges crossed %d / 3\nTime %d:%02d" % [mini(state.test_item, 3), int(state.remaining) / 60, int(state.remaining) % 60]
+	_guidance.text = "MONSTER ARENA · Stunts cleared %d / 3\nTime %d:%02d" % [mini(state.test_item, 3), int(state.remaining) / 60, int(state.remaining) % 60]
 	if state.phase == &"active":
 		if state.control_of(player_id) == &"":
-			_guidance.text += "\nBoard together: steering, speed, navigation. Navigator has the bridge report."
+			_guidance.text += "\nBoard together: steering, speed, navigation. Navigator has the stunt book."
 		elif state.control_of(player_id) != &"rear":
-			_guidance.text += "\nAsk your navigator which bridge to take."
+			_guidance.text += "\nAsk your navigator which stunt lane is live."
 		if state.recovery_available:
 			_guidance.text += "\nHold R to right the settled truck. %d%%" % int(state.recovery_elapsed * 50)
 	elif not state.assessment().is_empty():

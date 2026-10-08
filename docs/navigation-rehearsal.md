@@ -2,6 +2,8 @@
 
 This debug tool uses production track geometry, truck physics, attempt state and secured learners. It does not simulate human communication or prove the game is fun.
 
+The active track is now the monster truck stadium. Find Car Crunch, Ring Run and Big Air in the navigator's book. The final live lane has a real jump gap: line up and build speed; crawling into it fails. Wrecks compress under the truck and reset on retry. Pyrotechnics are show effects, while falling into the excavated stunt pits loses the shared attempt.
+
 From the repository, run:
 
 ```powershell

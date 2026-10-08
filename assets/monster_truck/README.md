@@ -1,5 +1,7 @@
 # Modeled truck
 
+**2026-10-08 stadium revision:** the active model is an enclosed competition truck, following the user's reference for huge chevron-tread tires, exposed tall green chassis, long suspension and a compact body. The original livery is dark teal/lime with RIFT RIDER lettering. Arched fiberglass roof, rear quarter panels, tinted split windshield and rounded front lights replace the open buggy silhouette. Side door openings retain crew boarding access; the roof and rear body have matching structural collision. Seats and mechanical pivot names stay compatible. Independent wheel articulation now follows terrain contact, while the chassis pitches and rolls over real bumps. The historical open-bed description below is superseded.
+
 `source/build_truck.py` is the revisable Blender generator. `source/truck.blend` retains individual beveled parts, text meshes, material slots and mechanical parents. `truck.glb` is the portable Godot asset. The generator saves the editable model before building studio lights/cameras, renders front/rear/cabin previews, then batches export meshes by material within each mechanical parent. Preview-only ground, lights and cutaway visibility never enter the GLB. `source/.gdignore` keeps Godot independent of a local Blender installation.
 
 ```sh
