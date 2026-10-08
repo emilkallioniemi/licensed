@@ -1,5 +1,7 @@
 # Design judgment
 
+> Active revision (2026-10-08): [Navigation and survival](../.scratch/monster-truck-build/navigation-survival.md) supersedes conflicting historical rules below. The monster truck has steering, speed and private navigation instructions, with no balance or examiner. Shared sight remains; route-report knowledge belongs only to navigation. Ordinary collisions allow recovery; lethal falls/crushing lose the attempt. Preserve approachable operation and establish equal contribution through playtesting. Development rehearsal is permitted; shipping still requires three humans.
+
 > Monster-truck revision (2026-09-14): the [active spec amendment](../.scratch/monster-truck/spec.md) supersedes older rules here for seated sight, role split, awkward controls, boarding, recovery and the next test. Build the approachable short test first; full-route expansion remains gated by human acceptance.
 
 The judgment to carry when building anything for licensed: a vehicle, a test item, a screen, an examiner line, a control. `README.md` is the design doc; this file is the part of it an agent has to *act on*, rewritten so each rule is observable. Every line here traces to a decision in the README or to a correction that repeated in `docs/corrections.md`. Vocabulary is in `CONTEXT.md`.

@@ -9,7 +9,7 @@ extends Node3D
 ## Ticket 08: the role column holds Driver, Spotter, Navigator, or Random.
 ## Ticket 09: the reception desk lists friends and joins or leaves a room.
 ## Ticket 10: Invite from the desk rings in-world; Accept is Join.
-## Ticket 11: the notice board, the examiner's call, the fade, and the test area.
+## Ticket 11: the notice board, countdown, fade, and test area.
 ## Ticket 12: the Escape overlay, quit, Back, and shared fate from the test area.
 ## Ticket 13: voice from the learners, mic mode and mute on the overlay.
 
@@ -21,8 +21,6 @@ const LEARNER_SCENE := preload("res://scenes/learner.tscn")
 const DOOR_SOUND := preload("res://assets/waiting_room/door.wav")
 ## Fade and music share this second.
 const TRANSITION := 1.0
-## Synthesized "Monster truck."; native Windows TTS can crash during initialization.
-const EXAMINER_CALL := preload("res://assets/waiting_room/examiner_monster_truck.wav")
 
 ## Furniture the spec names for box colliders, looked up on the kit by node name.
 const FURNITURE_GROUPS: PackedStringArray = [
@@ -61,7 +59,6 @@ var _returning := false
 var _test_door: AudioStreamPlayer3D
 var _waiting_environment: Environment
 var _music_volume := -6.0
-var _examiner: AudioStreamPlayer
 
 
 func _ready() -> void:
@@ -321,14 +318,12 @@ func _process(delta: float) -> void:
 
 
 func _on_countdown_started() -> void:
-	_speak_examiner()
 	# The line changed the instant the ready-up fired; don't wait for the next replicate.
 	room_changed.emit()
 
 
 func _on_countdown_cancelled() -> void:
-	if _examiner != null:
-		_examiner.stop()
+	pass
 
 
 func _on_launched(_vehicle: StringName, _roles: Dictionary) -> void:
@@ -377,16 +372,6 @@ func _present_arrival() -> void:
 	_presented_attempt = _room.attempt.id
 	_enter_test_area()
 	fade.to_clear(TRANSITION)
-
-
-func _speak_examiner() -> void:
-	if _examiner == null:
-		_examiner = AudioStreamPlayer.new()
-		_examiner.name = "Examiner"
-		_examiner.stream = EXAMINER_CALL
-		_examiner.volume_db = -6.0
-		add_child(_examiner)
-	_examiner.play()
 
 
 func _silence_stations() -> void:
@@ -595,7 +580,7 @@ func _receive_state(data: Dictionary) -> void:
 	var previous_attempt: String = _room.attempt.id
 	_room.restore(data)
 	# restore() is silent; a state diff raises the host's events so later views (booking
-	# sound, examiner line) can connect to `_room` on every machine.
+	# sound) can connect to `_room` on every machine.
 	if not had_booking and _room.has_booking():
 		_room.booking_formed.emit(_room.booking())
 	elif had_booking and not _room.has_booking():

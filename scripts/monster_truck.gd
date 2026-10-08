@@ -47,21 +47,11 @@ func _ready() -> void:
 		box("SeatBack", Vector3(0.66, 0.7, 0.17), at + Vector3(0, 0.76, back * 0.28))
 		if control != &"rear":
 			box("Console", Vector3(1.02, 0.44, 0.16), at + Vector3(0, 0.78, -back * 0.72))
-	box("ExaminerSeat", Vector3(0.7, 0.44, 0.7), Vector3(0.864, 2.92, 1.12))
 	shell_box("Bonnet", Vector3(4.1, 1.0, 0.9), Vector3(0, 2.1, -2.6))
 	shell_box("RearPanel", Vector3(2.0, 0.8, 0.2), Vector3(-0.9, 2.05, 2.35))
 	visuals = TruckPresentation.new()
 	visuals.name = "Presentation"
 	body.add_child(visuals)
-	# Existing learner is temporary examiner body; full distinct rig belongs to 23.
-	var examiner: Node3D = preload("res://assets/slice_0/player/learner.glb").instantiate()
-	visuals.add_child(examiner)
-	examiner.position = Vector3(0.864, 2.7, 1.12)
-	examiner.find_child("BodyPivot", true, false).position.y = 0.59
-	examiner.rotation.y = PI
-	for side in ["Left", "Right"]:
-		examiner.find_child(side + "Hip", true, false).rotation.x = -PI / 2.0
-		examiner.find_child(side + "Knee", true, false).rotation.x = PI / 2.0
 	sound = TruckSound.new()
 	body.add_child(sound)
 	engine = sound.engine
@@ -175,16 +165,16 @@ func _advance_suspension(delta: float, state: AttemptState) -> void:
 			if not hit.is_empty():
 				heights.append(hit.position.y)
 				side_heights[x] = hit.position.y
-	# Balance moves the centre of weight. Ordinary cornering stays forgiving.
+	# Ordinary cornering stays forgiving; navigation has no suspension input.
 	if absf(body.rotation.z) > 0.9:
 		body.rotation.z = move_toward(body.rotation.z, signf(body.rotation.z) * PI / 2.0, delta)
 	else:
 		var bank := 0.0
 		if side_heights.size() == 2:
 			bank = atan2(side_heights[2.4] - side_heights[-2.4], 4.8)
-		var roll_target := clampf(bank - state.speed * angular_motion * 0.06 - state.balance.x * 0.30, -1.2, 1.2)
+		var roll_target := clampf(bank - state.speed * angular_motion * 0.06, -1.2, 1.2)
 		body.rotation.z = move_toward(body.rotation.z, roll_target, delta * 1.2)
-		body.rotation.x = move_toward(body.rotation.x, clampf(vertical_speed * 0.04 + state.balance.y * 0.16, -0.28, 0.28), delta)
+		body.rotation.x = move_toward(body.rotation.x, clampf(vertical_speed * 0.04, -0.28, 0.28), delta)
 	var before := vertical_speed
 	if heights.is_empty():
 		vertical_speed -= 9.8 * delta

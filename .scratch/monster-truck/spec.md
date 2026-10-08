@@ -4,7 +4,11 @@ Status: ready-for-agent
 Date: 2026-09-13
 Source: [resolved decision map](map.md)
 
-## Active amendment: approachable cooperation (2026-09-14)
+## Active amendment: navigation and survival (2026-10-08)
+
+The user authorized improving the game after consolidating all existing work onto main. Follow [the executable revision](../monster-truck-build/navigation-survival.md): remove balance and the examiner entirely, give a third player private instructions/navigation, and build a physical track the group must survive. Ordinary collisions permit recovery and continuation; lethal falls/crushing cause shared loss. This supersedes the older role split, shared instructions, examiner, forgiving-all-accidents recovery, and the earlier route-expansion gate. The new track is a gameplay experiment requiring fresh three-human acceptance, not acceptance of the historical full-route plan. Exactly three humans, Steam shipping transport and existing lifecycle authority remain.
+
+## Historical amendment: approachable cooperation (2026-09-14)
 
 This amendment governs the next playable revision and supersedes conflicting requirements in the 2026-09-13 baseline below, its decision tickets, and existing implementation tickets. Completed implementation remains retained history. The complete vehicle remains the longer-term objective; expansion requires acceptance of the revised cooperation checkpoint and reconciliation of deferred requirements.
 

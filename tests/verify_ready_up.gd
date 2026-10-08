@@ -43,12 +43,11 @@ func _verify() -> void:
 	for index in range(3):
 		room.sit(1001 + index, index + 1)
 	_check(room.is_counting_down(), "three ready players must start the countdown")
-	_check(waiting._examiner.playing, "the examiner announcement must play")
-	_check(waiting._examiner.stream.get_length() > 0.0, "the announcement must contain audio")
+	_check(waiting.get_node_or_null("Examiner") == null, "ready-up has no examiner")
 	room.stand(1003)
-	_check(not waiting._examiner.playing, "standing must stop the announcement")
+	_check(not room.is_counting_down(), "standing cancels countdown")
 	room.sit(1003, 3)
-	_check(waiting._examiner.playing, "readying again must restart the announcement")
+	_check(room.is_counting_down(), "readying again restarts countdown")
 	room.tick(10.0)
 	await create_timer(1.2).timeout
 	_check(waiting.is_in_test_area(), "countdown must launch the test")
@@ -128,5 +127,5 @@ func _verify() -> void:
 	waiting.queue_free()
 	await process_frame
 	if _failures == 0:
-		print("PASS: three-player ready-up, announcement, cancellation, restart and test-area transition")
+	print("PASS: three-player ready-up, cancellation, restart and test-area transition without examiner")
 	quit(1 if _failures > 0 else 0)

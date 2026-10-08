@@ -40,7 +40,7 @@ func verify() -> void:
 	state.advance_driving(0.2)
 	truck.drive(state, 0.02)
 	var rear_wheel: Node3D = truck.find_child("RearWheel", true, false)
-	check(not rear_wheel.is_visible_in_tree() and state.balance.x < 0.0 and is_equal_approx(wheel.rotation.z, held), "balance replaces rear wheel without changing front steering")
+	check(not rear_wheel.is_visible_in_tree() and is_equal_approx(wheel.rotation.z, held), "navigation seat has no steering wheel or driving effect")
 	var front_tyre: Node3D = truck.find_child("FrontLSteer", true, false)
 	var rear_tyre: Node3D = truck.find_child("RearLSteer", true, false)
 	check(front_tyre.rotation.y < 0.0 and is_zero_approx(rear_tyre.rotation.y), "only front tyres steer")

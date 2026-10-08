@@ -32,9 +32,18 @@ func _ready() -> void:
 	timer = lettering("Timer", Vector3(1.2, 2.38, -1.875), 0.0016, 36)
 	direction = lettering("Direction", Vector3(1.0, 2.28, -1.905), 0.0012, 30)
 	parking = lettering("Parking", Vector3(1.42, 2.28, -1.905), 0.0012, 30)
-	var examiner_seat := lettering("ExaminerSeatPrint", Vector3(1.2, 2.36, 1.775), 0.0012, 24)
-	examiner_seat.text = "EXAMINER"
-	examiner_seat.modulate = Color("eadcb9")
+	var unused_seat := model.find_child("ExaminerSeat", true, false)
+	if unused_seat != null:
+		unused_seat.hide()
+	var report := MeshInstance3D.new()
+	var paper := BoxMesh.new()
+	paper.size = Vector3(0.5, 0.025, 0.65)
+	report.mesh = paper
+	var material := StandardMaterial3D.new()
+	material.albedo_color = Color("eee3c8")
+	report.material_override = material
+	add_child(report)
+	report.position = Vector3(-0.864, 3.05, 1.60)
 
 func lettering(title: String, at: Vector3, pixel: float, font: int) -> Label3D:
 	var label := Label3D.new()

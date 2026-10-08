@@ -11,7 +11,7 @@ A level. One set of controls, one role split, one test. The campaign is a list o
 _Avoid_: level, stage, map
 
 **Test**:
-The scored attempt at one vehicle's license. Ends in pass or fail for all three players at once.
+The shared attempt to get through a vehicle's track alive. Ends in pass or fail for all three players at once. Ordinary collisions permit continuing; lethal accidents cause failure.
 _Avoid_: level, round, mission, run, match
 
 **Test item**:
@@ -41,7 +41,7 @@ One of the three things a role can be made of: control, sight, or knowledge.
 _Avoid_: ability, power, responsibility
 
 **Control**:
-Hands on something the vehicle needs: wheel, pedals, throttle, balance, gears, indicators.
+Hands on something the vehicle needs: wheel, pedals, throttle, gears, indicators. The monster truck divides steering and speed between two players.
 _Avoid_: input, mechanic
 
 **Sight**:
@@ -57,12 +57,16 @@ How one vehicle divides its ingredients among the three roles.
 _Avoid_: loadout, assignment, role set
 
 **Test sheet**:
-The dry, precise, slightly ambiguous document describing a vehicle's procedures and test, held by one role and read aloud to the others when the vehicle uses one. The monster truck has no test sheet; its examiner requests manoeuvres, with physical signs and markings identifying the route.
+Instructions describing a vehicle's procedures and test, held by one role and read aloud to the others when the vehicle uses one. The monster truck uses a bridge inspection report.
 _Avoid_: manual, handbook, instructions, guide
 
 **Driver**, **Spotter**, **Navigator**:
-Names from the earlier monster-truck role-split candidate: driving, spotting hazards, and reading the test sheet. They remain existing waiting-room placeholders, not preassigned monster-truck roles in the current design.
+Driver and Spotter are historical role candidates. Navigator is the current monster-truck player responsible for reading private route instructions to the steering and speed players.
 _Avoid_: instructor, reader, clerk, operator
+
+**Bridge inspection report**:
+The navigator's private instructions identifying the intact bridge at each numbered junction. Shared road signs identify the branches; the navigator communicates which to take.
+_Avoid_: universal directions, examiner instructions
 
 **Random**:
 Picking no role and being dealt whichever is left when the test starts. Any number of players may pick it; it is not a fourth role.
@@ -75,7 +79,7 @@ _Avoid_: own, lock, claim, reserve, select
 ### Scoring
 
 **Examiner**:
-The deadpan NPC with the clipboard who scores the test and comments on it. Heard by everyone.
+The historical NPC who judged and commented on the test. Removed from the current monster-truck experience; navigation instructions come from a player.
 _Avoid_: instructor, judge, referee, narrator
 
 **Minor fault**:
@@ -83,7 +87,7 @@ A point on the examiner's sheet. In the monster-truck test, minor faults lower t
 _Avoid_: penalty, warning, strike, error
 
 **Serious fault**:
-A fault that guarantees failure. In the monster-truck test, dangerous accidents such as hitting a worker or driving into the ravine qualify; the test ends after the physical aftermath and examiner response.
+A lethal accident that guarantees shared failure, such as falling off the track or crushing a learner. The physical aftermath precedes results. Ordinary collisions and recoverable rollovers do not qualify.
 _Avoid_: critical fault, game over, major fault
 
 **Comment**:

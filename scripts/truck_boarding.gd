@@ -63,7 +63,6 @@ func start(owner_room: WaitingRoom) -> void:
 func stop() -> void:
 	active = false
 	truck.sound.reset()
-	get_parent().examiner_audio.stop()
 	if room != null:
 		for learner in room._learners():
 			learner.set_truck_movement(false)
@@ -230,6 +229,8 @@ func _physics_process(_delta: float) -> void:
 				acknowledged[peer_id] = intention.sequence
 				# Jump is an edge; held walking is repeatedly transmitted.
 				inputs[peer_id]["jump"] = false
+		# Resolve all learner catastrophes before the finish can award a pass.
+		state.observe_course(get_parent().global_transform.affine_inverse() * truck.body.global_transform, STEP)
 		tick_count += 1
 		if tick_count % 3 == 0:
 			_send_snapshot(false)
@@ -279,10 +280,11 @@ func advance_truck(present := true) -> void:
 	state.advance_driving(STEP)
 	truck.drive(state, STEP, present)
 	if multiplayer.is_server() and state.phase == &"active":
+		if get_parent().to_local(truck.body.global_position).y < -8.0:
+			state.observe_course(get_parent().global_transform.affine_inverse() * truck.body.global_transform, STEP)
+			return
 		if _advance_recovery(state):
 			return
-		get_parent().observe_cones(state)
-		state.observe_course(get_parent().global_transform.affine_inverse() * truck.body.global_transform, STEP)
 
 func _send_snapshot(reliable: bool) -> void:
 	snapshot_sequence += 1
@@ -399,10 +401,10 @@ func _present_controls() -> void:
 		match control:
 			&"front": copy = "STEERING — A / D turn left / right. The wheel holds its angle."
 			&"pedals": copy = "SPEED — W forward. S brake, then reverse. Release to slow down."
-			&"rear": copy = "BALANCE — A / D lean left / right. W / S lean forward / back."
-		copy += "\nE leave seat. Stop to swap: 1 steering / 2 speed / 3 balance."
+			&"rear": copy = "NAVIGATION — Read the bridge report aloud. TAB close / open report."
+		copy += "\nE leave seat. Stop to swap: 1 steering / 2 speed / 3 navigation."
 	elif hinted_control != &"":
-		copy = "E · Sit — " + str(hinted_control).replace("front", "steering").replace("pedals", "speed").replace("rear", "balance")
+		copy = "E · Sit — " + str(hinted_control).replace("front", "steering").replace("pedals", "speed").replace("rear", "navigation")
 	for requester in room.room_state().attempt.swaps:
 		var request: Dictionary = room.room_state().attempt.swaps[requester]
 		if request.other == player_id:
@@ -434,7 +436,6 @@ func _process(_delta: float) -> void:
 			var brake: Node3D = truck.visuals.pivots["BrakePedal"]
 			contacts.LeftFoot = throttle.to_global(Vector3(0, 0.23, 0.08))
 			contacts.RightFoot = brake.to_global(Vector3(0, 0.23, 0.08))
-		learner.balance_pose = state.balance
 		learner.present_control(control, truck.visuals, contacts)
 
 @rpc("any_peer", "call_remote", "reliable", 1)
@@ -456,13 +457,15 @@ func _accept_swap(peer_id: int, attempt_id: String, seq: int, target: StringName
 func _advance_recovery(state: AttemptState) -> bool:
 	var at: Vector3 = get_parent().to_local(truck.body.global_position)
 	var overturned := truck.body.global_basis.y.dot(Vector3.UP) < 0.5
-	var outside := absf(at.x) > 25.0 or at.z < -33.0 or at.z > 5.0 or at.y < -2.0
 	var stranded := false
 	for learner in room._learners():
-		if learner.movement_mode in [&"trapped", &"crushed", &"ravine"]:
+		if learner.movement_mode == &"trapped":
 			stranded = true
 	var settled := absf(truck.vertical_speed) < 0.5 and absf(state.speed) < 0.3
-	state.recovery_available = outside or stranded or (overturned and settled)
+	# A fall has no recovery. Righting is available only on supporting road.
+	var ray := PhysicsRayQueryParameters3D.create(truck.body.global_position + Vector3.UP * 2, truck.body.global_position - Vector3.UP * 2, 8)
+	var supported := not truck.get_world_3d().direct_space_state.intersect_ray(ray).is_empty()
+	state.recovery_available = supported and settled and at.y > -1 and (overturned or stranded)
 	var held := false
 	for peer_id in inputs:
 		if ages.get(peer_id, INF) < FRESHNESS and inputs[peer_id].get("recover", false):
@@ -473,11 +476,10 @@ func _advance_recovery(state: AttemptState) -> bool:
 	state.recovery_elapsed += STEP
 	if state.recovery_elapsed < 2.0:
 		return false
-	# Authored flat recovery pads, nearest safe pad first; test actual hull space.
-	var pads := [Vector3(0, 0, -9), Vector3(6, 0, -24), Vector3(22, 0, -24), Vector3(17, 0, -10)]
-	pads.sort_custom(func(a: Vector3, b: Vector3): return a.distance_squared_to(at) < b.distance_squared_to(at))
+	# Right in place; never teleport across a missing bridge or off-course fall.
+	var pads := [Vector3(at.x, 0, at.z)]
 	for pad in pads:
-		var pose := Transform3D(Basis.IDENTITY, get_parent().to_global(pad))
+		var pose := Transform3D(Basis(Vector3.UP, truck.body.global_rotation.y), get_parent().to_global(pad))
 		var query := PhysicsShapeQueryParameters3D.new()
 		var hull := BoxShape3D.new()
 		hull.size = Vector3(6.8, 4.8, 7.4)

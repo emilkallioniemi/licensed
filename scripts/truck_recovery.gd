@@ -16,13 +16,14 @@ func simulate(learner: Learner, command: Dictionary, truck: MonsterTruck, previo
 		state.observe_accident(player_id, state.id, &"landed", learner.global_position)
 
 func _resolve(learner: Learner, truck: MonsterTruck, previous: Transform3D, state: AttemptState, player_id: int, delta: float) -> void:
-	# Occupants stay secured through bumps, impacts and overturns.
-	if state.control_of(player_id) != &"":
-		return
 	if learner.movement_mode in [&"crushed", &"ravine"]:
 		return
 	if learner.global_position.y < -12.0:
-		_record(learner, state, player_id, &"ravine")
+		var impulse := truck.motion if learner.support == &"truck" else learner.velocity
+		_record(learner, state, player_id, &"ravine", impulse)
+		return
+	# Occupants stay secured through ordinary bumps, impacts and overturns.
+	if state.control_of(player_id) != &"":
 		return
 	if learner.support == &"truck" and truck.jolt != Vector3.ZERO:
 		# Seats secure ordinary turning; a collision or large vertical jolt can
@@ -61,6 +62,6 @@ func _resolve(learner: Learner, truck: MonsterTruck, previous: Transform3D, stat
 			state.observe_accident(player_id, state.id, &"rescued", learner.global_position)
 			learner.apply_recovery(&"independent")
 
-func _record(learner: Learner, state: AttemptState, player_id: int, kind: StringName) -> void:
-	state.observe_accident(player_id, state.id, kind, learner.global_position)
-	learner.apply_recovery(kind)
+func _record(learner: Learner, state: AttemptState, player_id: int, kind: StringName, impulse := Vector3.ZERO) -> void:
+	state.observe_accident(player_id, state.id, kind, learner.global_position, impulse)
+	learner.apply_recovery(kind, impulse)

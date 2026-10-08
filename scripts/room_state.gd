@@ -9,7 +9,7 @@ extends RefCounted
 signal booking_formed(vehicle: StringName)
 ## The booking dissolved (a drop, a switch, or a departure); every hold was released.
 signal booking_dissolved
-## The ready-up fired: the examiner calls the booking and the notice board starts counting.
+## The ready-up fired: the notice board starts counting.
 signal countdown_started
 ## Something the ready-up needs stopped holding mid-count; the notice board goes back to
 ## its state line and nothing is announced.

@@ -343,6 +343,14 @@ func simulate_truck_walk(command: Dictionary, truck_body: AnimatableBody3D, prev
 	if not _local and command.has("pitch"):
 		_pitch = clampf(command.pitch, -PITCH_LIMIT, PITCH_LIMIT)
 	ejection_time = maxf(0.0, ejection_time - delta)
+	if movement_mode == &"ravine":
+		# Death disables input, but the body still finishes its physical fall.
+		velocity.y -= 9.8 * delta
+		move_and_slide()
+		pose_grounded = is_on_floor()
+		pose_ejected = true
+		_current_position = global_position
+		return
 	if movement_mode in [&"trapped", &"crushed", &"ravine"]:
 		if command.has("yaw"):
 			rotation.y = command.yaw
@@ -480,7 +488,6 @@ func smooth_truck_correction(error: Vector3) -> void:
 
 ## Render-only contact references. TruckBoarding supplies confirmed occupancy;
 ## no predicted key press can seat this rig before the host grants the control.
-var balance_pose := Vector2.ZERO
 var control_presentation: StringName = &""
 var presentation_frame: Node3D
 var presentation_contacts: Dictionary = {}
@@ -505,10 +512,6 @@ func _animate_body(delta: float) -> void:
 		# Looking rotates the head/camera, never the seated pelvis or bound hands.
 		visual.global_basis = presentation_frame.global_basis * Basis(Vector3.UP, 0.0 if control_presentation == &"rear" else PI)
 		visual.global_position = presentation_frame.to_global(AttemptState.CONTROLS[control_presentation])
-	if control_presentation == &"rear" and is_instance_valid(presentation_frame):
-		visual.global_position += presentation_frame.global_basis * Vector3(balance_pose.x * 0.6, 0, balance_pose.y * 0.5)
-		visual.rotate_object_local(Vector3.BACK, -balance_pose.x * 0.25)
-		visual.rotate_object_local(Vector3.RIGHT, balance_pose.y * 0.2)
 	var speed := Vector2(velocity.x, velocity.z).length()
 	var vertical := velocity.y
 	var grounded := pose_grounded

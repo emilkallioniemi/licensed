@@ -1,0 +1,9 @@
+ERROR: Failed to open log file for writing: user://logs/godot.log
+   at: rotate_file (core/io/logger.cpp:169)
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+SteamClient: Steam is not running (status 1: Could not determine Steam client install directory.)
+CLIMB -1.1 highest 5.27255821228027 final (-1.210479, 5.272558, -1.086847) mode independent
+CLIMB 0.0 highest 5.25213813781738 final (-1.20199, 5.252138, 0.0) mode independent
+CLIMB 1.1 highest 4.34178495407104 final (0.327134, 2.838451, 1.086847) mode supported
+Boarding scene failures: 0

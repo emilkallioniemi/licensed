@@ -1,50 +1,35 @@
 class_name TestArea
 extends Node3D
-## Static scrapyard around the retained cooperation exercise.
-## Full route and encounters remain later tickets.
-
-## Centre-to-centre spacing of the three bays, metres (spec section 8).
-const BAY_SPACING := 1.5
-
-## Daylight the waiting room swaps in for its WorldEnvironment.
+## Shared track geometry and results; only the navigator sees the route report.
 var daylight: Environment
-
 var truck: MonsterTruck
 var boarding: TruckBoarding
+var track: SurvivalTrack
 var _bays: Array[Marker3D] = []
 var _own_role: Label
-var examiner_audio: AudioStreamPlayer
-var examiner_subtitle: Label
-var subtitle_time := 0.0
-var _announced_result := ""
 var _results: PanelContainer
 var _assessment: Label
 var _retry: Button
 var _return: Button
 var _reticle: Label
 var _guidance: Label
-var _target: Label3D
-var _cones: Array[MeshInstance3D] = []
-var _noted_faults := 0
-var _noted_cones := 0
-
+var _report: PanelContainer
+var _report_text: Label
+var report_open := true
 
 func _ready() -> void:
 	visible = false
-	_build()
-
-
-func _build() -> void:
 	truck = MonsterTruck.new()
 	truck.name = "MonsterTruck"
 	add_child(truck)
 	truck.position = Vector3(0, 0, -9)
-	examiner_audio = AudioStreamPlayer.new()
-	examiner_audio.stream = load("res://assets/monster_truck/temporary_request.wav")
-	add_child(examiner_audio)
 	boarding = TruckBoarding.new()
 	boarding.name = "Boarding"
 	add_child(boarding)
+	track = SurvivalTrack.new()
+	track.name = "SurvivalTrack"
+	add_child(track)
+	track.build(0)
 	daylight = Environment.new()
 	daylight.background_mode = Environment.BG_COLOR
 	daylight.background_color = Color("9caeac")
@@ -52,237 +37,128 @@ func _build() -> void:
 	daylight.ambient_light_color = Color("c3d2d0")
 	daylight.ambient_light_energy = 0.65
 	daylight.tonemap_mode = Environment.TONE_MAPPER_ACES
-
 	var sun := DirectionalLight3D.new()
-	sun.name = "Sun"
 	sun.light_color = Color("fff0d5")
 	sun.light_energy = 1.3
 	sun.shadow_enabled = true
-	sun.rotation_degrees = Vector3(-48.0, 35.0, 0.0)
+	sun.rotation_degrees = Vector3(-48, 35, 0)
 	add_child(sun)
-
-	_add_box("Asphalt", Vector3(80.0, 0.08, 80.0), Vector3(0.0, -0.04, 0.0), Color("3a3a38"), true)
-	var xs := [-BAY_SPACING, 0.0, BAY_SPACING]
-	for i in xs.size():
-		_add_box(
-			"Bay%d" % (i + 1),
-			Vector3(1.15, 0.06, 2.4),
-			Vector3(xs[i], 0.03, 0.2),
-			Color("c9b56a"),
-			false,
-		)
+	for index in 3:
 		var bay := Marker3D.new()
-		bay.name = "BayMarker%d" % (i + 1)
 		add_child(bay)
-		bay.position = Vector3(xs[i], 0.0, 0.0)
+		bay.position = Vector3((index - 1) * 1.5, 0, 0)
+		bay.rotation.y = PI
 		_bays.append(bay)
-
-	_add_box("SignPost", Vector3(0.12, 2.2, 0.12), Vector3(0.0, 1.1, 6.0), Color("4a4034"), true)
-	_add_box("SignBoard", Vector3(2.6, 0.7, 0.08), Vector3(0.0, 2.35, 6.0), Color("e8e0cc"), true)
-	var sign := Label3D.new()
-	sign.name = "Vehicle"
-	sign.text = "MONSTER TRUCK"
-	sign.font_size = 72
-	sign.outline_size = 8
-	sign.pixel_size = 0.004
-	sign.modulate = Color("293a3d")
-	sign.outline_modulate = Color("e8e0cc")
-	add_child(sign)
-	sign.position = Vector3(0.0, 2.35, 5.94)
-	sign.rotation.y = PI
-
-	var own_role_layer := CanvasLayer.new()
-	own_role_layer.name = "OwnRole"
-	own_role_layer.layer = 20
-	add_child(own_role_layer)
-	_own_role = Label.new()
-	_own_role.name = "Line"
-	_own_role.visible = false
-	_own_role.position = Vector2(16, 16)
-	_own_role.size.x = 760
-	_own_role.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_own_role.add_theme_font_size_override("font_size", 16)
-	_own_role.add_theme_color_override("font_color", Color("f4ecd7"))
-	_own_role.add_theme_color_override("font_outline_color", Color(0.08, 0.08, 0.1, 1))
-	_own_role.add_theme_constant_override("outline_size", 4)
-	own_role_layer.add_child(_own_role)
-	_reticle = Label.new()
+	var layer := CanvasLayer.new()
+	layer.layer = 20
+	add_child(layer)
+	_own_role = label(layer, Vector2(20, 20), 18)
+	_guidance = label(layer, Vector2(20, 120), 20)
+	_reticle = label(layer, Vector2.ZERO, 20)
 	_reticle.text = "+"
-	_reticle.add_theme_font_size_override("font_size", 20)
-	_reticle.add_theme_constant_override("outline_size", 3)
-	own_role_layer.add_child(_reticle)
-	_guidance = Label.new()
-	_guidance.position = Vector2(16, 125)
-	_guidance.size.x = 760
-	_guidance.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_guidance.add_theme_font_size_override("font_size", 20)
-	_guidance.add_theme_color_override("font_outline_color", Color.BLACK)
-	_guidance.add_theme_constant_override("outline_size", 5)
-	own_role_layer.add_child(_guidance)
-	_target = Label3D.new()
-	_target.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	_target.font_size = 96
-	_target.pixel_size = 0.02
-	_target.modulate = Color("fff098")
-	add_child(_target)
-	examiner_subtitle = Label.new()
-	examiner_subtitle.position = Vector2(16, 550)
-	examiner_subtitle.add_theme_font_size_override("font_size", 22)
-	own_role_layer.add_child(examiner_subtitle)
+	_report = PanelContainer.new()
+	_report.position = Vector2(20, 210)
+	_report.custom_minimum_size = Vector2(470, 310)
+	var paper := StyleBoxFlat.new()
+	paper.bg_color = Color("eee3c8")
+	paper.content_margin_left = 22
+	paper.content_margin_right = 22
+	paper.content_margin_top = 18
+	paper.content_margin_bottom = 18
+	_report.add_theme_stylebox_override("panel", paper)
+	layer.add_child(_report)
+	_report_text = Label.new()
+	_report_text.custom_minimum_size.x = 440
+	_report_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_report_text.add_theme_font_size_override("font_size", 18)
+	_report_text.add_theme_color_override("font_color", Color("293a3d"))
+	_report.add_child(_report_text)
+	_report.hide()
 	_results = PanelContainer.new()
-	_results.position = Vector2(24, 170)
-	_results.custom_minimum_size = Vector2(320, 200)
-	own_role_layer.add_child(_results)
+	_results.position = Vector2(24, 210)
+	_results.custom_minimum_size = Vector2(340, 180)
+	layer.add_child(_results)
 	var column := VBoxContainer.new()
 	_results.add_child(column)
 	_assessment = Label.new()
+	_assessment.add_theme_font_size_override("font_size", 24)
 	column.add_child(_assessment)
 	_retry = Button.new()
-	_retry.text = "Retry"
 	_retry.pressed.connect(func(): (get_parent() as WaitingRoom).choose_attempt(&"retry"))
 	column.add_child(_retry)
 	_return = Button.new()
-	_return.text = "Waiting room"
 	_return.pressed.connect(func(): (get_parent() as WaitingRoom).choose_attempt(&"waiting_room"))
 	column.add_child(_return)
 	_results.hide()
-	# Short test: broad right turn, low transverse ridges, generous parking box.
-	for x in [14.5, 17.0, 19.5]:
-		_add_box("ApronBump", Vector3(0.8, 0.3, 8.0), Vector3(x, 0.15, -24), Color("d6b75e"), true)
-	for x in [11.0, 23.0]:
-		_add_box("ParkingLine", Vector3(0.15, 0.03, 14), Vector3(x, 0.03, -10), Color("e4b752"), false)
-	for z in [-17.0, -3.0]:
-		_add_box("ParkingLine", Vector3(12, 0.03, 0.15), Vector3(17, 0.03, z), Color("e4b752"), false)
-	for at in [Vector3(0, 0.03, -17), Vector3(5, 0.03, -22), Vector3(10, 0.03, -24), Vector3(22, 0.03, -20), Vector3(20, 0.03, -17)]:
-		_add_box("RouteMark", Vector3(1.0, 0.02, 1.0), at, Color("e4b752"), false)
 
-	# Simple code placeholders for nonblocking cones; each contact is one fault.
-	for at in [Vector3(5, 0.4, -25), Vector3(10, 0.4, -19), Vector3(13, 0.4, -29), Vector3(21, 0.4, -29), Vector3(11, 0.4, -17), Vector3(23, 0.4, -3)]:
-		var cone := MeshInstance3D.new()
-		var mesh := CylinderMesh.new()
-		mesh.top_radius = 0.06
-		mesh.bottom_radius = 0.35
-		mesh.height = 0.8
-		cone.mesh = mesh
-		var material := StandardMaterial3D.new()
-		material.albedo_color = Color("ed8b3b")
-		cone.material_override = material
-		cone.position = at
-		add_child(cone)
-		_cones.append(cone)
-
-	var scrapyard := Scrapyard.new()
-	add_child(scrapyard)
-	scrapyard.dress_exercise(self)
+func label(parent: Node, at: Vector2, font: int) -> Label:
+	var text := Label.new()
+	text.position = at
+	text.size.x = 950
+	text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	text.add_theme_font_size_override("font_size", font)
+	text.add_theme_color_override("font_outline_color", Color.BLACK)
+	text.add_theme_constant_override("outline_size", 4)
+	parent.add_child(text)
+	return text
 
 func announce_arrival() -> void:
-	_noted_faults = 0
-	_noted_cones = 0
-	_announced_result = ""
+	var waiting := get_parent() as WaitingRoom
+	track.build(waiting.room_state().attempt.route_layout)
+	report_open = true
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	examiner_audio.stream = load("res://assets/monster_truck/temporary_request.wav")
-	# Old request audio names a superseded manoeuvre; subtitle until re-recorded.
-	examiner_subtitle.text = "I would like to see a turn, the bumps, and a parked vehicle."
-	subtitle_time = 7.0
 
-func _process(delta: float) -> void:
-	subtitle_time = maxf(0.0, subtitle_time - delta)
-	examiner_subtitle.visible = visible and subtitle_time > 0.0
+func _unhandled_input(event: InputEvent) -> void:
+	if visible and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_TAB:
+		report_open = not report_open
+
+func can_read_report(state: AttemptState, player_id: int) -> bool:
+	return visible and state.phase == &"active" and state.control_of(player_id) == &"rear"
+
+func _process(_delta: float) -> void:
 	var waiting := get_parent() as WaitingRoom
 	if waiting == null or waiting.room_state() == null:
 		return
 	var state: AttemptState = waiting.room_state().attempt
-	var local: Learner = waiting._local_learner()
+	var local := waiting._local_learner()
+	var player_id := waiting.player_id_for_peer(multiplayer.get_unique_id())
 	_reticle.visible = visible and state.phase == &"active" and local != null and not local.is_seated()
 	_reticle.position = get_viewport().get_visible_rect().size * 0.5 - Vector2(6, 12)
-	for index in _cones.size():
-		_cones[index].rotation.z = PI / 2.0 if state.cone_hits.has(index) else 0.0
-	if state.minor_faults > _noted_faults:
-		examiner_subtitle.text = "That was a cone." if state.cone_hits.size() > _noted_cones else "We will carry on from here."
-		subtitle_time = 4.0
-		_noted_faults = state.minor_faults
-		_noted_cones = state.cone_hits.size()
-	var result := state.assessment()
-	_guidance.visible = visible and state.phase == &"active"
-	_target.visible = _guidance.visible
-	var instructions := ["1 / 3 · Turn right toward TURN. Reach the marker facing across the yard.", "Turn complete. 2 / 3 · Cross BUMPS from left to right, staying on the yellow ridges.", "Bumps complete. 3 / 3 · Park in the yellow box, aligned lengthways. Stop for 2 seconds.", "Test complete."]
-	_guidance.text = instructions[clampi(state.test_item, 0, 3)]
-	_guidance.text += "\nTime %d:%02d · Minor faults %d" % [int(state.remaining) / 60, int(state.remaining) % 60, state.minor_faults]
-	if truck.body.global_basis.y.dot(Vector3.UP) < 0.5 and not state.recovery_available:
-		_guidance.text += "\nRelease the driving controls and let the truck settle to recover."
-	if state.recovery_available:
-		_guidance.text += "\nHold R for 2 seconds to recover nearby (+1 minor fault). %d%%" % int(state.recovery_elapsed * 50.0)
-	var targets := [Vector3(10, 3, -24), Vector3(21, 3, -24), Vector3(17, 3, -10), Vector3(17, 3, -10)]
-	_target.position = targets[clampi(state.test_item, 0, 3)]
-	_target.text = ["TURN ↓", "BUMPS →", "PARK ↓", "FINISHED"][clampi(state.test_item, 0, 3)]
+	_guidance.visible = visible and state.phase in [&"active", &"aftermath"]
+	_guidance.text = "GET THROUGH ALIVE · Bridges crossed %d / 3\nTime %d:%02d" % [mini(state.test_item, 3), int(state.remaining) / 60, int(state.remaining) % 60]
+	if state.phase == &"active":
+		if state.control_of(player_id) == &"":
+			_guidance.text += "\nBoard together: steering, speed, navigation. Navigator has the bridge report."
+		elif state.control_of(player_id) != &"rear":
+			_guidance.text += "\nAsk your navigator which bridge to take."
+		if state.recovery_available:
+			_guidance.text += "\nHold R to right the settled truck. %d%%" % int(state.recovery_elapsed * 50)
+	elif not state.assessment().is_empty():
+		_guidance.text = "EVERYONE MADE IT." if state.assessment().outcome == &"passed" else "ATTEMPT LOST · " + failure_reason(state.assessment().reason)
+	_report.visible = report_open and can_read_report(state, player_id)
+	if _report.visible:
+		_report_text.text = SurvivalTrack.report(state.route_layout, state.test_item) + "\n\nTAB · Close / open report"
 	_results.visible = visible and state.phase == &"settled"
-	if not result.is_empty() and visible and _announced_result != state.id:
-		_announced_result = state.id
-		examiner_audio.stream = load("res://assets/monster_truck/temporary_failure.wav")
-		if result.outcome == &"failed":
-			examiner_audio.play()
-		examiner_subtitle.text = "That will do." if result.outcome == &"passed" else "We will leave it there."
-		subtitle_time = 5.0
 	if _results.visible:
-		_assessment.text = "DRIVING TEST — %s\n%s\nMinor faults: %d" % [str(result.outcome).to_upper(), str(result.get("rating", result.reason)).capitalize(), result.minor_faults]
+		var result := state.assessment()
+		_assessment.text = "EVERYONE MADE IT" if result.outcome == &"passed" else "ATTEMPT LOST\n" + failure_reason(result.reason)
 		_retry.text = "Retry (%d/3)" % state.choices.values().count(&"retry")
 		_return.text = "Waiting room (%d/3)" % state.choices.values().count(&"waiting_room")
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
+func failure_reason(reason: StringName) -> String:
+	match reason:
+		&"ravine": return "Lethal fall"
+		&"crushed": return "A learner was crushed"
+		&"timeout": return "Time ran out"
+		_: return "Attempt conceded"
 
-func _add_box(box_name: String, size: Vector3, at: Vector3, color: Color, collide: bool) -> void:
-	var mesh_instance := MeshInstance3D.new()
-	mesh_instance.name = box_name
-	mesh_instance.set_meta("scenery_kind", box_name)
-	var mesh := BoxMesh.new()
-	mesh.size = size
-	mesh_instance.mesh = mesh
-	var mat := StandardMaterial3D.new()
-	mat.roughness = 0.92
-	mat.albedo_color = color
-	mesh_instance.set_surface_override_material(0, mat)
-	add_child(mesh_instance)
-	mesh_instance.position = at
-	if not collide:
-		return
-	var body := StaticBody3D.new()
-	if box_name in ["Asphalt", "ApronBump"]:
-		body.collision_layer = 9
-	if box_name in ["Gate", "ParkingWreck", "SignPost", "SignBoard"]:
-		body.collision_layer = 5
-	body.name = "%sCollision" % box_name
-	var shape := CollisionShape3D.new()
-	var box := BoxShape3D.new()
-	box.size = size
-	shape.shape = box
-	body.add_child(shape)
-	add_child(body)
-	body.position = at
-
-
-## Pose of bay `index` (0, 1, 2) in world space, facing the sign.
 func bay_transform(index: int) -> Transform3D:
-	var bay := _bays[clampi(index, 0, _bays.size() - 1)]
-	# Learners look down local −Z; +Z of the bay is toward the sign.
-	var facing := bay.global_transform.basis.z
-	facing.y = 0.0
-	if facing.length_squared() <= 0.0001:
-		facing = Vector3.FORWARD
-	return Transform3D(Basis.looking_at(facing.normalized(), Vector3.UP), bay.global_position)
-
+	return _bays[clampi(index, 0, 2)].global_transform
 
 func is_prepared() -> bool:
-	return _bays.size() == 3 and get_node_or_null("AsphaltCollision") != null
-
+	return _bays.size() == 3 and track != null and track.get_child_count() > 0
 
 func show_own_role(copy: String) -> void:
-	if _own_role == null:
-		return
 	_own_role.text = copy
-	_own_role.visible = copy != ""
-
-func observe_cones(state: AttemptState) -> void:
-	for index in _cones.size():
-		var local := truck.body.to_local(_cones[index].global_position)
-		if absf(local.x) < 3.55 and absf(local.z) < 3.9 and absf(local.y) < 1.8:
-			state.observe_cone(index)
+	_own_role.visible = visible and copy != ""

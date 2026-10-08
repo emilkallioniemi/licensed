@@ -1,0 +1,13 @@
+ERROR: Failed to open log file for writing: user://logs/godot.log
+   at: rotate_file (core/io/logger.cpp:169)
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+SteamClient: Steam is not running (status 1: Could not determine Steam client install directory.)
+READY_UP_PROBE: seating three players
+WaitingRoom: peer 3 left; 2 in the room
+WaitingRoom: the host vanished
+Transport: ENet hosting a fresh room
+WaitingRoom: the room waits for 3
+WaitingRoom: spawned Learner_1 palette 01 local=true
+WaitingRoom:  arrived as palette 01 (1 of 3)
+PASS: three-player ready-up, announcement, cancellation, restart and test-area transition

@@ -11,7 +11,7 @@ func _initialize() -> void:
 		a.request_control(i + 1, a.id, 1, controls[i])
 	a.drive(3, a.id, 1, 1, {"steer": 1.0, "throttle": true})
 	a.advance_driving(0.2)
-	check(a.balance.x > 0.0 and a.balance.y < 0.0 and a.rear_angle == 0.0, "balance shifts right and forward without rear steering")
+	check(a.front_angle == 0.0 and a.speed == 0.0 and a.rear_angle == 0.0, "navigator cannot steer or accelerate")
 	check(a.request_swap(1, a.id, 2, &"pedals"), "stopped occupant requests swap")
 	check(a.control_of(1) == &"front", "request alone never moves occupant")
 	check(not a.request_swap(3, a.id, 2, &"front"), "overlapping requests refused")
@@ -37,8 +37,8 @@ func _initialize() -> void:
 	check(a.answer_swap(3, a.id, 5, 1, true, 6), "fresh consent accepts renewed request")
 	var guest := AttemptState.new()
 	guest.restore(a.snapshot())
-	check(guest.balance == a.balance and guest.operators == a.operators, "snapshot shares balance and swapped seats")
-	print("Balance/swap failures: ", failures)
+	check(guest.route_layout == a.route_layout and guest.operators == a.operators, "snapshot shares route and swapped seats")
+	print("Navigation/swap failures: ", failures)
 	quit(1 if failures else 0)
 func check(ok: bool, label: String) -> void:
 	if not ok:

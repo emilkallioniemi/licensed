@@ -43,6 +43,8 @@ var _recovering_join := false
 
 
 func _ready() -> void:
+	if OS.is_debug_build() and OS.get_cmdline_user_args().has("--rehearsal"):
+		return
 	# Autoloads also run in the editor, during `--import`, and under headless `--script`
 	# (the room-state tests). None of those should open a lobby or bind a port.
 	if Engine.is_editor_hint() or OS.get_cmdline_args().has("--script") or OS.get_cmdline_args().has("--import"):

@@ -45,9 +45,10 @@ func _initialize() -> void:
 			check(a.observe_accident(1, a.id, fault, Vector3.ZERO), "accept serious observation")
 			check(not a.observe_accident(1, a.id, fault, Vector3.ZERO), "duplicate serious observation rejected")
 		a.tick(360.0)
-		check(a.assessment().reason == &"timeout", "recoverable accidents do not override timeout")
+		var expected: StringName = fault if fault in [&"ravine", &"crushed"] else &"timeout"
+		check(a.assessment().reason == expected, "lethal accidents win; overturn alone remains recoverable")
 		a.observe_accident(1, a.id, &"rescued", Vector3.ZERO)
-		check(a.assessment().reason == &"timeout" and a.assessment().outcome == &"failed", "physical recovery cannot revoke failure")
+		check(a.assessment().reason == expected and a.assessment().outcome == &"failed", "physical recovery cannot revoke failure")
 		var immutable := a.assessment()
 		immutable["outcome"] = &"passed"
 		check(a.assessment().outcome == &"failed", "caller cannot mutate shared outcome")

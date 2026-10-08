@@ -1,5 +1,7 @@
 # licensed (working title, name not decided)
 
+> Active revision (2026-10-08): [Navigation and survival](.scratch/monster-truck-build/navigation-survival.md) supersedes the older monster-truck amendments below. Steering / speed / navigation; no balance or examiner. Get through the track alive: ordinary crashes are recoverable, lethal falls and crushing lose the shared attempt. Three-human fun remains unvalidated. [Solo development rehearsal](docs/navigation-rehearsal.md).
+
 > Monster-truck revision (2026-09-14): the [active spec amendment](.scratch/monster-truck/spec.md) supersedes older rules here for seated sight, role split, awkward controls, boarding, recovery and the next test. Build the approachable short test first; full-route expansion remains gated by human acceptance.
 
 **Three friends. One vehicle. One driving test. Everyone passes or nobody does.**
