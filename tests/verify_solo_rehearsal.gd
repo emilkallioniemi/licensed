@@ -40,6 +40,21 @@ func verify() -> void:
 	check(ragdoll_count == 1, "F12 produces one physical passenger ragdoll")
 	key(room, KEY_F8)
 	check(room.room_state().attempt.operators.size() == 3, "rehearsal reset restores all three seats after an ejection")
+	# Lose with every passenger below the death plane, then use the actual Retry button.
+	room.test_area.truck.body.position.y = -16.0
+	for learner in room._learners():
+		learner.global_position.y = -14.0
+	await create_timer(0.25).timeout
+	check(room.room_state().attempt.assessment().get("reason") == &"ravine", "fatal fall produces shared loss")
+	room.test_area._retry.pressed.emit()
+	await create_timer(0.25).timeout
+	check(room.room_state().attempt.phase == &"active", "Retry remains active after recovery simulation")
+	for learner in room._learners():
+		var role: StringName = room.room_state().attempt.control_of(learner.get_multiplayer_authority())
+		check(role != &"", "Retry restores every player's seat")
+		if role != &"":
+			check(learner.global_position.distance_to(room.test_area.truck.body.to_global(AttemptState.CONTROLS[role])) < 0.1, "Retry returns every player to the truck")
+		check(learner.movement_mode == &"occupied" and not is_instance_valid(learner.visual.pose.ragdoll), "Retry clears death and physical ragdolls")
 	room.free()
 	print("Solo rehearsal failures: ", failures)
 	quit(1 if failures else 0)

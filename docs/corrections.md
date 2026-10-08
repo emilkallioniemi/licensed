@@ -176,3 +176,5 @@ Areas: `examiner`, `controls`, `split`, `sight`, `sheet`, `scope`, `ui`, `scorin
 - 2026-10-09 | steering | Partial input must produce a gentle proportional steering angle, not accumulate to full lock; ease wheel movement and return toward centre when keys are released.
 - 2026-10-09 | suspension | A fast run over wrecks or a ramp crest must preserve takeoff momentum, leave the ground and rebound on landing; suspension must not pull an airborne truck down to terrain.
 - 2026-10-09 | players | Players thrown or falling off the vehicle should tumble with physical ragdoll limbs and landing impacts; retain secured seats, shared fatal outcomes and recovery from ordinary falls.
+- 2026-10-09 | retry | Retry must return every player to the truck and clear fatal/ragdoll state before accident simulation resumes.
+- 2026-10-09 | speed | Double the forward and reverse speed caps to 20 m/s and 10 m/s, preserving progressive acceleration and half-strength reverse acceleration.

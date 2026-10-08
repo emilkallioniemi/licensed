@@ -59,9 +59,6 @@ func reset(new_layout: bool) -> void:
 		var role: StringName = [&"front", &"pedals", &"rear"][index]
 		_room.attempt.observe_learner(index + 1, AttemptState.CONTROLS[role])
 		_room.attempt.request_control(index + 1, _room.attempt.id, 1, role)
-	for learner in _learners():
-		learner.set_truck_movement(true)
-		learner.apply_recovery(&"independent")
 	selected = &"front"
 	disabled = &""
 	frame = 0
@@ -70,6 +67,13 @@ func reset(new_layout: bool) -> void:
 	test_area.truck.body.transform = Transform3D.IDENTITY
 	test_area.truck.vertical_speed = 0.0
 	test_area.truck.reset_presentation()
+	# Restore passengers before recovery can inspect their previous fatal position.
+	# Occupancy alone does not teleport them: accident resolution runs before seating.
+	for learner in _learners():
+		learner.set_truck_movement(true)
+		learner.apply_recovery(&"independent")
+		var role := _room.attempt.control_of(learner.get_multiplayer_authority())
+		learner.simulate_truck_walk({}, test_area.truck.body, test_area.truck.body.global_transform, role, 1.0 / 60.0)
 	test_area.announce_arrival()
 	test_area._results.hide()
 

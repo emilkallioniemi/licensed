@@ -47,7 +47,7 @@ func _initialize() -> void:
 	a.observe_learner(3, AttemptState.CONTROLS.pedals)
 	a.request_control(3, a.id, 1, &"pedals")
 	check(not a.drive(2, a.id, seq, 1, {"throttle": true}), "old operator cannot drive after handover")
-	for i in 40:
+	for i in 80:
 		a.advance_driving(0.1)
 	check(a.speed == 0.0 and a.parking_brake, "released controls stop and secure truck")
 	a.release_control(3, a.id, 2)
@@ -68,7 +68,7 @@ func _initialize() -> void:
 	var forward_gain := 0.0
 	for reverse in [false, true]:
 		a.speed = 0.0
-		for frame in 300:
+		for frame in 420:
 			var before := absf(a.speed)
 			a.drive(2, a.id, seq, 1, {"throttle": not reverse, "brake": reverse})
 			seq += 1
