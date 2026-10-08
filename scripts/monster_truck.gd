@@ -121,12 +121,16 @@ func drive(state: AttemptState, delta: float, present := true) -> void:
 	var horizontal_motion := Vector3(motion.x, 0, motion.z)
 	query.motion = horizontal_motion * delta
 	query.collision_mask = 4
+	var previous_overlap := _hull_overlap_depth(query)
 	var fractions := get_world_3d().direct_space_state.cast_motion(query)
 	var fraction := fractions[0]
 	body.global_position += horizontal_motion * delta * fraction
 	body.rotation.y += angular_motion * delta * fraction
 	query.transform = body.global_transform.translated_local(Vector3(0, 2.4, 0))
-	if not get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty():
+	var overlap := _hull_overlap_depth(query)
+	# Suspension or turning can put a corner slightly inside a wall. Let a
+	# step reduce that penetration instead of requiring instant full clearance.
+	if overlap > 0.0 and not (previous_overlap > 0.0 and overlap < previous_overlap - 0.000001):
 		body.global_transform = from
 		fraction = 0.0
 	if present:
@@ -161,6 +165,13 @@ func smooth_correction(previous_visual: Transform3D) -> void:
 		visuals.global_transform = previous_visual
 	else:
 		visuals.transform = Transform3D.IDENTITY
+
+func _hull_overlap_depth(query: PhysicsShapeQueryParameters3D) -> float:
+	var contacts := get_world_3d().direct_space_state.collide_shape(query, 32)
+	var depth := 0.0
+	for index in range(0, contacts.size(), 2):
+		depth = maxf(depth, contacts[index].distance_to(contacts[index + 1]))
+	return depth
 
 func _has_tyre_contact() -> bool:
 	for x in [-2.4, 2.4]:
