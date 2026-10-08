@@ -1,0 +1,10 @@
+ERROR: Failed to open log file for writing: user://logs/godot.log
+   at: rotate_file (core/io/logger.cpp:169)
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+100 ms tap axle degrees: -10.3132403123548
+FAIL: a 100 ms steering tap stays below six degrees at the axle
+Held 30 percent axle degrees: -34.3774677078494
+FAIL: held partial input does not accumulate to full lock
+Steering response failures: 2
+SteamClient: Steam is not running (status 1: Could not determine Steam client install directory.)

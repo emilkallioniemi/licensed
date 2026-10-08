@@ -161,6 +161,7 @@ func _advance_suspension(delta: float, state: AttemptState) -> void:
 	# Terrain is layer 8, separate from hull-blocking structures (4). Four tyre
 	# probes preserve real vertical support while the arcade cab stays upright.
 	var heights: Array[float] = []
+	var compressions: Array[float] = []
 	var side_heights: Dictionary = {}
 	var axle_heights: Dictionary = {}
 	for x in [-2.4, 2.4]:
@@ -170,16 +171,27 @@ func _advance_suspension(delta: float, state: AttemptState) -> void:
 			var hit := get_world_3d().direct_space_state.intersect_ray(ray)
 			if not hit.is_empty():
 				heights.append(hit.position.y)
+				compressions.append(hit.position.y + 0.18 - at.y)
 				if not side_heights.has(x):
 					side_heights[x] = []
 				if not axle_heights.has(z):
 					axle_heights[z] = []
 				side_heights[x].append(hit.position.y)
 				axle_heights[z].append(hit.position.y)
-	# Ordinary cornering stays forgiving; navigation has no suspension input.
-	if absf(body.rotation.z) > 0.9:
+	# A terrain ray is not a wheel contact. Springs can push a compressed
+	# chassis upward, but cannot pull an airborne truck toward distant ground.
+	var supported := false
+	var support_force := 0.0
+	for compression in compressions:
+		if compression > 0.0:
+			supported = true
+			# Each tyre carries a quarter of the chassis. Unloaded wheels
+			# contribute no force instead of cancelling another tyre's push.
+			support_force += maxf(0.0, compression * 110.0 - vertical_speed * 5.0) / 4.0
+	# Keep the takeoff attitude in flight; only supported wheels follow a bank.
+	if supported and absf(body.rotation.z) > 0.9:
 		body.rotation.z = move_toward(body.rotation.z, signf(body.rotation.z) * PI / 2.0, delta)
-	else:
+	elif supported:
 		var bank := 0.0
 		if side_heights.size() == 2:
 			bank = atan2(mean_height(side_heights[2.4]) - mean_height(side_heights[-2.4]), 4.8)
@@ -191,13 +203,10 @@ func _advance_suspension(delta: float, state: AttemptState) -> void:
 			pitch = atan2(mean_height(axle_heights[-2.1]) - mean_height(axle_heights[2.1]), 4.2)
 		body.rotation.x = move_toward(body.rotation.x, clampf(pitch, -0.65, 0.65), delta * 1.5)
 	var before := vertical_speed
-	if heights.is_empty():
-		vertical_speed -= 9.8 * delta
-	else:
-		var height: float = mean_height(heights)
-		vertical_speed += ((height - body.global_position.y) * 65.0 - vertical_speed * 8.0) * delta
-		if before > 3.0 and vertical_speed < before:
+	if supported:
+		if before < -3.0 and support_force > 9.8:
 			jolt = motion * 0.3 + Vector3.UP * 5.5
+	vertical_speed += (support_force - 9.8) * delta
 	body.global_position.y += vertical_speed * delta
 	motion.y = vertical_speed
 

@@ -113,7 +113,25 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_F9: reset(true)
 			KEY_F10: save_tapes()
 			KEY_F11: load_tapes()
+			KEY_F12: toss_passenger()
 			KEY_ESCAPE: get_tree().quit()
+
+func toss_passenger() -> void:
+	# Debug-only demonstration through the same ejection/snapshot state as play.
+	var state: AttemptState = _room.attempt
+	var passenger: int = state.operators.get(&"rear", 0)
+	if state.phase != &"active" or passenger == 0:
+		return
+	for learner in _learners():
+		if learner.get_multiplayer_authority() != passenger:
+			continue
+		dev_sequence += 1
+		state.release_control(passenger, state.id, dev_sequence)
+		learner.global_position = test_area.truck.body.to_global(Vector3(3.8, 4.0, -0.5))
+		var impulse := test_area.truck.motion + test_area.truck.body.global_basis * Vector3(5, 6, -2)
+		state.observe_accident(passenger, state.id, &"ejected", learner.global_position, impulse)
+		learner.apply_recovery(&"independent", impulse)
+		learner.pose_grounded = false
 
 func _physics_process(delta: float) -> void:
 	if dev_status == null:
@@ -149,7 +167,7 @@ func _physics_process(delta: float) -> void:
 	test_area.show_own_role("REHEARSAL VIEW · " + ("navigation" if selected == &"rear" else str(selected)))
 	if disabled == &"rear":
 		test_area.report_open = false
-	dev_status.text = "DEVELOPMENT REHEARSAL · one human\nF1 steering / F2 speed / F3 navigator\nF4 combined driving: %s\nF5 record: %s / F6 replay: %s\nF7 disable selected: %s\nF8 restart same track / F9 new track\nF10 save / F11 load recordings\nESC quit · Frame %d\n\nW / S speed · A / D steering\nDuring replay, selected role stays live.\nOther driving role uses its recording." % [str(combined), str(recording), str(replaying), str(disabled), frame]
+	dev_status.text = "DEVELOPMENT REHEARSAL · one human\nF1 steering / F2 speed / F3 navigator\nF4 combined driving: %s\nF5 record: %s / F6 replay: %s\nF7 disable selected: %s\nF8 restart same track / F9 new track\nF10 save / F11 load recordings\nF12 toss navigator (F8 reset)\nESC quit · Frame %d\n\nW / S speed · A / D steering\nDuring replay, selected role stays live.\nOther driving role uses its recording." % [str(combined), str(recording), str(replaying), str(disabled), frame]
 	frame += 1
 	if OS.get_cmdline_user_args().has("--rehearsal-smoke") and frame == 120:
 		print("PASS: debug rehearsal runs production track, three seats and physics")

@@ -173,3 +173,6 @@ Areas: `examiner`, `controls`, `split`, `sight`, `sheet`, `scope`, `ui`, `scorin
 - 2026-10-09 | naming | The game is named license, not licensed; use license for future branding and player-facing titles.
 - 2026-10-09 | handling | Remove artificial steering-induced body roll; steering alone must not tilt the truck on flat ground, while physical terrain banking and jump/landing response remain.
 - 2026-10-09 | handling | Increase forward pace slightly; holding forward builds speed to a cap, and holding reverse builds backward speed with half the forward acceleration.
+- 2026-10-09 | steering | Partial input must produce a gentle proportional steering angle, not accumulate to full lock; ease wheel movement and return toward centre when keys are released.
+- 2026-10-09 | suspension | A fast run over wrecks or a ramp crest must preserve takeoff momentum, leave the ground and rebound on landing; suspension must not pull an airborne truck down to terrain.
+- 2026-10-09 | players | Players thrown or falling off the vehicle should tumble with physical ragdoll limbs and landing impacts; retain secured seats, shared fatal outcomes and recovery from ordinary falls.

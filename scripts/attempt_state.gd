@@ -37,6 +37,9 @@ var _ready: Array[int] = []
 var _loading_elapsed := 0.0
 const INPUT_FRESHNESS := 0.35
 const AXLE_LIMIT := 0.6
+const FAST_AXLE_LIMIT := 0.32
+const STEER_RATE := 0.9
+const STEER_RETURN_RATE := 1.2
 const FORWARD_SPEED := 10.0
 const DRIVE_ACCEL := 4.0
 const REVERSE_ACCEL := DRIVE_ACCEL * 0.5
@@ -256,7 +259,14 @@ func advance_driving(delta: float) -> void:
 		if command.is_empty():
 			continue
 		match control:
-			&"front": front_angle = clampf(front_angle + command.steer * 1.8 * delta, -AXLE_LIMIT, AXLE_LIMIT)
+			&"front":
+				# Input selects a wheel angle rather than winding up to full lock.
+				# Small corrections stay gentle; slow manoeuvres retain full lock.
+				var input: float = command.steer
+				var response := input * (0.35 + 0.65 * input * input)
+				var limit := lerpf(AXLE_LIMIT, FAST_AXLE_LIMIT, clampf(absf(speed) / FORWARD_SPEED, 0.0, 1.0))
+				var rate := STEER_RETURN_RATE if is_zero_approx(input) else STEER_RATE
+				front_angle = move_toward(front_angle, response * limit, rate * delta)
 			&"pedals":
 				throttle = command.throttle
 				brake = command.brake

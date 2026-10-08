@@ -1,0 +1,8 @@
+ERROR: Failed to open log file for writing: user://logs/godot.log
+   at: rotate_file (core/io/logger.cpp:169)
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+SteamClient: Steam is not running (status 1: Could not determine Steam client install directory.)
+Clear-ground ascent velocity: 2.59999998708566
+FAIL: airborne upward momentum is reduced by gravity alone, not ground attraction
+Suspension launch failures: 1

@@ -57,6 +57,28 @@ func verify() -> void:
 	for index in track.cars.size():
 		check(track.folded_cars[index].visible == ((guest.crushed_cars & (1 << index)) != 0), "guest snapshot selects matching damage models")
 	check(truck.body.position.z < -75 and state.phase == &"active", "the car obstacle is traversable")
+	start(Vector3(18, 0.3, -35))
+	var wreck_airtime := 0.0
+	var peak_clearance := 0.0
+	var landed_after_wrecks := false
+	for frame in 600:
+		await step(true)
+		var clearance := INF
+		for x in [-2.4, 2.4]:
+			for z in [-2.1, 2.1]:
+				var tyre_at := truck.body.to_global(Vector3(x, 0, z))
+				var ray := PhysicsRayQueryParameters3D.create(tyre_at + Vector3.UP * 3, tyre_at - Vector3.UP * 12, 8)
+				var hit := world.get_world_3d().direct_space_state.intersect_ray(ray)
+				clearance = minf(clearance, tyre_at.y - hit.position.y if not hit.is_empty() else 0.0)
+		peak_clearance = maxf(peak_clearance, clearance)
+		if clearance > 0.65:
+			wreck_airtime += 1.0 / 60
+		if wreck_airtime > 0 and clearance < 0.2 and truck.body.position.z < -75:
+			landed_after_wrecks = true
+		if truck.body.position.z < -86 or state.phase != &"active":
+			break
+	print("Fast wreck run minimum-wheel peak clearance: ", peak_clearance, "; airtime: ", wreck_airtime)
+	check(wreck_airtime > 0.1 and landed_after_wrecks and state.phase == &"active", "charging over the real wreck lane lifts all four wheels, then lands alive")
 	start(Vector3(18, 0.3, -103))
 	for i in 1000:
 		await step(state.speed < 3.5)

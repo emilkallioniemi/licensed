@@ -382,7 +382,7 @@ func simulate_truck_walk(command: Dictionary, truck_body: AnimatableBody3D, prev
 	if command.has("yaw"):
 		rotation.y = command.yaw
 	var wish: Vector2 = command.get("wish", Vector2.ZERO)
-	var direction := global_basis * Vector3(wish.x, 0, wish.y)
+	var direction := Vector3.ZERO if pose_ejected else global_basis * Vector3(wish.x, 0, wish.y)
 	var speed := SPRINT_SPEED if command.get("sprint", false) else WALK_SPEED
 	var jumped: bool = command.get("jump", false) and is_on_floor()
 	if jumped:
@@ -430,6 +430,7 @@ func simulate_truck_walk(command: Dictionary, truck_body: AnimatableBody3D, prev
 		movement_mode = &"climbing" if floor_normal.y < 0.98 else &"supported"
 	elif support == &"truck":
 		support = &""
+		pose_ejected = true
 		_detach_velocity = carry
 		velocity += carry
 		movement_mode = &"independent"
@@ -534,5 +535,6 @@ func _animate_body(delta: float) -> void:
 			world_contacts[title] = presentation_frame.to_global(presentation_contacts[title])
 	visual.animate({"mode": movement_mode, "support": support, "seated": _seated,
 		"grounded": grounded, "speed": speed, "vertical": vertical, "phase": pose_phase,
+		"velocity": velocity,
 		"pitch": _pitch, "look_yaw": look_yaw, "ejected": pose_ejected,
 		"contacts": world_contacts}, delta)

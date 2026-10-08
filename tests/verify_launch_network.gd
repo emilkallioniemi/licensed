@@ -180,11 +180,12 @@ func drive_track_to(target: Vector3, tolerance: float, cruise_speed := 2.0) -> v
 			blocked_steps = 0
 		if reversing > 0:
 			reversing -= 1
-			rooms[0].test_area.boarding.test_intention = {"wish": Vector2.ZERO, "steer": clampf((-angle - state.front_angle) * 8.0, -1.0, 1.0)}
+			rooms[0].test_area.boarding.test_intention = {"wish": Vector2.ZERO, "steer": -angle / AttemptState.AXLE_LIMIT}
 			rooms[1].test_area.boarding.test_intention = {"wish": Vector2.ZERO, "brake": true}
 			await create_timer(0.05).timeout
 			continue
-		rooms[0].test_area.boarding.test_intention = {"wish": Vector2.ZERO, "steer": clampf((angle - state.front_angle) * 8.0, -1.0, 1.0)}
+		# Steering now selects a proportional angle, not a wheel-turning rate.
+		rooms[0].test_area.boarding.test_intention = {"wish": Vector2.ZERO, "steer": angle / AttemptState.AXLE_LIMIT}
 		rooms[1].test_area.boarding.test_intention = {"wish": Vector2.ZERO, "throttle": state.speed < cruise_speed}
 		await create_timer(0.05).timeout
 	print("ROUTE missed ", target, " at ", host.test_area.to_local(truck.body.global_position), " heading ", truck.body.rotation.y)

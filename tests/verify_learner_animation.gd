@@ -53,7 +53,8 @@ func _run() -> void:
 	await create_timer(0.4).timeout
 	for learner in learners:
 		var pelvis: Node3D = learner.visual.find_child("BodyPivot", true, false)
-		check(absf(pelvis.rotation.x) > 1.0, "late complete snapshot retains articulated airborne tumble after impulse timer")
+		check(is_instance_valid(learner.visual.pose.ragdoll), "late complete snapshot starts physical ragdoll after impulse timer")
+		check(pelvis.global_basis.y.angle_to(Vector3.UP) > 0.2, "airborne rigid bodies physically rotate away from upright")
 		learner.set_truck_movement(false)
 		learner.position.y = 0.0
 		learner.set_seated(true)

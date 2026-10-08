@@ -30,6 +30,16 @@ func verify() -> void:
 	check(room.room_state().attempt.speed < 0.1, "disabling speed contribution releases pedals and stops truck")
 	key(room, KEY_F8)
 	check(room.room_state().attempt.route_layout == layout and room.frame == 0, "restart keeps recorded route and rewinds frame")
+	key(room, KEY_F12)
+	check(not room.room_state().attempt.operators.has(&"rear"), "ragdoll demonstration detaches the navigator through real occupancy")
+	await create_timer(0.25).timeout
+	var ragdoll_count := 0
+	for learner in room._learners():
+		if is_instance_valid(learner.visual.pose.ragdoll):
+			ragdoll_count += 1
+	check(ragdoll_count == 1, "F12 produces one physical passenger ragdoll")
+	key(room, KEY_F8)
+	check(room.room_state().attempt.operators.size() == 3, "rehearsal reset restores all three seats after an ejection")
 	room.free()
 	print("Solo rehearsal failures: ", failures)
 	quit(1 if failures else 0)

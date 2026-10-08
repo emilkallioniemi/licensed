@@ -1,8 +1,8 @@
 class_name LearnerPose
 extends RefCounted
 ## Articulated presentation only. The CharacterBody and host recovery state own
-## contact/occupancy. Ragdolls are authored loose-limb poses, never a second solver
-## that can move the learner or decide whether the player is trapped.
+## contact/occupancy. Physical ragdoll limbs follow that confirmed trajectory;
+## their solver cannot move the learner or decide whether the player is trapped.
 const DIGITS := ["Index", "Middle", "Ring", "Little", "Thumb"]
 var rig: Node3D
 var joints: Dictionary = {}
@@ -18,6 +18,9 @@ var recovery := 0.0
 var boarding := 0.0
 var seat_blend := 0.0
 var time := 0.0
+var ragdoll: LearnerRagdoll
+var ragdoll_recovery := 0.0
+var ragdoll_rest := {}
 
 func _init(visual: Node3D) -> void:
 	rig = visual
@@ -38,6 +41,11 @@ func _register(title: String) -> void:
 		angles[title] = Vector3.ZERO
 
 func reset() -> void:
+	if is_instance_valid(ragdoll):
+		ragdoll.queue_free()
+		ragdoll = null
+	ragdoll_recovery = 0.0
+	ragdoll_rest.clear()
 	state = &"idle"
 	landing = 0.0
 	recovery = 0.0
@@ -63,6 +71,15 @@ func update(data: Dictionary, delta: float) -> void:
 	var phase: float = data.get("phase", time * 7.0)
 	var vertical: float = data.get("vertical", 0.0)
 	var pinned := mode in [&"trapped", &"crushed"]
+	if not seated and not pinned and not grounded and (data.get("ejected", false) or mode == &"ravine") and not is_instance_valid(ragdoll):
+		ragdoll = LearnerRagdoll.new()
+		ragdoll.build(rig, joints, data.get("velocity", Vector3.ZERO))
+		ragdoll_recovery = 0.0
+	if is_instance_valid(ragdoll) and (seated or pinned or ragdoll.landed_time > 0.45):
+		ragdoll_rest = ragdoll.local_pose()
+		ragdoll_recovery = 0.65 if not seated and not pinned else 0.0
+		ragdoll.queue_free()
+		ragdoll = null
 	if data.get("ejected", false) or mode == &"ravine":
 		tumble = true
 	if not previous_grounded and grounded:
@@ -182,6 +199,12 @@ func update(data: Dictionary, delta: float) -> void:
 				var target_ankle: Vector3 = contacts[side + "Foot"] - foot_basis * Vector3(0, -0.06, 0.27)
 				_two_bone(side + "Hip", side + "Knee", side + "Ankle", ankle.global_position.lerp(target_ankle, seat_blend), rig.global_basis * Vector3(-1 if side == "Left" else 1, 0, 0.1))
 				ankle.global_basis = foot_basis
+	if is_instance_valid(ragdoll):
+		ragdoll.present(rig, data)
+	elif ragdoll_recovery > 0.0:
+		ragdoll_recovery = maxf(0.0, ragdoll_recovery - delta)
+		for title in ragdoll_rest:
+			joints[title].transform = ragdoll_rest[title].interpolate_with(joints[title].transform, 1.0 - ragdoll_recovery / 0.65)
 
 func _two_bone(upper_name: String, lower_name: String, end_name: String, goal: Vector3, pole: Vector3) -> void:
 	var upper: Node3D = joints[upper_name]
