@@ -10,7 +10,7 @@ From the repository, run:
 
 The shipping game still requires three humans. The rehearsal scene is excluded from exports.
 
-- **F1 / F2 / F3**: inspect steering, speed or navigation. Only navigation sees the bridge inspection report; Tab opens/closes it.
+- **F1 / F2 / F3**: inspect steering, speed or navigation. Only navigation sees the modeled field book; Tab raises/lowers it. **Q / E**, arrow keys or Page Up/Down turn its physical pages. Find the landmark in the contents, then turn to its inspection entry; progress never turns pages automatically.
 - **W / S**, **A / D**: normal speed and steering inputs. Steering holds its angle.
 - **R**: hold to right a settled rollover on supporting road. It cannot rescue a lethal fall.
 - **F4**: toggle operating both driving roles with one keyboard. This convenience is for inspecting the course, not measuring cooperation.

@@ -241,7 +241,9 @@ func verify_survival_network() -> void:
 		check(room.room_state().attempt.phase == &"active" and room.room_state().attempt.test_item == 0, "retry resets all peers")
 		check(room.test_area.track.layout == host.room_state().attempt.route_layout, "retry regenerates identical geometry on all peers")
 	# Isolated fall setup; real gravity must kill even while recovery is held.
-	truck.body.global_position = host.test_area.to_global(Vector3(40, 0, -20))
+	# The former x=40 apron-side point is now a solid quarry ledge. Drop into
+	# the actual first ravine, between the two bridges, for every route layout.
+	truck.body.global_position = host.test_area.to_global(Vector3(0, 0, -60))
 	truck.vertical_speed = 0
 	rooms[2].test_area.boarding.test_intention = {"wish": Vector2.ZERO, "recover": true}
 	await create_timer(3.5).timeout

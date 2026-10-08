@@ -34,6 +34,15 @@ func verify() -> void:
 		await step({"brake": true})
 	check(truck.body.position.x < stopped_at - 2 and state.phase == &"active", "holding reverse recovers a wall collision")
 	start()
+	state.test_item = 3
+	truck.body.transform = Transform3D(Basis.IDENTITY, Vector3(0, 0, -207))
+	truck.vertical_speed = 0
+	for frame in 360:
+		await step({"throttle": true})
+		if state.assessment().get("outcome") == &"passed":
+			break
+	check(state.assessment().get("outcome") == &"passed", "truck crosses the painted finish without hitting a decorative collider")
+	start()
 	var broken_x := -SurvivalTrack.safe_side(state.route_layout, 0) * 18
 	track.build(state.route_layout)
 	await physics_frame

@@ -35,15 +35,6 @@ func _ready() -> void:
 	var unused_seat := model.find_child("ExaminerSeat", true, false)
 	if unused_seat != null:
 		unused_seat.hide()
-	var report := MeshInstance3D.new()
-	var paper := BoxMesh.new()
-	paper.size = Vector3(0.5, 0.025, 0.65)
-	report.mesh = paper
-	var material := StandardMaterial3D.new()
-	material.albedo_color = Color("eee3c8")
-	report.material_override = material
-	add_child(report)
-	report.position = Vector3(-0.864, 3.05, 1.60)
 
 func lettering(title: String, at: Vector3, pixel: float, font: int) -> Label3D:
 	var label := Label3D.new()

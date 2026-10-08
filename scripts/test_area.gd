@@ -13,9 +13,8 @@ var _retry: Button
 var _return: Button
 var _reticle: Label
 var _guidance: Label
-var _report: PanelContainer
-var _report_text: Label
 var report_open := true
+var field_book: NavigationBook
 
 func _ready() -> void:
 	visible = false
@@ -31,8 +30,17 @@ func _ready() -> void:
 	add_child(track)
 	track.build(0)
 	daylight = Environment.new()
-	daylight.background_mode = Environment.BG_COLOR
-	daylight.background_color = Color("9caeac")
+	daylight.background_mode = Environment.BG_SKY
+	var sky := Sky.new()
+	var atmosphere := ProceduralSkyMaterial.new()
+	atmosphere.sky_top_color = Color("7198a4")
+	atmosphere.sky_horizon_color = Color("e3d5b9")
+	atmosphere.ground_horizon_color = Color("d2bea0")
+	sky.sky_material = atmosphere
+	daylight.sky = sky
+	daylight.fog_enabled = true
+	daylight.fog_light_color = Color("b9b5a2")
+	daylight.fog_density = 0.0017
 	daylight.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	daylight.ambient_light_color = Color("c3d2d0")
 	daylight.ambient_light_energy = 0.65
@@ -56,24 +64,8 @@ func _ready() -> void:
 	_guidance = label(layer, Vector2(20, 120), 20)
 	_reticle = label(layer, Vector2.ZERO, 20)
 	_reticle.text = "+"
-	_report = PanelContainer.new()
-	_report.position = Vector2(20, 210)
-	_report.custom_minimum_size = Vector2(470, 310)
-	var paper := StyleBoxFlat.new()
-	paper.bg_color = Color("eee3c8")
-	paper.content_margin_left = 22
-	paper.content_margin_right = 22
-	paper.content_margin_top = 18
-	paper.content_margin_bottom = 18
-	_report.add_theme_stylebox_override("panel", paper)
-	layer.add_child(_report)
-	_report_text = Label.new()
-	_report_text.custom_minimum_size.x = 440
-	_report_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_report_text.add_theme_font_size_override("font_size", 18)
-	_report_text.add_theme_color_override("font_color", Color("293a3d"))
-	_report.add_child(_report_text)
-	_report.hide()
+	field_book = NavigationBook.new()
+	layer.add_child(field_book)
 	_results = PanelContainer.new()
 	_results.position = Vector2(24, 210)
 	_results.custom_minimum_size = Vector2(340, 180)
@@ -106,11 +98,26 @@ func announce_arrival() -> void:
 	var waiting := get_parent() as WaitingRoom
 	track.build(waiting.room_state().attempt.route_layout)
 	report_open = true
+	field_book.reset_book(waiting.room_state().attempt.route_layout)
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _unhandled_input(event: InputEvent) -> void:
 	if visible and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_TAB:
 		report_open = not report_open
+
+func _input(event: InputEvent) -> void:
+	# Consume page keys before E reaches the boarding interaction handler.
+	var waiting := get_parent() as WaitingRoom
+	if waiting == null or waiting.room_state() == null:
+		return
+	var player_id := waiting.player_id_for_peer(multiplayer.get_unique_id())
+	if report_open and can_read_report(waiting.room_state().attempt, player_id) and event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode in [KEY_E, KEY_RIGHT, KEY_PAGEDOWN]:
+			field_book.turn(1)
+			get_viewport().set_input_as_handled()
+		elif event.physical_keycode in [KEY_Q, KEY_LEFT, KEY_PAGEUP]:
+			field_book.turn(-1)
+			get_viewport().set_input_as_handled()
 
 func can_read_report(state: AttemptState, player_id: int) -> bool:
 	return visible and state.phase == &"active" and state.control_of(player_id) == &"rear"
@@ -135,9 +142,7 @@ func _process(_delta: float) -> void:
 			_guidance.text += "\nHold R to right the settled truck. %d%%" % int(state.recovery_elapsed * 50)
 	elif not state.assessment().is_empty():
 		_guidance.text = "EVERYONE MADE IT." if state.assessment().outcome == &"passed" else "ATTEMPT LOST · " + failure_reason(state.assessment().reason)
-	_report.visible = report_open and can_read_report(state, player_id)
-	if _report.visible:
-		_report_text.text = SurvivalTrack.report(state.route_layout, state.test_item) + "\n\nTAB · Close / open report"
+	field_book.visible = report_open and can_read_report(state, player_id)
 	_results.visible = visible and state.phase == &"settled"
 	if _results.visible:
 		var result := state.assessment()
